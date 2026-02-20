@@ -431,20 +431,20 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- MORE SHEET -->
 <div class="sheet-bg" id="more-sheet" onclick="if(event.target===this)closeSheet('more-sheet')">
   <div class="sheet">
-    <div class="sheet-title">المزيد</div>
+    <div class="sheet-title" data-i18n="more-sheet-title">المزيد</div>
     <div class="sheet-item" onclick="closeSheet('more-sheet');S('screen-settings')">
       <span class="sheet-item-icon">⚙️</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">الإعدادات</div><div class="sheet-item-sub">الصوت والمظهر وحجم النص</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-i18n="more-settings-title">الإعدادات</div><div class="sheet-item-sub" data-i18n="more-settings-sub">الصوت والمظهر وحجم النص</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('more-sheet');S('screen-about')">
       <span class="sheet-item-icon">🎭</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">شرح اللعبة</div><div class="sheet-item-sub">نبذة احترافية عن COUP</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-i18n="more-about-title">شرح اللعبة</div><div class="sheet-item-sub" data-i18n="more-about-sub">نبذة احترافية عن COUP</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('more-sheet');S('screen-rules')">
       <span class="sheet-item-icon">📋</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">قواعد اللعبة</div><div class="sheet-item-sub">دليل سريع للأفعال والشخصيات</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-i18n="more-rules-title">قواعد اللعبة</div><div class="sheet-item-sub" data-i18n="more-rules-sub">دليل سريع للأفعال والشخصيات</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('more-sheet');showCredits()">
@@ -452,40 +452,40 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="sheet-item-text"><div class="sheet-item-title">Credits</div><div class="sheet-item-sub">COUP™ — © 2026 Turki</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
-    <button class="btn btn-dim btn-full" onclick="closeSheet('more-sheet')"><span>✕ إغلاق</span></button>
+    <button class="btn btn-dim btn-full" onclick="closeSheet('more-sheet')"><span data-i18n="more-close-btn">✕ إغلاق</span></button>
   </div>
 </div>
 
 <!-- SETUP ONLINE -->
 <div id="screen-setup-online" class="screen">
   <div class="glass-card form-card" style="margin:20px 0;">
-    <div class="form-title">🌐 إعداد الغرفة الأونلاين</div>
+    <div class="form-title" data-i18n="setup-title">🌐 إعداد الغرفة الأونلاين</div>
     <div class="form-group">
-      <div class="inp-label">اسمك</div>
-      <input class="inp" id="host-name" placeholder="أدخل اسمك" maxlength="20">
+      <div class="inp-label" data-i18n="setup-name-lbl">اسمك</div>
+      <input class="inp" id="host-name" placeholder="أدخل اسمك" data-i18n-ph="setup-name-ph" maxlength="20">
     </div>
     <div class="form-group">
-      <div class="inp-label">أفاتارك</div>
+      <div class="inp-label" data-i18n="setup-av-lbl">أفاتارك</div>
       <div class="av-grid" id="av-host"></div>
     </div>
     <div class="form-group">
-      <div class="inp-label">عدد اللاعبين الإجمالي</div>
+      <div class="inp-label" data-i18n="setup-maxp-lbl">عدد اللاعبين الإجمالي</div>
       <select class="inp" id="max-players">
-        <option value="2">2 لاعبين</option><option value="3">3 لاعبين</option>
-        <option value="4" selected>4 لاعبين</option><option value="5">5 لاعبين</option><option value="6">6 لاعبين</option>
+        <option value="2" data-i18n="setup-maxp-2">2 لاعبين</option><option value="3" data-i18n="setup-maxp-3">3 لاعبين</option>
+        <option value="4" selected data-i18n="setup-maxp-4">4 لاعبين</option><option value="5" data-i18n="setup-maxp-5">5 لاعبين</option><option value="6" data-i18n="setup-maxp-6">6 لاعبين</option>
       </select>
     </div>
     <div class="form-group">
-      <div class="inp-label">بوتات تملأ الغرفة 🤖</div>
+      <div class="inp-label" data-i18n="setup-bots-lbl">بوتات تملأ الغرفة 🤖</div>
       <select class="inp" id="bot-count">
-        <option value="0">بدون بوتات</option><option value="1">1 بوت</option>
-        <option value="2">2 بوتات</option><option value="3" selected>3 بوتات (ابدأ وحدك!)</option>
-        <option value="4">4 بوتات</option><option value="5">5 بوتات</option>
+        <option value="0" data-i18n="setup-bots-0">بدون بوتات</option><option value="1" data-i18n="setup-bots-1">1 بوت</option>
+        <option value="2" data-i18n="setup-bots-2">2 بوتات</option><option value="3" selected data-i18n="setup-bots-3">3 بوتات (ابدأ وحدك!)</option>
+        <option value="4" data-i18n="setup-bots-4">4 بوتات</option><option value="5" data-i18n="setup-bots-5">5 بوتات</option>
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-      <button class="btn btn-green btn-full" onclick="createRoom()"><span>🚀 إنشاء الغرفة</span></button>
-      <button class="btn btn-dim btn-full" onclick="back()"><span>← رجوع</span></button>
+      <button class="btn btn-green btn-full" onclick="createRoom()"><span data-i18n="setup-create-btn">🚀 إنشاء الغرفة</span></button>
+      <button class="btn btn-dim btn-full" onclick="back()"><span data-i18n="back-btn">← رجوع</span></button>
     </div>
   </div>
 </div>
@@ -493,23 +493,23 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- JOIN -->
 <div id="screen-join" class="screen">
   <div class="glass-card form-card">
-    <div class="form-title">🔑 الانضمام لغرفة</div>
+    <div class="form-title" data-i18n="join-title">🔑 الانضمام لغرفة</div>
     <div class="form-group">
-      <div class="inp-label">اسمك</div>
-      <input class="inp" id="join-name" placeholder="أدخل اسمك" maxlength="20">
+      <div class="inp-label" data-i18n="join-name-lbl">اسمك</div>
+      <input class="inp" id="join-name" placeholder="أدخل اسمك" data-i18n-ph="join-name-ph" maxlength="20">
     </div>
     <div class="form-group">
-      <div class="inp-label">أفاتارك</div>
+      <div class="inp-label" data-i18n="join-av-lbl">أفاتارك</div>
       <div class="av-grid" id="av-join"></div>
     </div>
     <div class="form-group">
-      <div class="inp-label">كود الغرفة</div>
+      <div class="inp-label" data-i18n="join-code-lbl">كود الغرفة</div>
       <input class="inp code-inp" id="join-code" placeholder="XXXX" maxlength="4">
     </div>
     <div style="min-height:18px;text-align:center;font-size:12px;color:var(--crimson-lt);margin-bottom:4px;" id="join-err"></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button class="btn btn-green btn-full" onclick="joinRoom()"><span>الانضمام →</span></button>
-      <button class="btn btn-dim btn-full" onclick="back()"><span>← رجوع</span></button>
+      <button class="btn btn-green btn-full" onclick="joinRoom()"><span data-i18n="join-btn">الانضمام →</span></button>
+      <button class="btn btn-dim btn-full" onclick="back()"><span data-i18n="back-btn">← رجوع</span></button>
     </div>
   </div>
 </div>
@@ -519,26 +519,26 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="lobby-wrap">
     <div class="glass-card lobby-card">
       <div class="lobby-card-hd">
-        <div class="lobby-card-title">🏰 الغرفة</div>
+        <div class="lobby-card-title" data-i18n="lobby-title">🏰 الغرفة</div>
         <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--emerald-lt);letter-spacing:1px;">
           <span class="live-dot"></span> LIVE
         </div>
       </div>
       <div class="lobby-card-body">
         <div class="room-code-box" onclick="copyCode()" id="code-copy-box">
-          <div class="room-code-lbl">كود الغرفة</div>
+          <div class="room-code-lbl" data-i18n="lobby-code-lbl">كود الغرفة</div>
           <div class="room-code-val" id="lobby-code">----</div>
-          <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:4px;" id="code-copy-hint">📋 اضغط للنسخ</div>
+          <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:4px;" id="code-copy-hint" data-i18n="lobby-copy-hint">📋 اضغط للنسخ</div>
         </div>
         <div class="share-row">
           <div class="share-url" id="share-url">جاري التحميل...</div>
-          <button class="btn btn-sm" onclick="copyShareUrl()" id="copy-url-btn"><span>نسخ</span></button>
+          <button class="btn btn-sm" onclick="copyShareUrl()" id="copy-url-btn"><span data-i18n="lobby-copy-url-btn">نسخ</span></button>
         </div>
-        <div style="font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px;">📲 أرسل الرابط أو الكود لأصدقائك</div>
+        <div style="font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px;" data-i18n="lobby-share-tip">📲 أرسل الرابط أو الكود لأصدقائك</div>
         <div class="player-list" id="lobby-players"></div>
-        <div style="text-align:center;font-size:12px;color:var(--text-dim);" id="lobby-status">في انتظار اللاعبين...</div>
-        <button class="btn btn-green btn-full" id="start-btn" onclick="hostStart()" style="display:none"><span>🎲 ابدأ اللعبة!</span></button>
-        <button class="btn btn-dim btn-full" onclick="leaveRoom()"><span>← مغادرة الغرفة</span></button>
+        <div style="text-align:center;font-size:12px;color:var(--text-dim);" id="lobby-status" data-i18n="lobby-waiting">في انتظار اللاعبين...</div>
+        <button class="btn btn-green btn-full" id="start-btn" onclick="hostStart()" style="display:none"><span data-i18n="lobby-start-btn">🎲 ابدأ اللعبة!</span></button>
+        <button class="btn btn-dim btn-full" onclick="leaveRoom()"><span data-i18n="lobby-leave-btn">← مغادرة الغرفة</span></button>
       </div>
     </div>
   </div>
@@ -547,37 +547,37 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- SOLO -->
 <div id="screen-solo" class="screen">
   <div class="glass-card form-card" style="margin:20px 0;">
-    <div class="form-title">🤖 العب ضد البوتات</div>
+    <div class="form-title" data-i18n="solo-title">🤖 العب ضد البوتات</div>
     <div class="form-group">
-      <div class="inp-label">اسمك</div>
-      <input class="inp" id="solo-name" placeholder="أدخل اسمك" maxlength="20">
+      <div class="inp-label" data-i18n="solo-name-lbl">اسمك</div>
+      <input class="inp" id="solo-name" placeholder="أدخل اسمك" data-i18n-ph="solo-name-ph" maxlength="20">
     </div>
     <div class="form-group">
-      <div class="inp-label">أفاتارك</div>
+      <div class="inp-label" data-i18n="solo-av-lbl">أفاتارك</div>
       <div class="av-grid" id="av-solo"></div>
     </div>
     <div class="form-group">
-      <div class="inp-label">عدد البوتات المنافسين</div>
+      <div class="inp-label" data-i18n="solo-bots-lbl">عدد البوتات المنافسين</div>
       <select class="inp" id="solo-bots" onchange="refreshBotPreview()">
-        <option value="1">1 بوت</option><option value="2">2 بوتات</option>
-        <option value="3" selected>3 بوتات</option><option value="4">4 بوتات</option><option value="5">5 بوتات</option>
+        <option value="1" data-i18n="solo-bots-1">1 بوت</option><option value="2" data-i18n="solo-bots-2">2 بوتات</option>
+        <option value="3" selected data-i18n="solo-bots-3">3 بوتات</option><option value="4" data-i18n="solo-bots-4">4 بوتات</option><option value="5" data-i18n="solo-bots-5">5 بوتات</option>
       </select>
     </div>
     <div class="form-group">
-      <div class="inp-label">مستوى الصعوبة</div>
+      <div class="inp-label" data-i18n="solo-diff-lbl">مستوى الصعوبة</div>
       <div class="diff-bar">
-        <button class="diff-pill" onclick="setDiff('easy',this)"><div class="diff-pill-icon">😊</div>سهل</button>
-        <button class="diff-pill active" onclick="setDiff('medium',this)"><div class="diff-pill-icon">😐</div>متوسط</button>
-        <button class="diff-pill" onclick="setDiff('hard',this)"><div class="diff-pill-icon">😈</div>صعب</button>
+        <button class="diff-pill" onclick="setDiff('easy',this)"><div class="diff-pill-icon">😊</div><span data-i18n="solo-diff-easy">سهل</span></button>
+        <button class="diff-pill active" onclick="setDiff('medium',this)"><div class="diff-pill-icon">😐</div><span data-i18n="solo-diff-med">متوسط</span></button>
+        <button class="diff-pill" onclick="setDiff('hard',this)"><div class="diff-pill-icon">😈</div><span data-i18n="solo-diff-hard">صعب</span></button>
       </div>
     </div>
     <div class="form-group">
-      <div class="inp-label">منافسوك (اضغط على الاسم لتعديله)</div>
+      <div class="inp-label" data-i18n="solo-rivals-lbl">منافسوك (اضغط على الاسم لتعديله)</div>
       <div class="bots-list" id="bots-preview"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-      <button class="btn btn-green btn-full" onclick="startSolo()"><span>⚔️ ابدأ القتال!</span></button>
-      <button class="btn btn-dim btn-full" onclick="back()"><span>← رجوع</span></button>
+      <button class="btn btn-green btn-full" onclick="startSolo()"><span data-i18n="solo-start-btn">⚔️ ابدأ القتال!</span></button>
+      <button class="btn btn-dim btn-full" onclick="back()"><span data-i18n="back-btn">← رجوع</span></button>
     </div>
   </div>
 </div>
@@ -593,7 +593,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     </div>
     <div class="turn-info">
       <span class="live-dot"></span>
-      <span>دور <span class="turn-name" id="turn-name">—</span></span>
+      <span><span data-i18n="turn-prefix">دور</span> <span class="turn-name" id="turn-name">—</span></span>
     </div>
     <div class="menu-btn-top" onclick="openGameSheet()">☰</div>
   </div>
@@ -624,29 +624,29 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- Game Sheet -->
 <div class="sheet-bg" id="game-sheet" onclick="if(event.target===this)closeSheet('game-sheet')">
   <div class="sheet">
-    <div class="sheet-title">☰ قائمة اللعبة</div>
+    <div class="sheet-title" data-i18n="gsheet-title">☰ قائمة اللعبة</div>
     <!-- ═══ زر طرد اللاعب — للمضيف فقط داخل اللعبة ═══ -->
     <div class="sheet-item" id="kick-sheet-item" onclick="closeSheet('game-sheet');openKickModal()" style="display:none;">
       <span class="sheet-item-icon">🚫</span>
-      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--crimson-lt)">طرد لاعب</div><div class="sheet-item-sub">إزالة لاعع من الجلسة</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--crimson-lt)" data-i18n="gsheet-kick">طرد لاعب</div><div class="sheet-item-sub" data-i18n="gsheet-kick-sub">إزالة لاعع من الجلسة</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');confirmLeave()">
       <span class="sheet-item-icon">🏠</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">العودة للرئيسية</div><div class="sheet-item-sub">الخروج من اللعبة</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-i18n="gsheet-home">العودة للرئيسية</div><div class="sheet-item-sub" data-i18n="gsheet-home-sub">الخروج من اللعبة</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');S('screen-rules')">
       <span class="sheet-item-icon">📋</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">قواعد اللعبة</div><div class="sheet-item-sub">مرجع سريع</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-i18n="gsheet-rules">قواعد اللعبة</div><div class="sheet-item-sub" data-i18n="gsheet-rules-sub">مرجع سريع</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');S('screen-settings')">
       <span class="sheet-item-icon">⚙️</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">الإعدادات</div><div class="sheet-item-sub">الصوت والمظهر</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-i18n="gsheet-settings">الإعدادات</div><div class="sheet-item-sub" data-i18n="gsheet-settings-sub">الصوت والمظهر</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
-    <button class="btn btn-dim btn-full" onclick="closeSheet('game-sheet')"><span>← استمرار اللعبة</span></button>
+    <button class="btn btn-dim btn-full" onclick="closeSheet('game-sheet')"><span data-i18n="gsheet-continue">← استمرار اللعبة</span></button>
   </div>
 </div>
 
@@ -664,19 +664,19 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <div id="screen-stats" class="screen">
   <div class="stats-wrap">
     <div class="stats-hd">
-      <div class="stats-title">🏆 نتائج الجولة</div>
+      <div class="stats-title" data-i18n="stats-title">🏆 نتائج الجولة</div>
       <div class="stats-sub" id="stats-sub">إحصائيات اللعبة</div>
     </div>
     <div class="podium" id="podium"></div>
     <div class="divider-gold"></div>
     <div class="stat-grid" id="stat-grid"></div>
     <div class="rank-table">
-      <div class="rank-table-title">📋 ترتيب اللاعبين</div>
+      <div class="rank-table-title" data-i18n="stats-rank-title">📋 ترتيب اللاعبين</div>
       <div id="rank-body"></div>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="btn btn-green" style="flex:1" onclick="playAgain()"><span>🔄 جولة جديدة</span></button>
-      <button class="btn btn-dim" style="flex:1" onclick="leaveRoom()"><span>🏠 الرئيسية</span></button>
+      <button class="btn btn-green" style="flex:1" onclick="playAgain()"><span data-i18n="stats-again-btn">🔄 جولة جديدة</span></button>
+      <button class="btn btn-dim" style="flex:1" onclick="leaveRoom()"><span data-i18n="stats-home-btn">🏠 الرئيسية</span></button>
     </div>
   </div>
 </div>
@@ -709,7 +709,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="rule-action-card"><div class="ra-icon">🏦</div><div class="ra-name">Foreign Aid</div><div class="ra-desc">خذ +2◈ من الخزينة<br>يُحجب بـ Duke</div></div>
       <div class="rule-action-card"><div class="ra-icon">❓</div><div class="ra-name">Challenge</div><div class="ra-desc">تحدّ أي ادعاء<br>الخاسر يكشف ورقة</div></div>
     </div>
-    <button class="btn btn-dim btn-full" onclick="back()"><span>← العودة</span></button>
+    <button class="btn btn-dim btn-full" onclick="back()"><span data-i18n="back-btn">← العودة</span></button>
   </div>
 </div>
 
@@ -786,7 +786,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="about-stat"><div class="about-stat-icon">⏱</div><div class="about-stat-val">15د</div><div class="about-stat-lbl">مدة جولة</div></div>
       <div class="about-stat"><div class="about-stat-icon">🔞</div><div class="about-stat-val">13+</div><div class="about-stat-lbl">الفئة العمرية</div></div>
     </div>
-    <button class="btn btn-dim btn-full" onclick="back()"><span>← العودة</span></button>
+    <button class="btn btn-dim btn-full" onclick="back()"><span data-i18n="back-btn">← العودة</span></button>
   </div>
 </div>
 
@@ -1017,6 +1017,7 @@ function setupLobbyListeners(){
 // ═══ FIX 7: عرض لاععي الاستقبال مع زر طرد للمضيف ═══
 function renderLobbyPlayers(pd){
   pd=pd||{};
+  const T=I18N[LANG];
   const maxP=+(document.getElementById('max-players')?.value||4);
   const pls=Object.values(pd).sort((a,b)=>a.ts-b.ts);
   const el=document.getElementById('lobby-players'); el.innerHTML='';
@@ -1025,21 +1026,21 @@ function renderLobbyPlayers(pd){
     const r=document.createElement('div');
     r.className=`player-row${p.host?' is-host':''}`;
     r.innerHTML=`<span class="player-row-av">${p.av}</span><span class="player-row-name">${p.name}</span>
-      ${p.host?'<span class="tag tag-host">مضيف</span>':''}
-      ${p.isBot?'<span class="tag tag-bot">بوت 🤖</span>':(isMe?'<span class="tag tag-you">أنت</span>':'<span class="tag tag-ready">جاهز</span>')}
-      ${ME.host && !isMe && !p.host && !p.isBot ? `<button class="kick-btn-lobby" onclick="kickPlayerLobby('${p.id}','${p.name}')">طرد</button>` : ''}`;
+      ${p.host?`<span class="tag tag-host">${T['lobby-tag-host']}</span>`:''}
+      ${p.isBot?`<span class="tag tag-bot">${T['lobby-tag-bot']}</span>`:(isMe?`<span class="tag tag-you">${T['lobby-tag-you']}</span>`:`<span class="tag tag-ready">${T['lobby-tag-ready']}</span>`)}
+      ${ME.host && !isMe && !p.host && !p.isBot ? `<button class="kick-btn-lobby" onclick="kickPlayerLobby('${p.id}','${p.name}')">${T['lobby-kick-btn']}</button>` : ''}`;
     el.appendChild(r);
   });
   for(let i=pls.length;i<maxP;i++){
     const r=document.createElement('div'); r.className='player-row empty';
-    r.innerHTML='<span class="player-row-av">👤</span><span class="player-row-name" style="color:var(--text-dim)">في انتظار لاعع...</span>';
+    r.innerHTML=`<span class="player-row-av">👤</span><span class="player-row-name" style="color:var(--text-dim)">${T['lobby-empty-slot']}</span>`;
     el.appendChild(r);
   }
-  document.getElementById('lobby-status').textContent=`${pls.length}/${maxP} لاععين في الغرفة`;
+  document.getElementById('lobby-status').textContent=LANG==='en'?`${pls.length}/${maxP} players in room`:`${pls.length}/${maxP} لاعع في الغرفة`;
   const sb=document.getElementById('start-btn');
   if(ME.host){
     sb.style.display=pls.length>=2?'flex':'none';
-    sb.querySelector('span').textContent=`🎲 ابدأ اللعبة (${pls.length} لاععين)`;
+    sb.querySelector('span').textContent=LANG==='en'?`🎲 Start Game (${pls.length} players)`:`🎲 ابدأ اللعبة (${pls.length} لاعع)`;
   }
 }
 
@@ -1255,19 +1256,20 @@ const CAN_CHAL  = ['Tax','Exchange','Steal','Assassinate','ForeignAid'];
 function renderActions(){
   const wrap=document.getElementById('action-wrap');
   const me=myP(); if(!me) return;
+  const T=I18N[LANG];
   if(!myTurn()||G.phase!=='action'){
-    wrap.innerHTML=`<div class="waiting-msg"><span class="spinner"></span>دور <b style="color:var(--gold)">${cur().name}</b>...</div>`;
+    wrap.innerHTML=`<div class="waiting-msg"><span class="spinner"></span>${T['turn-prefix']} <b style="color:var(--gold)">${cur().name}</b>...</div>`;
     return;
   }
   const must=me.coins>=10;
   const acts=[
-    {id:'Income',      icon:'💰', claim:null,       cost:null, ar:'خذ +1 عملة',     ok:!must},
-    {id:'ForeignAid',  icon:'🏦', claim:null,       cost:null, ar:'خذ +2 عملة',     ok:!must},
-    {id:'Coup',        icon:'⚔️', claim:null,       cost:7,    ar:'أزل نفوذ −7◈',   ok:me.coins>=7, force:must},
-    {id:'Tax',         icon:'📜', claim:'Duke',     cost:null, ar:'+3◈',             ok:!must},
-    {id:'Assassinate', icon:'🗡️',claim:'Assassin', cost:3,    ar:'أزل ورقة −3◈',   ok:me.coins>=3&&!must},
-    {id:'Steal',       icon:'🦹', claim:'Captain',  cost:null, ar:'+2◈ من لاعع',    ok:opps().length>0&&!must},
-    {id:'Exchange',    icon:'🔄', claim:'Ambassador',cost:null, ar:'بادل أوراقك',    ok:!must},
+    {id:'Income',      icon:'💰', claim:null,       cost:null, desc:T['action-income'],      ok:!must},
+    {id:'ForeignAid',  icon:'🏦', claim:null,       cost:null, desc:T['action-foreign-aid'], ok:!must},
+    {id:'Coup',        icon:'⚔️', claim:null,       cost:7,    desc:T['action-coup'],         ok:me.coins>=7, force:must},
+    {id:'Tax',         icon:'📜', claim:'Duke',     cost:null, desc:T['action-tax'],          ok:!must},
+    {id:'Assassinate', icon:'🗡️',claim:'Assassin', cost:3,    desc:T['action-assassinate'],  ok:me.coins>=3&&!must},
+    {id:'Steal',       icon:'🦹', claim:'Captain',  cost:null, desc:T['action-steal'],        ok:opps().length>0&&!must},
+    {id:'Exchange',    icon:'🔄', claim:'Ambassador',cost:null,desc:T['action-exchange'],     ok:!must},
   ];
   const panel=document.createElement('div'); panel.className='action-panel';
   const grid=document.createElement('div');  grid.className='actions-grid';
@@ -1277,7 +1279,7 @@ function renderActions(){
     btn.innerHTML=`<div class="a-icon">${a.icon}</div>
       <div class="a-name">${a.id}</div>
       ${a.claim?`<div class="a-claim">${a.claim}</div>`:''}
-      <div class="a-desc">${a.ar}${a.cost?` (${a.cost}◈)`:''}</div>`;
+      <div class="a-desc">${a.desc}${a.cost?` (${a.cost}◈)`:''}</div>`;
     btn.onclick=()=>doAction(a.id);
     grid.appendChild(btn);
   });
@@ -1704,8 +1706,8 @@ function askNext(ops, i, actionId, target, onSuccess){
 
   if(opp.eliminated){ setTimeout(()=>next(), 100); return; }
 
-  // FIX 4: المشاهد لا يرى نافذة التحدي/الاعتراض في SOLO
-  if(opp.id === ME.id && isSpectating()){ setTimeout(()=>next(), 200); return; }
+  // إذا كان هذا اللاعع هو ME وأصبح مشاهداً → تخطى تلقائياً بدون نافذة
+  if(opp.id === ME?.id && isSpectating()){ setTimeout(()=>next(), 200); return; }
 
   const me  = myP();
   const cn  = CLAIM_MAP[actionId];
@@ -2287,7 +2289,8 @@ window.showStats = function(data){
   const others=players.filter(p=>p.id!==wid);
   const ranked=[winner,...others].filter(Boolean);
   const dur=data.startedAt?Math.round((Date.now()-data.startedAt)/60000):0;
-  document.getElementById('stats-sub').textContent=`${players.length} لاععين · ${dur>0?dur+' دقيقة':'جولة منتهية'}`;
+  const T=I18N[LANG];
+  document.getElementById('stats-sub').textContent=LANG==='en'?`${players.length} players · ${dur>0?dur+' min':'game over'}`:`${players.length} لاعع · ${dur>0?dur+' دقيقة':'جولة منتهية'}`;
 
   const pod=document.getElementById('podium'); pod.innerHTML='';
   const po=ranked.length>=3?[ranked[1],ranked[0],ranked[2]]:ranked.length===2?[ranked[1],ranked[0]]:[ranked[0]];
@@ -2299,17 +2302,17 @@ window.showStats = function(data){
     const isWin=p.id===wid; const isMe=p.id===ME.id;
     const d=document.createElement('div'); d.className=`podium-pl ${pc[i]}`;
     d.innerHTML=`<div class="podium-av" style="position:relative">${isWin?'<span class="podium-crown">👑</span>':''}<span style="font-size:${isWin?42:32}px">${p.av}</span></div>
-      <div class="podium-name">${p.name}${isMe?' (أنت)':''}</div>
-      <div class="podium-status">${isWin?'🏆 فائز':'مُقصى'}</div>
+      <div class="podium-name">${p.name}${isMe?` (${T['lobby-tag-you']})`:''}</div>
+      <div class="podium-status">${isWin?`🏆 ${T['stats-winner-badge']}`:T['stats-elim']}</div>
       <div class="podium-block" style="height:${ph[i]||44}px"><span class="podium-num">${pn[i]||'3'}</span></div>`;
     pod.appendChild(d);
   });
 
   const sg=document.getElementById('stat-grid'); sg.innerHTML='';
-  [{icon:'👥',lbl:'اللاععون',val:players.length,sub:'شاركوا'},
-   {icon:'⏱',lbl:'المدة',val:dur>0?dur:'<1',sub:'دقيقة'},
-   {icon:'🤖',lbl:'البوتات',val:players.filter(p=>p.isBot).length,sub:'شاركوا'},
-   {icon:'🏦',lbl:'الخزينة',val:G?.treasury||0,sub:'◈ متبقية'}
+  [{icon:'👥',lbl:T['stats-players-lbl'],val:players.length,sub:T['stats-players-sub']},
+   {icon:'⏱',lbl:T['stats-dur-lbl'],val:dur>0?dur:'<1',sub:T['stats-dur-sub']},
+   {icon:'🤖',lbl:T['stats-bots-lbl'],val:players.filter(p=>p.isBot).length,sub:T['stats-bots-sub']},
+   {icon:'🏦',lbl:T['stats-treasury-lbl'],val:G?.treasury||0,sub:T['stats-treasury-sub']}
   ].forEach(s=>{
     const d=document.createElement('div'); d.className='stat-card';
     d.innerHTML=`<div class="stat-icon">${s.icon}</div><div class="stat-lbl">${s.lbl}</div><div class="stat-val">${s.val}</div><div class="stat-sub">${s.sub}</div>`;
@@ -2325,8 +2328,8 @@ window.showStats = function(data){
     const r=document.createElement('div'); r.className=`rank-row${isWin?' is-win':''}${isMe&&!isWin?' is-me':''}`;
     r.innerHTML=`<div class="rank-pos ${posClass}">${posIcon}</div>
       <div class="rank-av">${p.av}</div>
-      <div class="rank-info"><div class="rank-name">${p.name}${p.isBot?' 🤖':''}</div><div class="rank-detail">${isWin?'بقي في الميدان':'أُقصي'} · ${p.coins||0}◈</div></div>
-      ${isWin?'<span class="rank-badge rb-win">فائز 👑</span>':isMe?'<span class="rank-badge rb-you">أنت</span>':'<span class="rank-badge rb-out">مُقصى</span>'}`;
+      <div class="rank-info"><div class="rank-name">${p.name}${p.isBot?' 🤖':''}</div><div class="rank-detail">${isWin?T['stats-survived']:T['stats-elim']} · ${p.coins||0}◈</div></div>
+      ${isWin?`<span class="rank-badge rb-win">${T['stats-winner-badge']}</span>`:isMe?`<span class="rank-badge rb-you">${T['lobby-tag-you']}</span>`:`<span class="rank-badge rb-out">${T['stats-elim']}</span>`}`;
     rb.appendChild(r);
   });
   SCREEN_HIST=[];
@@ -2500,28 +2503,180 @@ window.setTheme = function(mode, el){
 let LANG = 'ar';
 const I18N = {
   ar: {
-    'lbl-settings-title': '⚙️ الإعدادات','lbl-section-sound':'الصوت','lbl-sfx':'🔊 أصوات التأثيرات',
+    /* Settings */
+    'lbl-settings-title':'⚙️ الإعدادات','lbl-section-sound':'الصوت','lbl-sfx':'🔊 أصوات التأثيرات',
     'lbl-vol':'🔉 مستوى الصوت','lbl-section-display':'المظهر','lbl-lang':'🌐 اللغة / Language',
     'lbl-lang-desc':'اختر لغة الواجهة','lbl-theme':'🌗 وضع العرض','lbl-theme-desc':'اختر بين الداكن والفاتح',
     'lbl-delay':'⏱ تأخير بين الأدوار','lbl-delay-desc':'وقت للتفكير قبل دور البوت','lbl-fontsize':'🔤 حجم النص',
-    'lbl-save-btn':'✓ حفظ والعودة','title-tagline':'لعبة المؤامرة والخداع','title-badge-txt':'ONLINE MULTIPLAYER',
-    'menu-card-title':'القائمة الرئيسية','menu-create-title':'إنشاء غرفة أونلاين','menu-create-sub':'العب مع الأصدقاء في الوقت الفعلي',
-    'menu-join-title':'الانضمام بكود','menu-join-sub':'أدخل كود غرفة صديقك','menu-solo-title':'العب ضد البوتات',
-    'menu-solo-sub':'لعب فوري بذكاء اصطناعي متطور','menu-more-title':'المزيد','menu-more-sub':'الإعدادات · القواعد · Credits',
-    'treasury-lbl':'خزينة','turn-prefix':'دور','hand-lbl':'أوراقك','log-title':'⚔️ سجل الأحداث',
-    'log-view-all':'📜 عرض الكل','coup-alert-title':'انقلاب إلزامي!','coup-alert-sub':'لديك 10+ عملات — يجب تنفيذ انقلاب',
+    'lbl-save-btn':'✓ حفظ والعودة',
+    /* Title */
+    'title-tagline':'لعبة المؤامرة والخداع','menu-card-title':'القائمة الرئيسية',
+    'menu-create-title':'إنشاء غرفة أونلاين','menu-create-sub':'العب مع الأصدقاء في الوقت الفعلي',
+    'menu-join-title':'الانضمام بكود','menu-join-sub':'أدخل كود غرفة صديقك',
+    'menu-solo-title':'العب ضد البوتات','menu-solo-sub':'لعب فوري بذكاء اصطناعي متطور',
+    'menu-more-title':'المزيد','menu-more-sub':'الإعدادات · القواعد · Credits',
+    /* More sheet */
+    'more-sheet-title':'المزيد','more-settings-title':'الإعدادات','more-settings-sub':'الصوت والمظهر وحجم النص',
+    'more-about-title':'شرح اللعبة','more-about-sub':'نبذة احترافية عن COUP',
+    'more-rules-title':'قواعد اللعبة','more-rules-sub':'دليل سريع للأفعال والشخصيات',
+    'more-close-btn':'✕ إغلاق',
+    /* Setup Online */
+    'setup-title':'🌐 إعداد الغرفة الأونلاين','setup-name-lbl':'اسمك','setup-name-ph':'أدخل اسمك',
+    'setup-av-lbl':'أفاتارك','setup-maxp-lbl':'عدد اللاعبين الإجمالي',
+    'setup-maxp-2':'2 لاعبين','setup-maxp-3':'3 لاعبين','setup-maxp-4':'4 لاعبين',
+    'setup-maxp-5':'5 لاعبين','setup-maxp-6':'6 لاعبين',
+    'setup-bots-lbl':'بوتات تملأ الغرفة 🤖',
+    'setup-bots-0':'بدون بوتات','setup-bots-1':'1 بوت','setup-bots-2':'2 بوتات',
+    'setup-bots-3':'3 بوتات (ابدأ وحدك!)','setup-bots-4':'4 بوتات','setup-bots-5':'5 بوتات',
+    'setup-create-btn':'🚀 إنشاء الغرفة','setup-back-btn':'← رجوع',
+    /* Join */
+    'join-title':'🔑 الانضمام لغرفة','join-name-lbl':'اسمك','join-name-ph':'أدخل اسمك',
+    'join-av-lbl':'أفاتارك','join-code-lbl':'كود الغرفة','join-btn':'الانضمام →','join-back-btn':'← رجوع',
+    /* Lobby */
+    'lobby-title':'🏰 الغرفة','lobby-code-lbl':'كود الغرفة','lobby-copy-hint':'📋 اضغط للنسخ',
+    'lobby-copy-url-btn':'نسخ','lobby-share-tip':'📲 أرسل الرابط أو الكود لأصدقائك',
+    'lobby-waiting':'في انتظار اللاعبين...','lobby-start-btn':'🎲 ابدأ اللعبة!','lobby-leave-btn':'← مغادرة الغرفة',
+    'lobby-empty-slot':'في انتظار لاعب...','lobby-tag-host':'مضيف','lobby-tag-you':'أنت',
+    'lobby-tag-ready':'جاهز','lobby-tag-bot':'بوت 🤖','lobby-kick-btn':'طرد',
+    /* Solo */
+    'solo-title':'🤖 العب ضد البوتات','solo-name-lbl':'اسمك','solo-name-ph':'أدخل اسمك',
+    'solo-av-lbl':'أفاتارك','solo-bots-lbl':'عدد البوتات المنافسين',
+    'solo-bots-1':'1 بوت','solo-bots-2':'2 بوتات','solo-bots-3':'3 بوتات',
+    'solo-bots-4':'4 بوتات','solo-bots-5':'5 بوتات',
+    'solo-diff-lbl':'مستوى الصعوبة','solo-diff-easy':'سهل','solo-diff-med':'متوسط','solo-diff-hard':'صعب',
+    'solo-rivals-lbl':'منافسوك (اضغط على الاسم لتعديله)',
+    'solo-start-btn':'⚔️ ابدأ القتال!','solo-back-btn':'← رجوع',
+    /* Game */
+    'treasury-lbl':'خزينة','turn-prefix':'دور','hand-lbl':'أوراقك',
+    'log-title':'⚔️ سجل الأحداث','log-view-all':'📜 عرض الكل',
+    'coup-alert-title':'انقلاب إلزامي!','coup-alert-sub':'لديك 10+ عملات — يجب تنفيذ انقلاب',
+    /* Game Sheet */
+    'gsheet-title':'☰ قائمة اللعبة','gsheet-kick':'طرد لاعب','gsheet-kick-sub':'إزالة لاعع من الجلسة',
+    'gsheet-home':'العودة للرئيسية','gsheet-home-sub':'الخروج من اللعبة',
+    'gsheet-rules':'قواعد اللعبة','gsheet-rules-sub':'مرجع سريع',
+    'gsheet-settings':'الإعدادات','gsheet-settings-sub':'الصوت والمظهر',
+    'gsheet-continue':'← استمرار اللعبة',
+    /* Stats */
+    'stats-title':'🏆 نتائج الجولة','stats-winner-badge':'فائز 👑','stats-elim':'مُقصى',
+    'stats-survived':'بقي في الميدان',
+    'stats-players-lbl':'اللاععون','stats-players-sub':'شاركوا',
+    'stats-dur-lbl':'المدة','stats-dur-sub':'دقيقة',
+    'stats-bots-lbl':'البوتات','stats-bots-sub':'شاركوا',
+    'stats-treasury-lbl':'الخزينة','stats-treasury-sub':'◈ متبقية',
+    'stats-rank-title':'📋 ترتيب اللاعبين',
+    'stats-again-btn':'🔄 جولة جديدة','stats-home-btn':'🏠 الرئيسية',
+    /* Rules */
+    'rules-title':'📋 قواعد اللعبة','rules-sub':'COUP™ — دليل سريع',
+    'rules-back-btn':'← العودة',
+    /* About */
+    'about-back-btn':'← العودة',
+    /* Actions */
+    'action-income':'خذ +1 عملة','action-foreign-aid':'خذ +2 عملة',
+    'action-coup':'أزل نفوذ −7◈','action-tax':'+3◈','action-assassinate':'أزل ورقة −3◈',
+    'action-steal':'+2◈ من لاعع','action-exchange':'بادل أوراقك',
+    /* Waiting msg */
+    'waiting-turn':'دور',
+    /* Spectator */
+    'spectator-badge':'👁 وضع المشاهدة — لا صلاحية للتصويت',
+    'spectator-title':'👁 أنت تشاهد — لقد خسرت!',
+    'spectator-alive':'اللاععون المتبقون:',
+    'spectator-msg':'👁 تشاهد بقية الجولة... لا يمكنك التصويت أو الاعتراض',
+    /* Confirm leave */
+    'confirm-leave-title':'🏠 العودة','confirm-leave-body':'هل تريد الخروج من اللعبة الحالية؟',
+    'confirm-leave-yes':'نعم، اخرج','confirm-leave-no':'لا، استمر',
+    /* Disconnect */
+    'conn-bar':'⚠️ انقطع الاتصال بالخادم...',
+    'back-btn':'← رجوع',
+    'stats-sub-txt':'إحصائيات اللعبة',
+    'log-title-txt':'⚔️ سجل الأحداث',
   },
   en: {
+    /* Settings */
     'lbl-settings-title':'⚙️ Settings','lbl-section-sound':'Sound','lbl-sfx':'🔊 Sound Effects',
-    'lbl-vol':'🔉 Volume','lbl-section-display':'Appearance','lbl-lang':'🌐 اللغة / Language',
+    'lbl-vol':'🔉 Volume','lbl-section-display':'Appearance','lbl-lang':'🌐 Language / اللغة',
     'lbl-lang-desc':'Choose interface language','lbl-theme':'🌗 Display Mode','lbl-theme-desc':'Choose between dark and light',
     'lbl-delay':'⏱ Turn Delay','lbl-delay-desc':'Thinking time before bot turn','lbl-fontsize':'🔤 Font Size',
-    'lbl-save-btn':'✓ Save & Back','title-tagline':'The Game of Intrigue & Deception','title-badge-txt':'ONLINE MULTIPLAYER',
-    'menu-card-title':'MAIN MENU','menu-create-title':'Create Online Room','menu-create-sub':'Play with friends in real time',
-    'menu-join-title':'Join with Code','menu-join-sub':"Enter your friend's room code",'menu-solo-title':'Play vs Bots',
-    'menu-solo-sub':'Instant play with advanced AI','menu-more-title':'More','menu-more-sub':'Settings · Rules · Credits',
-    'treasury-lbl':'Treasury','turn-prefix':'Turn','hand-lbl':'Your Cards','log-title':'⚔️ Event Log',
-    'log-view-all':'📜 View All','coup-alert-title':'Mandatory Coup!','coup-alert-sub':'You have 10+ coins — you must Coup',
+    'lbl-save-btn':'✓ Save & Back',
+    /* Title */
+    'title-tagline':'The Game of Intrigue & Deception','menu-card-title':'MAIN MENU',
+    'menu-create-title':'Create Online Room','menu-create-sub':'Play with friends in real time',
+    'menu-join-title':'Join with Code','menu-join-sub':"Enter your friend's room code",
+    'menu-solo-title':'Play vs Bots','menu-solo-sub':'Instant play with advanced AI',
+    'menu-more-title':'More','menu-more-sub':'Settings · Rules · Credits',
+    /* More sheet */
+    'more-sheet-title':'More','more-settings-title':'Settings','more-settings-sub':'Sound, theme and font size',
+    'more-about-title':'About the Game','more-about-sub':'A professional overview of COUP',
+    'more-rules-title':'Game Rules','more-rules-sub':'Quick guide for actions & characters',
+    'more-close-btn':'✕ Close',
+    /* Setup Online */
+    'setup-title':'🌐 Online Room Setup','setup-name-lbl':'Your Name','setup-name-ph':'Enter your name',
+    'setup-av-lbl':'Your Avatar','setup-maxp-lbl':'Total Players',
+    'setup-maxp-2':'2 players','setup-maxp-3':'3 players','setup-maxp-4':'4 players',
+    'setup-maxp-5':'5 players','setup-maxp-6':'6 players',
+    'setup-bots-lbl':'Bots to fill the room 🤖',
+    'setup-bots-0':'No bots','setup-bots-1':'1 bot','setup-bots-2':'2 bots',
+    'setup-bots-3':'3 bots (start alone!)','setup-bots-4':'4 bots','setup-bots-5':'5 bots',
+    'setup-create-btn':'🚀 Create Room','setup-back-btn':'← Back',
+    /* Join */
+    'join-title':'🔑 Join a Room','join-name-lbl':'Your Name','join-name-ph':'Enter your name',
+    'join-av-lbl':'Your Avatar','join-code-lbl':'Room Code','join-btn':'Join →','join-back-btn':'← Back',
+    /* Lobby */
+    'lobby-title':'🏰 Room','lobby-code-lbl':'ROOM CODE','lobby-copy-hint':'📋 Tap to copy',
+    'lobby-copy-url-btn':'Copy','lobby-share-tip':'📲 Share the link or code with friends',
+    'lobby-waiting':'Waiting for players...','lobby-start-btn':'🎲 Start Game!','lobby-leave-btn':'← Leave Room',
+    'lobby-empty-slot':'Waiting for player...','lobby-tag-host':'Host','lobby-tag-you':'You',
+    'lobby-tag-ready':'Ready','lobby-tag-bot':'Bot 🤖','lobby-kick-btn':'Kick',
+    /* Solo */
+    'solo-title':'🤖 Play vs Bots','solo-name-lbl':'Your Name','solo-name-ph':'Enter your name',
+    'solo-av-lbl':'Your Avatar','solo-bots-lbl':'Number of bots',
+    'solo-bots-1':'1 bot','solo-bots-2':'2 bots','solo-bots-3':'3 bots',
+    'solo-bots-4':'4 bots','solo-bots-5':'5 bots',
+    'solo-diff-lbl':'Difficulty','solo-diff-easy':'Easy','solo-diff-med':'Medium','solo-diff-hard':'Hard',
+    'solo-rivals-lbl':'Your rivals (tap name to edit)',
+    'solo-start-btn':'⚔️ Start Battle!','solo-back-btn':'← Back',
+    /* Game */
+    'treasury-lbl':'Treasury','turn-prefix':'Turn','hand-lbl':'Your Cards',
+    'log-title':'⚔️ Event Log','log-view-all':'📜 View All',
+    'coup-alert-title':'Mandatory Coup!','coup-alert-sub':'You have 10+ coins — you must Coup',
+    /* Game Sheet */
+    'gsheet-title':'☰ Game Menu','gsheet-kick':'Kick Player','gsheet-kick-sub':'Remove a player from the session',
+    'gsheet-home':'Return to Main Menu','gsheet-home-sub':'Exit the game',
+    'gsheet-rules':'Game Rules','gsheet-rules-sub':'Quick reference',
+    'gsheet-settings':'Settings','gsheet-settings-sub':'Sound and theme',
+    'gsheet-continue':'← Continue Game',
+    /* Stats */
+    'stats-title':'🏆 Game Results','stats-winner-badge':'Winner 👑','stats-elim':'Eliminated',
+    'stats-survived':'Survived to the end',
+    'stats-players-lbl':'Players','stats-players-sub':'participated',
+    'stats-dur-lbl':'Duration','stats-dur-sub':'minutes',
+    'stats-bots-lbl':'Bots','stats-bots-sub':'participated',
+    'stats-treasury-lbl':'Treasury','stats-treasury-sub':'◈ remaining',
+    'stats-rank-title':'📋 Player Rankings',
+    'stats-again-btn':'🔄 New Round','stats-home-btn':'🏠 Main Menu',
+    /* Rules */
+    'rules-title':'📋 Game Rules','rules-sub':'COUP™ — Quick Guide',
+    'rules-back-btn':'← Back',
+    /* About */
+    'about-back-btn':'← Back',
+    /* Actions */
+    'action-income':'Take +1 coin','action-foreign-aid':'Take +2 coins',
+    'action-coup':'Remove influence −7◈','action-tax':'+3◈','action-assassinate':'Remove card −3◈',
+    'action-steal':'+2◈ from player','action-exchange':'Exchange your cards',
+    /* Waiting msg */
+    'waiting-turn':'Turn',
+    /* Spectator */
+    'spectator-badge':'👁 Spectator Mode — No voting rights',
+    'spectator-title':'👁 You are spectating — You lost!',
+    'spectator-alive':'Remaining players:',
+    'spectator-msg':'👁 Watching the rest of the round... You cannot vote or block',
+    /* Confirm leave */
+    'confirm-leave-title':'🏠 Return','confirm-leave-body':'Do you want to exit the current game?',
+    'confirm-leave-yes':'Yes, exit','confirm-leave-no':'No, continue',
+    /* Disconnect */
+    'conn-bar':'⚠️ Disconnected from server...',
+    'back-btn':'← Back',
+    'stats-sub-txt':'Game Statistics',
+    'log-title-txt':'⚔️ Event Log',
   }
 };
 
@@ -2539,24 +2694,43 @@ window.setLang = function(lang, el){
 
 function applyLangDynamic(lang){
   const T = I18N[lang]; const isEn = lang === 'en';
-  const tdark=document.getElementById('theme-dark'); const tlight=document.getElementById('theme-light');
-  if(tdark)  tdark.innerHTML=`<span class="theme-pill-icon">🌙</span><span>${isEn?'Dark':'داكن'}</span>`;
-  if(tlight) tlight.innerHTML=`<span class="theme-pill-icon">☀️</span><span>${isEn?'Light':'فاتح'}</span>`;
-  const segs=document.querySelectorAll('.seg-btn');
-  if(segs.length>=3){ segs[0].textContent=isEn?'S':'ص'; segs[1].textContent=isEn?'M':'م'; segs[2].textContent=isEn?'L':'ك'; }
+
+  // ═══ 1. معالجة كل عناصر data-i18n في الصفحة ═══
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(T[key] !== undefined) el.textContent = T[key];
+  });
+  // placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const key = el.getAttribute('data-i18n-ph');
+    if(T[key] !== undefined) el.placeholder = T[key];
+  });
+
+  // ═══ 2. عناصر لا تحمل id أو data-i18n (query-based) ═══
   const tagline=document.querySelector('.title-tagline'); if(tagline) tagline.textContent=T['title-tagline'];
   const mct=document.querySelector('.menu-card-title'); if(mct) mct.textContent=T['menu-card-title'];
+  // قائمة الرئيسية
   const mbTitles=document.querySelectorAll('.menu-btn-title'); const mbSubs=document.querySelectorAll('.menu-btn-sub');
   const titleKeys=['menu-create-title','menu-join-title','menu-solo-title','menu-more-title'];
   const subKeys=['menu-create-sub','menu-join-sub','menu-solo-sub','menu-more-sub'];
   mbTitles.forEach((el,i)=>{ if(titleKeys[i]) el.textContent=T[titleKeys[i]]; });
   mbSubs.forEach((el,i)=>{ if(subKeys[i]) el.textContent=T[subKeys[i]]; });
+  // اللعبة
   const tl=document.querySelector('.treasury-lbl'); if(tl) tl.textContent=T['treasury-lbl'];
   const hl=document.getElementById('hand-lbl'); if(hl) hl.textContent=T['hand-lbl'];
   const logSpan=document.querySelector('.log-title span'); if(logSpan) logSpan.textContent=T['log-title'];
   const logBtn=document.querySelector('.log-title button'); if(logBtn) logBtn.textContent=T['log-view-all'];
   const cat=document.querySelector('.coup-alert-title'); const cas=document.querySelector('.coup-alert-sub');
   if(cat) cat.textContent=T['coup-alert-title']; if(cas) cas.textContent=T['coup-alert-sub'];
+
+  // ═══ 3. الثيم ومقاس النص ═══
+  const tdark=document.getElementById('theme-dark'); const tlight=document.getElementById('theme-light');
+  if(tdark)  tdark.innerHTML=`<span class="theme-pill-icon">🌙</span><span>${isEn?'Dark':'داكن'}</span>`;
+  if(tlight) tlight.innerHTML=`<span class="theme-pill-icon">☀️</span><span>${isEn?'Light':'فاتح'}</span>`;
+  const segs=document.querySelectorAll('.seg-btn');
+  if(segs.length>=3){ segs[0].textContent=isEn?'S':'ص'; segs[1].textContent=isEn?'M':'م'; segs[2].textContent=isEn?'L':'ك'; }
+
+  // ═══ 4. قدرات الشخصيات ═══
   if(isEn){
     CARDS.Duke.ability='Tax +3◈ · Blocks Foreign Aid'; CARDS.Assassin.ability='Assassinate −3◈ · Remove card';
     CARDS.Contessa.ability='Blocks Assassination only'; CARDS.Captain.ability='Steal +2◈ · Block Steal';
@@ -2566,7 +2740,24 @@ function applyLangDynamic(lang){
     CARDS.Contessa.ability='يحجب الاغتيال فقط'; CARDS.Captain.ability='Steal +2◈ · يحجب Steal';
     CARDS.Ambassador.ability='بادل أوراقك · يحجب Steal';
   }
+
+  // ═══ 5. نصوص ديناميكية تتغير أثناء اللعبة ═══
+  // شريط الانتظار
+  document.querySelectorAll('.waiting-msg').forEach(el=>{
+    if(SPECTATING) el.textContent=T['spectator-msg'];
+  });
+  // شارة المشاهد
+  const badge=document.getElementById('spectator-badge');
+  if(badge) badge.textContent=T['spectator-badge'];
+  // التحقق الإجمالي من state الحالي
   if(G) renderHand();
+  // نص "دور" في شريط اللعبة — يُعاد بناؤه عند التحديث التالي لـ renderTurnBar
+  const tnEl=document.querySelector('.turn-info > span:last-child');
+  if(tnEl){
+    const nameEl=document.getElementById('turn-name');
+    const name=nameEl?nameEl.textContent:'';
+    tnEl.innerHTML=`${T['turn-prefix']} <span class="turn-name" id="turn-name">${name}</span>`;
+  }
 }
 
 let SPECTATING = false;
@@ -2574,12 +2765,13 @@ function checkSpectator(){
   const me=myP();
   if(!me||SPECTATING) return;
   if(me.eliminated){
+    const T=I18N[LANG];
     SPECTATING=true;
-    closeModal(); // FIX 4: أغلق أي نافذة مفتوحة فوراً
+    closeModal();
     if(!document.getElementById('spectator-badge')){
       const badge=document.createElement('div');
       badge.id='spectator-badge'; badge.className='spectator-badge';
-      badge.textContent='👁 وضع المشاهدة — لا صلاحية للتصويت';
+      badge.textContent=T['spectator-badge'];
       document.body.appendChild(badge);
     }
     const handEl=document.getElementById('hand-cards');
@@ -2587,12 +2779,12 @@ function checkSpectator(){
       handEl.innerHTML='';
       const spectDiv=document.createElement('div'); spectDiv.className='spectator-hand';
       const alivePlayers=alive().filter(p=>p.id!==ME.id);
-      spectDiv.innerHTML=`<div style="margin-bottom:10px;font-weight:700;color:var(--gold);">👁 أنت تشاهد — لقد خسرت!</div>
-        <div style="font-size:12px;color:var(--text-dim)">اللاععون المتبقون: ${alivePlayers.map(p=>`${p.av} ${p.name}`).join(' · ')}</div>`;
+      spectDiv.innerHTML=`<div style="margin-bottom:10px;font-weight:700;color:var(--gold);">${T['spectator-title']}</div>
+        <div style="font-size:12px;color:var(--text-dim)">${T['spectator-alive']} ${alivePlayers.map(p=>`${p.av} ${p.name}`).join(' · ')}</div>`;
       handEl.appendChild(spectDiv);
     }
     const aw=document.getElementById('action-wrap');
-    if(aw) aw.innerHTML=`<div class="waiting-msg">👁 تشاهد بقية الجولة... لا يمكنك التصويت أو الاعتراض</div>`;
+    if(aw) aw.innerHTML=`<div class="waiting-msg">${T['spectator-msg']}</div>`;
     glog(`👁 <span style="color:#ce93d8">${me.name}</span> يشاهد الآن كمتفرج — بدون صلاحيات`);
   }
 }
