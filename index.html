@@ -39,18 +39,20 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg0);color:var(--text);mi
 
 #bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:1;}
 
+/* ═══ تأثيرات خلفية القائمة الرئيسية — أقوى وأوضح ═══ */
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%,  rgba(201,168,76,.14) 0%,transparent 65%),
-    radial-gradient(ellipse 50% 50% at 4%   88%,  rgba(155,26,26,.08)  0%,transparent 55%),
-    radial-gradient(ellipse 50% 50% at 96%  12%,  rgba(26,58,122,.08)  0%,transparent 55%);}
+    radial-gradient(ellipse 100% 65% at 50% -5%,  rgba(201,168,76,.32) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 60% at 4%   88%,  rgba(155,26,26,.18)  0%,transparent 55%),
+    radial-gradient(ellipse 60% 60% at 96%  12%,  rgba(26,58,122,.18)  0%,transparent 55%),
+    radial-gradient(ellipse 50% 50% at 50%  50%,  rgba(201,168,76,.08) 0%,transparent 70%);}
 body.light::before{background:
-    radial-gradient(ellipse 90% 55% at 50% -5%,  rgba(180,130,30,.16) 0%,transparent 65%),
-    radial-gradient(ellipse 50% 50% at 4%   88%,  rgba(155,26,26,.05)  0%,transparent 55%),
-    radial-gradient(ellipse 50% 50% at 96%  12%,  rgba(26,58,122,.04)  0%,transparent 55%);}
+    radial-gradient(ellipse 100% 65% at 50% -5%,  rgba(180,130,30,.28) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 60% at 4%   88%,  rgba(155,26,26,.10)  0%,transparent 55%),
+    radial-gradient(ellipse 60% 60% at 96%  12%,  rgba(26,58,122,.08)  0%,transparent 55%);}
 
 body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.022'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:.8;}
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.045'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:1;}
 .screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:20px;}
 .screen.active{display:flex;}
 .font-display{font-family:'Cinzel Decorative',serif;}.font-serif{font-family:'Cinzel',serif;}
@@ -73,7 +75,7 @@ select.inp option{background:var(--bg3);}
 
 #screen-title{gap:20px;padding-top:40px;}
 .title-logo{font-family:'Cinzel Decorative',serif;font-size:clamp(64px,16vw,140px);color:var(--gold);letter-spacing:12px;line-height:1;animation:logo-glow 3s ease-in-out infinite alternate;text-align:center;}
-@keyframes logo-glow{from{text-shadow:0 0 40px rgba(201,168,76,.5),0 0 80px rgba(201,168,76,.2);}to{text-shadow:0 0 70px rgba(201,168,76,.9),0 0 140px rgba(201,168,76,.4),0 0 200px rgba(201,168,76,.15);}}
+@keyframes logo-glow{from{text-shadow:0 0 40px rgba(201,168,76,.7),0 0 80px rgba(201,168,76,.35),0 0 120px rgba(201,168,76,.15);}to{text-shadow:0 0 80px rgba(201,168,76,1),0 0 160px rgba(201,168,76,.6),0 0 240px rgba(201,168,76,.25),0 0 320px rgba(201,168,76,.1);}}
 .title-tagline{font-family:'Cinzel',serif;font-size:11px;letter-spacing:6px;color:var(--text-dim);text-transform:uppercase;text-align:center;}
 .title-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(26,107,58,.12);border:1px solid rgba(26,107,58,.3);border-radius:20px;padding:5px 14px;font-size:11px;letter-spacing:2px;color:var(--emerald-lt);}
 .menu-card{width:min(420px,94vw);overflow:hidden;}
@@ -359,7 +361,6 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 .fb-dot.connected{background:var(--emerald-lt);}
 .fb-dot.error{background:var(--crimson-lt);}
 
-/* ── سجل الأحداث المنبثق ── */
 .event-log-modal{display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow-y:auto;}
 .event-log-entry{border-radius:var(--radius-sm);padding:9px 12px;border:1px solid var(--line-gold);background:rgba(255,255,255,.02);font-size:12px;color:var(--text-dim);line-height:1.7;}
 .event-log-entry:first-child{color:var(--text);border-color:var(--border);}
@@ -384,12 +385,12 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="menu-card-title">القائمة الرئيسية</div>
       <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);"><span class="live-dot"></span> LIVE</div>
     </div>
-    <button class="menu-btn menu-btn-primary" onclick="S('screen-setup-online')">
+    <button class="menu-btn menu-btn-primary" onclick="goSetupOnline()">
       <span class="menu-btn-icon">🌐</span>
       <span class="menu-btn-text"><div class="menu-btn-title">إنشاء غرفة أونلاين</div><div class="menu-btn-sub">العب مع الأصدقاء في الوقت الفعلي</div></span>
       <span class="menu-btn-arr">›</span>
     </button>
-    <button class="menu-btn" onclick="S('screen-join')">
+    <button class="menu-btn" onclick="goJoin()">
       <span class="menu-btn-icon">🔑</span>
       <span class="menu-btn-text"><div class="menu-btn-title">الانضمام بكود</div><div class="menu-btn-sub">أدخل كود غرفة صديقك</div></span>
       <span class="menu-btn-arr">›</span>
@@ -408,7 +409,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="title-footer">
     <a href="https://x.com/_turki1957" target="_blank">@_turki1957</a>
     <span style="color:var(--text-faint)">·</span>
-    <span>© 2026 <span style="color:var(--gold);font-weight:700;font-family:'Cinzel',serif;letter-spacing:1px;">Turki</span></span>
+    <span style="color:var(--text-dim);">© 2026 <span style="color:var(--gold-lt);font-weight:700;font-family:'Cinzel',serif;letter-spacing:1px;text-shadow:0 0 10px var(--gold-glow);">Turki</span></span>
   </div>
 </div>
 
@@ -823,8 +824,6 @@ let CUR_SCREEN  = 'screen-title';
 let _tmr        = null;
 let _lastData   = null;
 let _unsubs     = [];
-
-// سجل الأحداث الكامل (نسخة احتياطية للعرض في المودال)
 let ALL_LOG_ENTRIES = [];
 
 const uid   = ()=>Math.random().toString(36).slice(2,11);
@@ -891,19 +890,11 @@ window.createRoom = async function(){
   const name=(document.getElementById('host-name').value.trim()||'المضيف');
   const maxP=+document.getElementById('max-players').value;
   ME={ id:uid(), name, av:AV.host||'🤴', host:true };
-
   const btn = document.querySelector('#screen-setup-online .btn-green');
   if(btn){ btn.disabled=true; btn.querySelector('span').textContent='⏳ جاري الإنشاء...'; }
-
   try {
     let c, t=0;
-    do{
-      c=code4(); t++;
-      if(t>20) break;
-      const existing=await dbGet(`rooms/${c}`);
-      if(!existing) break;
-    } while(true);
-
+    do{ c=code4(); t++; if(t>20) break; const existing=await dbGet(`rooms/${c}`); if(!existing) break; } while(true);
     ROOM=c;
     await dbSet(`rooms/${c}`,{ code:c, maxP, status:'lobby', hostId:ME.id, ts:Date.now() });
     await dbSet(`rooms/${c}/players/${ME.id}`,{ id:ME.id, name:ME.name, av:ME.av, host:true, online:true, ts:Date.now() });
@@ -923,20 +914,15 @@ window.joinRoom = async function(){
   const name=(document.getElementById('join-name').value.trim()||'ضيف');
   const c=document.getElementById('join-code').value.trim().toUpperCase();
   const errEl=document.getElementById('join-err'); errEl.textContent='';
-
   if(!c||c.length!==4){ errEl.textContent='أدخل كود صحيح (4 أحرف)'; return; }
-
   const btn = document.querySelector('#screen-join .btn-green');
   if(btn){ btn.disabled=true; btn.querySelector('span').textContent='⏳ جاري الانضمام...'; }
-
   try {
     const rd=await dbGet(`rooms/${c}`);
     if(!rd){ errEl.textContent='❌ الغرفة غير موجودة'; return; }
     if(rd.status!=='lobby'){ errEl.textContent='❌ اللعبة بدأت بالفعل'; return; }
-
     const players=await dbGet(`rooms/${c}/players`);
     if(players&&Object.keys(players).length>=rd.maxP){ errEl.textContent='❌ الغرفة ممتلئة'; return; }
-
     ME={ id:uid(), name, av:AV.join||'🤴', host:false };
     ROOM=c;
     await dbSet(`rooms/${c}/players/${ME.id}`,{ id:ME.id, name:ME.name, av:ME.av, host:false, online:true, ts:Date.now() });
@@ -1012,7 +998,6 @@ window.hostStart = async function(){
   const botC=+(document.getElementById('bot-count')?.value||0);
   for(let i=0;i<botC&&pls.length<maxP;i++)
     pls.push({ id:'bot_'+i, name:BOT_NAMES[i]||`بوت ${i+1}`, av:BOT_AVS[i]||'🤖', isBot:true, ts:Date.now()+i });
-
   const d=deck();
   const players=pls.map(p=>({
     id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
@@ -1067,6 +1052,13 @@ const myP    = ()=>G.players.find(p=>p.id===ME.id);
 const alive  = ()=>G.players.filter(p=>!p.eliminated);
 const opps   = ()=>alive().filter(p=>p.id!==ME.id);
 const myTurn = ()=>{ const c=G?.players?.[G?.turn]; return c?.id===ME.id; };
+
+// ═══ التحقق من حالة المشاهدة ═══
+// المشاهد: لاعب مُقصى (eliminated) — لا صلاحية له في أي نافذة قرار
+const isSpectating = ()=> {
+  const me = myP();
+  return me && me.eliminated;
+};
 
 function renderGame(){
   if(!G?.players) return;
@@ -1208,16 +1200,16 @@ function doAction(id){
   }
 }
 
-/* ═══ نظام الردود المُصلح ═══
-   المشكلة كانت: askReaction تسأل اللاعب البشري (ME) عن ردّه على أكشنه هو
-   الحل: نُصفّي ops لتشمل فقط اللاعبين الآخرين (وليس اللاعب الحالي ME)
+/* ═══ نظام الردود ═══
+   - المشاهد (eliminated) لا يظهر له أي نافذة رد — يتجاوز تلقائياً
+   - فقط اللاعبون الأحياء غير اللاعب الحالي يُسألون
 */
 function askReaction(actionId, target, onSuccess){
   const canBlock = !!BLOCK_MAP[actionId];
   const canChal  = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
   if(!canBlock && !canChal){ onSuccess(); return; }
 
-  // اللاعبون المؤهلون للرد: أحياء، وليسوا اللاعب الحالي (ME)
+  // فقط اللاعبون الأحياء وليسوا ME (والمشاهد مُقصى فلن يظهر هنا لأنه eliminated)
   const ops = G.players.filter(p => !p.eliminated && p.id !== ME.id);
   if(!ops.length){ onSuccess(); return; }
 
@@ -1230,33 +1222,59 @@ function askNext(ops, i, actionId, target, onSuccess){
   const next = () => askNext(ops, i+1, actionId, target, onSuccess);
 
   const blockCards = BLOCK_MAP[actionId] || [];
-  // الاعتراض بـ Contessa يُتاح فقط للاعب المستهدف بالاغتيال
   const canBlock = blockCards.length > 0 &&
     (actionId !== 'Assassinate' || opp.id === target?.id);
   const canChal = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
 
   if(opp.isBot){
-    const blkChance  = DIFF==='hard' ? 0.30 : DIFF==='medium' ? 0.20 : 0.10;
-    const chalChance = DIFF==='hard' ? 0.18 : DIFF==='medium' ? 0.10 : 0.04;
-    if(canBlock && Math.random() < blkChance){
+    const diff = opp.difficulty || DIFF;
+
+    /* ══════════════════════
+       احتمالات كل مستوى
+       سهل: نادراً يعترض/يتحدى
+       متوسط: بشكل معقول
+       صعب: يعترض ويتحدى كثيراً ويكذب أقل
+    ══════════════════════ */
+    const cfg = {
+      easy:   { blk:0.06, chal:0.03, hasCard:0.20 },
+      medium: { blk:0.22, chal:0.12, hasCard:0.40 },
+      hard:   { blk:0.48, chal:0.30, hasCard:0.65 },
+    }[diff] || { blk:0.22, chal:0.12, hasCard:0.40 };
+
+    if(canBlock && Math.random() < cfg.blk){
       setTimeout(()=>{
         glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
-        const hasCard = DIFF==='hard' ? Math.random()<0.55 : Math.random()<0.35;
-        if(hasCard){ glog(`✅ اعتراض صحيح — حُجب الأكشن`); nextTurn(); }
-        else { glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`); forceReveal(opp.id, ()=>onSuccess()); }
-      }, 700);
-    } else if(canChal && Math.random() < chalChance){
+        // البوت الصعب يعترض فقط لما عنده الورقة فعلاً — السهل يبلف أكثر
+        const hasCard = opp.cards.some((c,ci)=> BLOCK_MAP[actionId]?.includes(c) && !opp.revealed[ci])
+                      || Math.random() < cfg.hasCard;
+        if(hasCard){
+          glog(`✅ اعتراض صحيح — حُجب الأكشن`);
+          nextTurn();
+        } else {
+          glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`);
+          forceReveal(opp.id, ()=>onSuccess());
+        }
+      }, diff==='hard'?500:700);
+
+    } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
         glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
         doChallenge(opp, actionId, onSuccess);
-      }, 800);
+      }, diff==='hard'?500:800);
+
     } else {
-      setTimeout(()=>next(), 350);
+      setTimeout(()=>next(), diff==='easy'?200:350);
     }
     return;
   }
 
-  // لاعب بشري (ليس ME — لأننا فلترنا ME أعلاه)
+  // ═══ لاعب بشري — تحقق إن كان مشاهداً قبل عرض النافذة ═══
+  // إذا كان اللاعب مُقصى (spectator) يتجاوز تلقائياً بدون نافذة
+  if(opp.eliminated){
+    setTimeout(()=>next(), 100);
+    return;
+  }
+
   const me  = myP();
   const cn  = CLAIM_MAP[actionId];
   const body = `<b style="color:var(--gold-lt)">${me.av} ${me.name}</b> يدّعي:<br>
@@ -1310,17 +1328,18 @@ function doChallenge(challenger, actionId, onSuccess){
   if(!claimed){ onSuccess(); return; }
   const ci = me.cards.findIndex((c,i) => c===claimed && !me.revealed[i]);
   if(ci !== -1){
-    // تحدٍّ فاشل — اللاعب صادق
     glog(`❓ <span class="lh">${challenger.name}</span> تحدّى — ${me.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
     forceReveal(challenger.id, ()=>{ replaceCard(ME.id, claimed); onSuccess(); });
   } else {
-    // تحدٍّ ناجح — اللاعب يكذب
     glog(`❓ <span class="lh">${challenger.name}</span> كشف البلف! ${me.name} كان يكذب`);
     forceReveal(ME.id, ()=>nextTurn());
   }
 }
 
 function doBlock(blocker, actionId, blockCards, onSuccess){
+  // ═══ إذا كان اللاعب مشاهداً لا يُعرض عليه نافذة الاعتراض ═══
+  if(isSpectating()){ nextTurn(); return; }
+
   const lbl = blockCards.map(c=>`${CARDS[c].icon} ${c}`).join('/');
   openModal(
     `🛡️ ${blocker.av} ${blocker.name} يعترض`,
@@ -1352,6 +1371,15 @@ function forceReveal(pid,cb){
     SFX.cardReveal();
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
+
+  // ═══ إذا كان المطلوب منه الكشف هو اللاعب ذاته وهو مشاهد — اختر تلقائياً ═══
+  if(pid === ME.id && isSpectating()){
+    const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
+    glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
+    SFX.cardReveal();
+    checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
+  }
+
   G._rCb=cb; G._rPid=pid;
   const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onclick="pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
   openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
@@ -1411,6 +1439,8 @@ window.confirmExchange = function(){
 };
 
 function pickTarget(prompt,cb){
+  // ═══ المشاهد لا يختار هدفاً ═══
+  if(isSpectating()) return;
   const ops=opps();
   const extra=`<div class="targets">${ops.map(p=>`<div class="target-row" onclick="pickTgt('${p.id}')"><span class="t-av">${p.av}</span><span class="t-name">${p.name}</span><span class="t-coins">◈${p.coins}</span></div>`).join('')}</div>`;
   G._tCb=cb;
@@ -1429,30 +1459,101 @@ function nextTurn(){
 }
 
 function runBot(){
-  if(!G) return; const bot=cur(); if(!bot?.isBot) return;
-  const al=alive(); const ops=al.filter(p=>p.id!==bot.id); const must=bot.coins>=10;
-  const richTarget=ops.reduce((a,b)=>b.coins>a.coins?b:a,ops[0]);
-  const weakTarget=ops.find(p=>p.revealed.filter(Boolean).length===1)||ops[Math.floor(Math.random()*ops.length)];
+  if(!G) return;
+  const bot = cur(); if(!bot?.isBot) return;
+  const diff = bot.difficulty || DIFF;
+  const al   = alive();
+  const ops  = al.filter(p => p.id !== bot.id);
+  if(!ops.length) return;
+  const must = bot.coins >= 10;
+
+  // الهدف الأضعف (ورقة مكشوفة) أو عشوائي
+  const weakTarget = ops.find(p => p.revealed.filter(Boolean).length === 1)
+                  || ops[Math.floor(Math.random() * ops.length)];
+  // الهدف الأغنى عملات
+  const richTarget = ops.reduce((a,b) => b.coins > a.coins ? b : a, ops[0]);
+
   let action;
-  if(must){ action={ id:'Coup', target:weakTarget }; }
-  else if(bot.coins>=7&&(DIFF==='hard'?Math.random()<0.7:Math.random()<0.5)){ action={ id:'Coup', target:weakTarget }; }
-  else if(bot.coins>=3&&DIFF!=='easy'&&Math.random()<0.25){ action={ id:'Assassinate', target:weakTarget }; }
-  else {
-    const w=['Tax','Tax','ForeignAid','Income','Steal','Steal'];
-    const id=w[Math.floor(Math.random()*w.length)];
-    action={ id, target:id==='Steal'?richTarget:null };
+
+  /* ══════════════════════════════════════
+     سهل 😊
+     - يلعب Income معظم الوقت
+     - نادراً يهاجم
+     - لا ينفذ Coup إلا لو عنده 7+ وبشكل عشوائي
+  ══════════════════════════════════════ */
+  if(diff === 'easy'){
+    if(must){ action = { id:'Coup', target:weakTarget }; }
+    else if(bot.coins >= 7 && Math.random() < 0.30){ action = { id:'Coup', target:weakTarget }; }
+    else if(bot.coins >= 3 && Math.random() < 0.10){ action = { id:'Assassinate', target:weakTarget }; }
+    else {
+      // معظم الوقت Income أو ForeignAid
+      const w = ['Income','Income','Income','ForeignAid','ForeignAid','Tax','Steal'];
+      const id = w[Math.floor(Math.random() * w.length)];
+      action = { id, target: id==='Steal' ? richTarget : null };
+    }
   }
-  execBot(bot,action);
+
+  /* ══════════════════════════════════════
+     متوسط 😐
+     - يستخدم Tax كثيراً
+     - يهاجم بشكل معقول
+     - يضرب لو عنده 6+
+  ══════════════════════════════════════ */
+  else if(diff === 'medium'){
+    if(must){ action = { id:'Coup', target:weakTarget }; }
+    else if(bot.coins >= 6 && Math.random() < 0.50){ action = { id:'Coup', target:weakTarget }; }
+    else if(bot.coins >= 3 && Math.random() < 0.30){ action = { id:'Assassinate', target:weakTarget }; }
+    else if(Math.random() < 0.35){ action = { id:'Steal', target:richTarget }; }
+    else {
+      const w = ['Tax','Tax','Tax','ForeignAid','ForeignAid','Income','Steal'];
+      const id = w[Math.floor(Math.random() * w.length)];
+      action = { id, target: id==='Steal' ? richTarget : null };
+    }
+  }
+
+  /* ══════════════════════════════════════
+     صعب 😈
+     - يضرب بسرعة ويستهدف الأقوى
+     - يفضل Assassinate بدل Income
+     - يستخدم Steal كثيراً
+     - يضرب Coup من 5 عملات
+  ══════════════════════════════════════ */
+  else {
+    // الهدف الأخطر: أقل ورقة مكشوفة (= أقوى) وأكثر عملات
+    const dangerTarget = ops.sort((a,b)=>{
+      const aScore = a.coins + (a.revealed.filter(Boolean).length * -3);
+      const bScore = b.coins + (b.revealed.filter(Boolean).length * -3);
+      return bScore - aScore;
+    })[0];
+
+    if(must){ action = { id:'Coup', target:weakTarget }; }
+    else if(bot.coins >= 5 && Math.random() < 0.75){ action = { id:'Coup', target:weakTarget }; }
+    else if(bot.coins >= 3 && Math.random() < 0.55){ action = { id:'Assassinate', target:weakTarget }; }
+    else if(Math.random() < 0.50){ action = { id:'Steal', target:dangerTarget }; }
+    else {
+      // دائماً Tax — نادراً Income
+      const w = ['Tax','Tax','Tax','Tax','ForeignAid','Steal','Steal'];
+      const id = w[Math.floor(Math.random() * w.length)];
+      action = { id, target: id==='Steal' ? dangerTarget : null };
+    }
+  }
+
+  execBot(bot, action);
 }
 
-/* عرض مودال التحدي للإنسان لما البوت يلعب أكشن يمكن تحديه */
+/* ═══ ردود البوت على اللاعب — المشاهد يُتجاوز تلقائياً ═══ */
 function botActionWithReaction(bot, actionId, target, onConfirm){
   const BLOCK = BLOCK_MAP[actionId] || [];
   const canChal = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
   const canBlock = BLOCK.length > 0 && (actionId !== 'Assassinate' || myP()?.id === target?.id);
 
-  // لو الأكشن ما يحتاج رد (Income/Coup) — نفّذ مباشرة
   if(!canChal && !canBlock){ onConfirm(); return; }
+
+  // ═══ إذا كان اللاعب مشاهداً — تجاوز مباشر بدون نافذة ═══
+  if(isSpectating()){
+    setTimeout(()=>onConfirm(), 300);
+    return;
+  }
 
   const cn = CLAIM_MAP[actionId];
   const body = `<b style="color:var(--gold-lt)">${bot.av} ${bot.name}</b> يدّعي:<br>
@@ -1470,11 +1571,9 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
       const claimed = CLAIM_MAP[actionId];
       const ci = bot.cards.findIndex((c,i)=> c===claimed && !bot.revealed[i]);
       if(ci !== -1){
-        // البوت صادق — الإنسان يخسر ورقة
         glog(`❓ ${myP().name} تحدّى — <span class="lh">${bot.name}</span> يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
         forceReveal(ME.id, ()=>{ replaceCard(bot.id, claimed); onConfirm(); });
       } else {
-        // البوت يكذب — يخسر ورقة، الأكشن يُلغى
         glog(`❓ ${myP().name} كشف البلف! <span class="lh">${bot.name}</span> كان يكذب`);
         forceReveal(bot.id, ()=>nextTurn());
       }
@@ -1487,12 +1586,12 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
       label:`🛡️ اعترض (${lbl})`, cls:'',
       cb:()=>{
         SFX.block();
-        // هل الإنسان يملك بطاقة الاعتراض فعلاً؟ البوت يقرر يتحدّى أم يقبل
         const me = myP();
+        const diff = bot.difficulty || DIFF;
         const hasCard = me.cards.some((c,i)=> BLOCK.includes(c) && !me.revealed[i]);
-        const chalChance = DIFF==='hard' ? 0.50 : DIFF==='medium' ? 0.30 : 0.15;
+        // الصعب يتحدى الاعتراض أكثر، السهل يقبله عادةً
+        const chalChance = diff==='hard' ? 0.60 : diff==='medium' ? 0.35 : 0.12;
         if(!hasCard || Math.random() < chalChance){
-          // البوت يتحدّى الاعتراض
           setTimeout(()=>{
             glog(`❓ <span class="lh">${bot.name}</span> يتحدّى اعتراضك!`);
             if(hasCard){
@@ -1574,15 +1673,6 @@ function execBot(bot,action){
   }
 }
 
-function revealRandom(np,pi){
-  const al=np[pi].cards.map((c,ci)=>({c,ci})).filter(x=>!np[pi].revealed[x.ci]);
-  if(!al.length) return;
-  const {c,ci}=al[Math.floor(Math.random()*al.length)];
-  np[pi].revealed[ci]=true;
-  glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[c].icon} ${c}`);
-  checkElim(np,pi);
-}
-
 const clonePlayers=()=>G.players.map(p=>({...p,cards:[...p.cards],revealed:[...p.revealed]}));
 const idx=(pid,arr)=>arr.findIndex(p=>p.id===pid);
 
@@ -1605,16 +1695,13 @@ function glog(msg){
 
 function glogLocal(msg){
   const el=document.getElementById('log-entries'); if(!el) return;
-  // احفظ في المصفوفة الكاملة
   ALL_LOG_ENTRIES.unshift(msg);
   if(ALL_LOG_ENTRIES.length > 200) ALL_LOG_ENTRIES.pop();
-
   const d=document.createElement('div'); d.className='log-entry'; d.innerHTML=msg;
   el.insertBefore(d,el.firstChild);
   while(el.children.length>50) el.removeChild(el.lastChild);
 }
 
-/* ═══ زر "عرض الكل" — يعرض سجل الأحداث الكامل ═══ */
 window.openEventLogModal = function(){
   if(!ALL_LOG_ENTRIES.length){
     openModal('📜 سجل الأحداث','<div style="text-align:center;padding:20px;color:var(--text-dim)">لا توجد أحداث بعد</div>',[{label:'إغلاق',cls:'btn-dim',cb:()=>{}}]);
@@ -1737,6 +1824,8 @@ window.confirmLeave = function(){
   ]);
 };
 
+window.goSetupOnline = function(){ buildAv('av-host','host'); S('screen-setup-online'); };
+window.goJoin = function(){ buildAv('av-join','join'); S('screen-join'); };
 window.goSolo = function(){ buildAv('av-solo','solo'); refreshBotPreview(); S('screen-solo'); };
 window.setDiff = function(d,el){ DIFF=d; document.querySelectorAll('.diff-pill').forEach(b=>b.classList.remove('active')); el.classList.add('active'); refreshBotPreview(); };
 window.refreshBotPreview = function(){
@@ -1791,6 +1880,7 @@ window.showCredits = function(){
     [{ label:'إغلاق', cls:'btn-dim', cb:()=>{} }]
   );
 };
+
 window.setSize = function(s,el){
   document.body.classList.remove('text-sm','text-md','text-lg');
   document.body.classList.add('text-'+(s||'md'));
@@ -1812,179 +1902,75 @@ window.setTheme = function(mode, el){
   el.classList.add('active');
 };
 
-/* ═══ نظام اللغة ═══ */
 let LANG = 'ar';
-
 const I18N = {
   ar: {
-    // settings
-    'lbl-settings-title': '⚙️ الإعدادات',
-    'lbl-section-sound':  'الصوت',
-    'lbl-sfx':            '🔊 أصوات التأثيرات',
-    'lbl-vol':            '🔉 مستوى الصوت',
-    'lbl-section-display':'المظهر',
-    'lbl-lang':           '🌐 اللغة / Language',
-    'lbl-lang-desc':      'اختر لغة الواجهة',
-    'lbl-theme':          '🌗 وضع العرض',
-    'lbl-theme-desc':     'اختر بين الداكن والفاتح',
-    'lbl-delay':          '⏱ تأخير بين الأدوار',
-    'lbl-delay-desc':     'وقت للتفكير قبل دور البوت',
-    'lbl-fontsize':       '🔤 حجم النص',
-    'lbl-save-btn':       '✓ حفظ والعودة',
-    // title screen
-    'title-tagline':      'لعبة المؤامرة والخداع',
-    'title-badge-txt':    'ONLINE MULTIPLAYER',
-    'menu-card-title':    'القائمة الرئيسية',
-    'menu-create-title':  'إنشاء غرفة أونلاين',
-    'menu-create-sub':    'العب مع الأصدقاء في الوقت الفعلي',
-    'menu-join-title':    'الانضمام بكود',
-    'menu-join-sub':      'أدخل كود غرفة صديقك',
-    'menu-solo-title':    'العب ضد البوتات',
-    'menu-solo-sub':      'لعب فوري بذكاء اصطناعي متطور',
-    'menu-more-title':    'المزيد',
-    'menu-more-sub':      'الإعدادات · القواعد · Credits',
-    // game ui
-    'treasury-lbl':       'خزينة',
-    'turn-prefix':        'دور',
-    'hand-lbl':           'أوراقك',
-    'log-title':          '⚔️ سجل الأحداث',
-    'log-view-all':       '📜 عرض الكل',
-    'coup-alert-title':   'انقلاب إلزامي!',
-    'coup-alert-sub':     'لديك 10+ عملات — يجب تنفيذ انقلاب',
+    'lbl-settings-title': '⚙️ الإعدادات','lbl-section-sound':'الصوت','lbl-sfx':'🔊 أصوات التأثيرات',
+    'lbl-vol':'🔉 مستوى الصوت','lbl-section-display':'المظهر','lbl-lang':'🌐 اللغة / Language',
+    'lbl-lang-desc':'اختر لغة الواجهة','lbl-theme':'🌗 وضع العرض','lbl-theme-desc':'اختر بين الداكن والفاتح',
+    'lbl-delay':'⏱ تأخير بين الأدوار','lbl-delay-desc':'وقت للتفكير قبل دور البوت','lbl-fontsize':'🔤 حجم النص',
+    'lbl-save-btn':'✓ حفظ والعودة','title-tagline':'لعبة المؤامرة والخداع','title-badge-txt':'ONLINE MULTIPLAYER',
+    'menu-card-title':'القائمة الرئيسية','menu-create-title':'إنشاء غرفة أونلاين','menu-create-sub':'العب مع الأصدقاء في الوقت الفعلي',
+    'menu-join-title':'الانضمام بكود','menu-join-sub':'أدخل كود غرفة صديقك','menu-solo-title':'العب ضد البوتات',
+    'menu-solo-sub':'لعب فوري بذكاء اصطناعي متطور','menu-more-title':'المزيد','menu-more-sub':'الإعدادات · القواعد · Credits',
+    'treasury-lbl':'خزينة','turn-prefix':'دور','hand-lbl':'أوراقك','log-title':'⚔️ سجل الأحداث',
+    'log-view-all':'📜 عرض الكل','coup-alert-title':'انقلاب إلزامي!','coup-alert-sub':'لديك 10+ عملات — يجب تنفيذ انقلاب',
   },
   en: {
-    // settings
-    'lbl-settings-title': '⚙️ Settings',
-    'lbl-section-sound':  'Sound',
-    'lbl-sfx':            '🔊 Sound Effects',
-    'lbl-vol':            '🔉 Volume',
-    'lbl-section-display':'Appearance',
-    'lbl-lang':           '🌐 اللغة / Language',
-    'lbl-lang-desc':      'Choose interface language',
-    'lbl-theme':          '🌗 Display Mode',
-    'lbl-theme-desc':     'Choose between dark and light',
-    'lbl-delay':          '⏱ Turn Delay',
-    'lbl-delay-desc':     'Thinking time before bot turn',
-    'lbl-fontsize':       '🔤 Font Size',
-    'lbl-save-btn':       '✓ Save & Back',
-    // title screen
-    'title-tagline':      'The Game of Intrigue & Deception',
-    'title-badge-txt':    'ONLINE MULTIPLAYER',
-    'menu-card-title':    'MAIN MENU',
-    'menu-create-title':  'Create Online Room',
-    'menu-create-sub':    'Play with friends in real time',
-    'menu-join-title':    'Join with Code',
-    'menu-join-sub':      "Enter your friend's room code",
-    'menu-solo-title':    'Play vs Bots',
-    'menu-solo-sub':      'Instant play with advanced AI',
-    'menu-more-title':    'More',
-    'menu-more-sub':      'Settings · Rules · Credits',
-    // game ui
-    'treasury-lbl':       'Treasury',
-    'turn-prefix':        'Turn',
-    'hand-lbl':           'Your Cards',
-    'log-title':          '⚔️ Event Log',
-    'log-view-all':       '📜 View All',
-    'coup-alert-title':   'Mandatory Coup!',
-    'coup-alert-sub':     'You have 10+ coins — you must Coup',
+    'lbl-settings-title':'⚙️ Settings','lbl-section-sound':'Sound','lbl-sfx':'🔊 Sound Effects',
+    'lbl-vol':'🔉 Volume','lbl-section-display':'Appearance','lbl-lang':'🌐 اللغة / Language',
+    'lbl-lang-desc':'Choose interface language','lbl-theme':'🌗 Display Mode','lbl-theme-desc':'Choose between dark and light',
+    'lbl-delay':'⏱ Turn Delay','lbl-delay-desc':'Thinking time before bot turn','lbl-fontsize':'🔤 Font Size',
+    'lbl-save-btn':'✓ Save & Back','title-tagline':'The Game of Intrigue & Deception','title-badge-txt':'ONLINE MULTIPLAYER',
+    'menu-card-title':'MAIN MENU','menu-create-title':'Create Online Room','menu-create-sub':'Play with friends in real time',
+    'menu-join-title':'Join with Code','menu-join-sub':"Enter your friend's room code",'menu-solo-title':'Play vs Bots',
+    'menu-solo-sub':'Instant play with advanced AI','menu-more-title':'More','menu-more-sub':'Settings · Rules · Credits',
+    'treasury-lbl':'Treasury','turn-prefix':'Turn','hand-lbl':'Your Cards','log-title':'⚔️ Event Log',
+    'log-view-all':'📜 View All','coup-alert-title':'Mandatory Coup!','coup-alert-sub':'You have 10+ coins — you must Coup',
   }
 };
 
 window.setLang = function(lang, el){
   LANG = lang;
   localStorage.setItem('coup_lang', lang);
-
-  // اتجاه الصفحة
   document.documentElement.lang = lang;
   document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
-
-  // تفعيل الزر
   document.querySelectorAll('#lang-ar,#lang-en').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
-
-  // تطبيق الترجمات بالـ IDs
   const T = I18N[lang];
-  Object.keys(T).forEach(id=>{
-    const el2 = document.getElementById(id);
-    if(el2) el2.textContent = T[id];
-  });
-
-  // عناصر خاصة بدون ID ثابت
+  Object.keys(T).forEach(id=>{ const el2=document.getElementById(id); if(el2) el2.textContent=T[id]; });
   applyLangDynamic(lang);
 };
 
 function applyLangDynamic(lang){
-  const T = I18N[lang];
-  const isEn = lang === 'en';
-
-  // theme buttons text
-  const tdark  = document.getElementById('theme-dark');
-  const tlight = document.getElementById('theme-light');
-  if(tdark)  tdark.innerHTML  = `<span class="theme-pill-icon">🌙</span><span>${isEn?'Dark':'داكن'}</span>`;
-  if(tlight) tlight.innerHTML = `<span class="theme-pill-icon">☀️</span><span>${isEn?'Light':'فاتح'}</span>`;
-
-  // font size seg buttons
-  const segs = document.querySelectorAll('.seg-btn');
-  if(segs.length>=3){
-    segs[0].textContent = isEn ? 'S' : 'ص';
-    segs[1].textContent = isEn ? 'M' : 'م';
-    segs[2].textContent = isEn ? 'L' : 'ك';
-  }
-
-  // title tagline
-  const tagline = document.querySelector('.title-tagline');
-  if(tagline) tagline.textContent = T['title-tagline'];
-
-  // menu card title
-  const mct = document.querySelector('.menu-card-title');
-  if(mct) mct.textContent = T['menu-card-title'];
-
-  // menu buttons — بالترتيب: إنشاء، انضمام، بوتات، مزيد
-  const mbTitles = document.querySelectorAll('.menu-btn-title');
-  const mbSubs   = document.querySelectorAll('.menu-btn-sub');
-  const titleKeys = ['menu-create-title','menu-join-title','menu-solo-title','menu-more-title'];
-  const subKeys   = ['menu-create-sub','menu-join-sub','menu-solo-sub','menu-more-sub'];
-  mbTitles.forEach((el,i)=>{ if(titleKeys[i]) el.textContent = T[titleKeys[i]]; });
-  mbSubs.forEach((el,i)=>{ if(subKeys[i]) el.textContent = T[subKeys[i]]; });
-
-  // treasury label
-  const tl = document.querySelector('.treasury-lbl');
-  if(tl) tl.textContent = T['treasury-lbl'];
-
-  // hand label
-  const hl = document.getElementById('hand-lbl');
-  if(hl) hl.textContent = T['hand-lbl'];
-
-  // log title span
-  const logSpan = document.querySelector('.log-title span');
-  if(logSpan) logSpan.textContent = T['log-title'];
-
-  // log view-all button
-  const logBtn = document.querySelector('.log-title button');
-  if(logBtn) logBtn.textContent = T['log-view-all'];
-
-  // coup alert
-  const cat = document.querySelector('.coup-alert-title');
-  const cas = document.querySelector('.coup-alert-sub');
-  if(cat) cat.textContent = T['coup-alert-title'];
-  if(cas) cas.textContent = T['coup-alert-sub'];
-
-  // CARD abilities (switch language)
+  const T = I18N[lang]; const isEn = lang === 'en';
+  const tdark=document.getElementById('theme-dark'); const tlight=document.getElementById('theme-light');
+  if(tdark)  tdark.innerHTML=`<span class="theme-pill-icon">🌙</span><span>${isEn?'Dark':'داكن'}</span>`;
+  if(tlight) tlight.innerHTML=`<span class="theme-pill-icon">☀️</span><span>${isEn?'Light':'فاتح'}</span>`;
+  const segs=document.querySelectorAll('.seg-btn');
+  if(segs.length>=3){ segs[0].textContent=isEn?'S':'ص'; segs[1].textContent=isEn?'M':'م'; segs[2].textContent=isEn?'L':'ك'; }
+  const tagline=document.querySelector('.title-tagline'); if(tagline) tagline.textContent=T['title-tagline'];
+  const mct=document.querySelector('.menu-card-title'); if(mct) mct.textContent=T['menu-card-title'];
+  const mbTitles=document.querySelectorAll('.menu-btn-title'); const mbSubs=document.querySelectorAll('.menu-btn-sub');
+  const titleKeys=['menu-create-title','menu-join-title','menu-solo-title','menu-more-title'];
+  const subKeys=['menu-create-sub','menu-join-sub','menu-solo-sub','menu-more-sub'];
+  mbTitles.forEach((el,i)=>{ if(titleKeys[i]) el.textContent=T[titleKeys[i]]; });
+  mbSubs.forEach((el,i)=>{ if(subKeys[i]) el.textContent=T[subKeys[i]]; });
+  const tl=document.querySelector('.treasury-lbl'); if(tl) tl.textContent=T['treasury-lbl'];
+  const hl=document.getElementById('hand-lbl'); if(hl) hl.textContent=T['hand-lbl'];
+  const logSpan=document.querySelector('.log-title span'); if(logSpan) logSpan.textContent=T['log-title'];
+  const logBtn=document.querySelector('.log-title button'); if(logBtn) logBtn.textContent=T['log-view-all'];
+  const cat=document.querySelector('.coup-alert-title'); const cas=document.querySelector('.coup-alert-sub');
+  if(cat) cat.textContent=T['coup-alert-title']; if(cas) cas.textContent=T['coup-alert-sub'];
   if(isEn){
-    CARDS.Duke.ability       = 'Tax +3◈ · Blocks Foreign Aid';
-    CARDS.Assassin.ability   = 'Assassinate −3◈ · Remove card';
-    CARDS.Contessa.ability   = 'Blocks Assassination only';
-    CARDS.Captain.ability    = 'Steal +2◈ · Block Steal';
-    CARDS.Ambassador.ability = 'Exchange cards · Block Steal';
+    CARDS.Duke.ability='Tax +3◈ · Blocks Foreign Aid'; CARDS.Assassin.ability='Assassinate −3◈ · Remove card';
+    CARDS.Contessa.ability='Blocks Assassination only'; CARDS.Captain.ability='Steal +2◈ · Block Steal';
+    CARDS.Ambassador.ability='Exchange cards · Block Steal';
   } else {
-    CARDS.Duke.ability       = 'Tax +3◈ · يحجب Foreign Aid';
-    CARDS.Assassin.ability   = 'Assassinate −3◈ · يزيل ورقة';
-    CARDS.Contessa.ability   = 'يحجب الاغتيال فقط';
-    CARDS.Captain.ability    = 'Steal +2◈ · يحجب Steal';
-    CARDS.Ambassador.ability = 'بادل أوراقك · يحجب Steal';
+    CARDS.Duke.ability='Tax +3◈ · يحجب Foreign Aid'; CARDS.Assassin.ability='Assassinate −3◈ · يزيل ورقة';
+    CARDS.Contessa.ability='يحجب الاغتيال فقط'; CARDS.Captain.ability='Steal +2◈ · يحجب Steal';
+    CARDS.Ambassador.ability='بادل أوراقك · يحجب Steal';
   }
-
-  // إعادة رسم الكوتشة لو اللعبة شغالة
   if(G) renderHand();
 }
 
@@ -1994,10 +1980,12 @@ function checkSpectator(){
   if(!me||SPECTATING) return;
   if(me.eliminated){
     SPECTATING=true;
+    // أغلق أي نافذة مفتوحة فوراً
+    closeModal();
     if(!document.getElementById('spectator-badge')){
       const badge=document.createElement('div');
       badge.id='spectator-badge'; badge.className='spectator-badge';
-      badge.textContent='👁 وضع المشاهدة';
+      badge.textContent='👁 وضع المشاهدة — لا صلاحية للتصويت';
       document.body.appendChild(badge);
     }
     const handEl=document.getElementById('hand-cards');
@@ -2010,8 +1998,8 @@ function checkSpectator(){
       handEl.appendChild(spectDiv);
     }
     const aw=document.getElementById('action-wrap');
-    if(aw) aw.innerHTML=`<div class="waiting-msg">👁 تشاهد بقية الجولة...</div>`;
-    glog(`👁 <span style="color:#ce93d8">${me.name}</span> يشاهد الآن كمتفرج`);
+    if(aw) aw.innerHTML=`<div class="waiting-msg">👁 تشاهد بقية الجولة... لا يمكنك التصويت أو الاعتراض</div>`;
+    glog(`👁 <span style="color:#ce93d8">${me.name}</span> يشاهد الآن كمتفرج — بدون صلاحيات`);
   }
 }
 
@@ -2034,7 +2022,6 @@ const SFX = (()=>{
   let ctx = null;
   const get = ()=>{ if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)(); return ctx; };
   const vol = ()=>{ const el=document.getElementById('sfx-toggle'); return (el&&!el.checked)?0:((+document.getElementById('vol')?.value||70)/100); };
-
   function tone(freq, type, dur, gainVal, delay=0){
     const ac=get(); if(!ac) return;
     const o=ac.createOscillator(); const g=ac.createGain();
@@ -2052,7 +2039,6 @@ const SFX = (()=>{
     g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+dur);
     src.connect(g); g.connect(ac.destination); src.start(); src.stop(ac.currentTime+dur+0.05);
   }
-
   return {
     click(){    tone(480,'sine',.06,.18); tone(620,'sine',.09,.12,.05); },
     cardReveal(){ tone(220,'sawtooth',.08,.22); tone(180,'sawtooth',.12,.15,.07); noise(.1,.08); },
@@ -2079,50 +2065,47 @@ document.addEventListener('click', e=>{
   if(btn && !btn.disabled) SFX.click();
 }, true);
 
+/* ═══ خلفية متحركة — أقوى وأوضح في القائمة الرئيسية ═══ */
 (function initBG(){
   const cv=document.getElementById('bg-canvas');
   const ctx=cv.getContext('2d');
   let W,H;
-
   function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
-
   const isLight=()=>document.body.classList.contains('light');
+  const isTitle=()=>document.getElementById('screen-title')?.classList.contains('active');
 
   function mkP(){
     return {
       x:Math.random()*W, y:H+Math.random()*H,
-      r:.5+Math.random()*1.6,
-      vx:(Math.random()-.5)*.18,
-      vy:-(.06+Math.random()*.2),
+      r:.6+Math.random()*2.2,
+      vx:(Math.random()-.5)*.22, vy:-(.08+Math.random()*.28),
       life:0, maxLife:.4+Math.random()*.5,
       pulse:Math.random()*Math.PI*2,
-      type:Math.random()<.14?'diamond':Math.random()<.08?'cross':'circle',
+      type:Math.random()<.18?'diamond':Math.random()<.1?'cross':'circle',
     };
   }
-
   function mkL(){
     const a=Math.random()*Math.PI*2;
     return {
       x:Math.random()*W, y:Math.random()*H,
-      vx:Math.cos(a)*.05, vy:Math.sin(a)*.05,
-      len:40+Math.random()*90, a,
+      vx:Math.cos(a)*.06, vy:Math.sin(a)*.06,
+      len:50+Math.random()*120, a,
       op:0, ph:'in', hold:0,
-      maxOp:.035+Math.random()*.055,
+      maxOp:.055+Math.random()*.09,
     };
   }
-
   function mkO(){
-    const hues=['gold','gold','gold','crimson','sapphire'];
+    const hues=['gold','gold','gold','gold','crimson','sapphire'];
     return {
       x:Math.random()*W, y:Math.random()*H,
-      r:100+Math.random()*280,
-      vx:(Math.random()-.5)*.1, vy:(Math.random()-.5)*.08,
-      ph:Math.random()*Math.PI*2, sp:.003+Math.random()*.004,
+      r:120+Math.random()*320,
+      vx:(Math.random()-.5)*.12, vy:(Math.random()-.5)*.1,
+      ph:Math.random()*Math.PI*2, sp:.003+Math.random()*.005,
       hue:hues[Math.floor(Math.random()*hues.length)],
     };
   }
 
-  const PCOUNT=85, LCOUNT=16, OCOUNT=6;
+  const PCOUNT=120, LCOUNT=22, OCOUNT=8;
   let ps=Array.from({length:PCOUNT},mkP);
   let ls=Array.from({length:LCOUNT},mkL);
   let os=Array.from({length:OCOUNT},mkO);
@@ -2134,15 +2117,21 @@ document.addEventListener('click', e=>{
   function draw(){
     ctx.clearRect(0,0,W,H);
     const lt=isLight();
+    // في القائمة الرئيسية — ضاعف الكثافة
+    const titleMult = isTitle() ? 2.2 : 1.0;
 
     os.forEach(o=>{
       o.ph+=o.sp; o.x+=o.vx; o.y+=o.vy;
       if(o.x<-o.r)o.x=W+o.r; else if(o.x>W+o.r)o.x=-o.r;
       if(o.y<-o.r)o.y=H+o.r; else if(o.y>H+o.r)o.y=-o.r;
       const pulse=.5+.5*Math.sin(o.ph);
-      const base=lt?.016:.024;
-      const a=base+pulse*(lt?.018:.026);
-      const cols={gold:`rgba(201,168,76,${a})`,crimson:`rgba(155,26,26,${a})`,sapphire:`rgba(26,58,122,${a})`};
+      const base=lt?.022:.038;
+      const a=Math.min(1,(base+pulse*(lt?.028:.045))*titleMult);
+      const cols={
+        gold:`rgba(201,168,76,${a})`,
+        crimson:`rgba(155,26,26,${a})`,
+        sapphire:`rgba(26,58,122,${a})`
+      };
       const rad=o.r*(.75+pulse*.5);
       const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,rad);
       g.addColorStop(0,cols[o.hue]); g.addColorStop(1,'transparent');
@@ -2152,17 +2141,18 @@ document.addEventListener('click', e=>{
 
     ls.forEach((l,i)=>{
       l.x+=l.vx; l.y+=l.vy;
-      if(l.ph==='in'){l.op+=.0025;if(l.op>=l.maxOp){l.op=l.maxOp;l.ph='hold';}}
-      else if(l.ph==='hold'){l.hold++;if(l.hold>200+Math.random()*300)l.ph='out';}
-      else{l.op-=.0018;if(l.op<=0){ls[i]=mkL();return;}}
+      if(l.ph==='in'){l.op+=.003;if(l.op>=l.maxOp){l.op=l.maxOp;l.ph='hold';}}
+      else if(l.ph==='hold'){l.hold++;if(l.hold>180+Math.random()*280)l.ph='out';}
+      else{l.op-=.002;if(l.op<=0){ls[i]=mkL();return;}}
       if(l.x<-300||l.x>W+300||l.y<-300||l.y>H+300){ls[i]=mkL();return;}
-      const col=lt?`rgba(130,95,15,${l.op*3.5})`:`rgba(201,168,76,${l.op*3.5})`;
+      const opFinal = Math.min(1, l.op * titleMult);
+      const col=lt?`rgba(130,95,15,${opFinal*4})`:`rgba(201,168,76,${opFinal*4})`;
       ctx.save();
-      ctx.globalAlpha=l.op;
+      ctx.globalAlpha=opFinal;
       ctx.strokeStyle=col;
-      ctx.lineWidth=lt?.45:.55;
-      ctx.shadowBlur=lt?1.5:3;
-      ctx.shadowColor=lt?'rgba(140,100,20,.25)':'rgba(201,168,76,.35)';
+      ctx.lineWidth=lt?.6:.75;
+      ctx.shadowBlur=lt?2:5;
+      ctx.shadowColor=lt?'rgba(140,100,20,.4)':'rgba(201,168,76,.6)';
       ctx.beginPath();
       ctx.moveTo(l.x,l.y);
       ctx.lineTo(l.x+Math.cos(l.a)*l.len,l.y+Math.sin(l.a)*l.len);
@@ -2170,21 +2160,22 @@ document.addEventListener('click', e=>{
     });
 
     ps.forEach((p,i)=>{
-      p.x+=p.vx; p.y+=p.vy; p.life+=.0025; p.pulse+=.035;
+      p.x+=p.vx; p.y+=p.vy; p.life+=.003; p.pulse+=.04;
       if(p.life>p.maxLife||p.y<-12){ps[i]=mkP();return;}
       if(p.x<0)p.x=W; if(p.x>W)p.x=0;
       const t=p.life/p.maxLife;
       const fade=t<.2?t/.2:t>.75?(1-t)/.25:1;
       const pls=.55+.45*Math.sin(p.pulse);
-      const a=fade*(lt?.16:.26)*pls;
-      const col=lt?`rgba(110,78,8,${a})`:`rgba(220,188,95,${a})`;
-      if(p.type==='diamond') drawDia(p.x,p.y,p.r*1.3,a,col);
+      const baseA = lt ? .22 : .36;
+      const a=Math.min(1, fade * baseA * pls * titleMult);
+      const col=lt?`rgba(110,78,8,${a})`:`rgba(230,196,105,${a})`;
+      if(p.type==='diamond') drawDia(p.x,p.y,p.r*1.5,a,col);
       else if(p.type==='cross') drawCross(p.x,p.y,p.r,a,col);
       else {
-        const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3.5);
-        g.addColorStop(0,lt?`rgba(160,115,25,${a*.7})`:`rgba(201,168,76,${a*.7})`);
+        const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
+        g.addColorStop(0,lt?`rgba(160,115,25,${a*.8})`:`rgba(201,168,76,${a*.8})`);
         g.addColorStop(1,'transparent');
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.5,0,Math.PI*2);
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r*4,0,Math.PI*2);
         ctx.fillStyle=g;ctx.fill();
         ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
         ctx.fillStyle=col;ctx.fill();
@@ -2219,39 +2210,27 @@ function confetti(){
 }
 
 window.addEventListener('load',()=>{
-  buildAv('av-host','host');
-  buildAv('av-join','join');
-
   const savedLang = localStorage.getItem('coup_lang') || 'ar';
   LANG = savedLang;
   if(savedLang === 'en'){
-    const lBtn = document.getElementById('lang-en');
-    const aBtn = document.getElementById('lang-ar');
-    if(lBtn) lBtn.classList.add('active');
-    if(aBtn) aBtn.classList.remove('active');
+    const lBtn=document.getElementById('lang-en'); const aBtn=document.getElementById('lang-ar');
+    if(lBtn) lBtn.classList.add('active'); if(aBtn) aBtn.classList.remove('active');
     setLang('en', lBtn);
   }
-
   const savedFont = localStorage.getItem('coup_fontsize')||'md';
   setSize(savedFont, document.querySelector(`.seg-btn:nth-child(${savedFont==='sm'?1:savedFont==='lg'?3:2})`));
-
   const savedTheme = localStorage.getItem('coup_theme') || 'dark';
   if(savedTheme === 'light'){
     document.body.classList.add('light');
-    const lBtn = document.getElementById('theme-light');
-    const dBtn = document.getElementById('theme-dark');
-    if(lBtn) lBtn.classList.add('active');
-    if(dBtn) dBtn.classList.remove('active');
+    const lBtn=document.getElementById('theme-light'); const dBtn=document.getElementById('theme-dark');
+    if(lBtn) lBtn.classList.add('active'); if(dBtn) dBtn.classList.remove('active');
   }
-
   const p=new URLSearchParams(location.search);
   const rc=p.get('room');
-  if(rc){
-    document.getElementById('join-code').value=rc.toUpperCase();
-    S('screen-join');
-  }
+  if(rc){ document.getElementById('join-code').value=rc.toUpperCase(); goJoin(); }
 });
 
 </script>
 </body>
 </html>
+
