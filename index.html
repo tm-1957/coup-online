@@ -1445,37 +1445,132 @@ function runBot(){
   execBot(bot,action);
 }
 
+/* عرض مودال التحدي للإنسان لما البوت يلعب أكشن يمكن تحديه */
+function botActionWithReaction(bot, actionId, target, onConfirm){
+  const BLOCK = BLOCK_MAP[actionId] || [];
+  const canChal = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
+  const canBlock = BLOCK.length > 0 && (actionId !== 'Assassinate' || myP()?.id === target?.id);
+
+  // لو الأكشن ما يحتاج رد (Income/Coup) — نفّذ مباشرة
+  if(!canChal && !canBlock){ onConfirm(); return; }
+
+  const cn = CLAIM_MAP[actionId];
+  const body = `<b style="color:var(--gold-lt)">${bot.av} ${bot.name}</b> يدّعي:<br>
+    <b style="font-size:16px">${actionId}${cn ? ` (${CARDS[cn].icon} ${cn})` : ''}</b>
+    ${target ? `<br>الهدف: <b>${target.av} ${target.name}</b>` : ''}`;
+
+  const acts = [
+    { label:'✅ أسمح', cls:'btn-green', cb:()=>{ glog(`✅ ${myP().name} سمح`); onConfirm(); } }
+  ];
+
+  if(canChal) acts.push({
+    label:'❓ أتحدّى!', cls:'btn-red',
+    cb:()=>{
+      SFX.challenge();
+      const claimed = CLAIM_MAP[actionId];
+      const ci = bot.cards.findIndex((c,i)=> c===claimed && !bot.revealed[i]);
+      if(ci !== -1){
+        // البوت صادق — الإنسان يخسر ورقة
+        glog(`❓ ${myP().name} تحدّى — <span class="lh">${bot.name}</span> يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
+        forceReveal(ME.id, ()=>{ replaceCard(bot.id, claimed); onConfirm(); });
+      } else {
+        // البوت يكذب — يخسر ورقة، الأكشن يُلغى
+        glog(`❓ ${myP().name} كشف البلف! <span class="lh">${bot.name}</span> كان يكذب`);
+        forceReveal(bot.id, ()=>nextTurn());
+      }
+    }
+  });
+
+  if(canBlock){
+    const lbl = BLOCK.map(c=>`${CARDS[c].icon} ${c}`).join('/');
+    acts.push({
+      label:`🛡️ اعترض (${lbl})`, cls:'',
+      cb:()=>{
+        SFX.block();
+        // هل الإنسان يملك بطاقة الاعتراض فعلاً؟ البوت يقرر يتحدّى أم يقبل
+        const me = myP();
+        const hasCard = me.cards.some((c,i)=> BLOCK.includes(c) && !me.revealed[i]);
+        const chalChance = DIFF==='hard' ? 0.50 : DIFF==='medium' ? 0.30 : 0.15;
+        if(!hasCard || Math.random() < chalChance){
+          // البوت يتحدّى الاعتراض
+          setTimeout(()=>{
+            glog(`❓ <span class="lh">${bot.name}</span> يتحدّى اعتراضك!`);
+            if(hasCard){
+              const card = me.cards.find((c,i)=> BLOCK.includes(c) && !me.revealed[i]);
+              glog(`🛡️ ${me.name} يملك ${card}! اعتراضه صحيح`);
+              forceReveal(bot.id, ()=>{ replaceCard(ME.id, card); nextTurn(); });
+            } else {
+              glog(`❌ ${me.name} كان يكذب في الاعتراض! يخسر ورقة`);
+              forceReveal(ME.id, ()=>onConfirm());
+            }
+          }, 600);
+        } else {
+          glog(`🛡️ ${me.name} اعترض — <span class="lh">${bot.name}</span> قبل الاعتراض`);
+          nextTurn();
+        }
+      }
+    });
+  }
+
+  openModal(`${bot.av} ${bot.name} يلعب — ماذا تفعل؟`, body, acts);
+  SFX.modal();
+  startTimer(30, ()=>{ glog(`⏱ انتهى وقتك — سُمح تلقائياً`); onConfirm(); });
+}
+
 function execBot(bot,action){
-  const np=G.players.map(p=>({...p,cards:[...p.cards],revealed:[...p.revealed]}));
-  const bi=idx(bot.id,np);
-  const act=(changes,logMsg)=>{ pushUpdate({players:np,...changes},logMsg); nextTurn(); };
+  const np=()=>G.players.map(p=>({...p,cards:[...p.cards],revealed:[...p.revealed]}));
+  const bi=()=>G.players.findIndex(p=>p.id===bot.id);
+
   switch(action.id){
-    case 'Income': np[bi].coins++; act({treasury:Math.max(0,G.treasury-1)},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`); break;
-    case 'ForeignAid':
-      if(Math.random()<0.2){ const bl=alive().find(p=>p.id!==bot.id); if(bl){ glog(`🛡️ <span class="lh">${bl.name}</span> اعترض Foreign Aid!`); nextTurn(); return; } }
-      np[bi].coins+=2; act({treasury:Math.max(0,G.treasury-2)},`🏦 <span class="lh">${bot.name}</span> Foreign Aid (+2◈)`); break;
-    case 'Tax': np[bi].coins+=3; act({treasury:Math.max(0,G.treasury-3)},`📜 <span class="lh">${bot.name}</span> Tax (+3◈)`); break;
+    case 'Income': {
+      const pls=np(); pls[bi()].coins++;
+      pushUpdate({players:pls,treasury:Math.max(0,G.treasury-1)},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`);
+      nextTurn(); break;
+    }
+    case 'ForeignAid': {
+      glog(`🏦 <span class="lh">${bot.name}</span> يحاول Foreign Aid…`);
+      botActionWithReaction(bot,'ForeignAid',null,()=>{
+        const pls=np(); pls[bi()].coins+=2;
+        pushUpdate({players:pls,treasury:Math.max(0,G.treasury-2)},`🏦 <span class="lh">${bot.name}</span> Foreign Aid (+2◈)`);
+        nextTurn();
+      }); break;
+    }
+    case 'Tax': {
+      glog(`📜 <span class="lh">${bot.name}</span> يدّعي Duke — Tax…`);
+      botActionWithReaction(bot,'Tax',null,()=>{
+        const pls=np(); pls[bi()].coins+=3;
+        pushUpdate({players:pls,treasury:Math.max(0,G.treasury-3)},`📜 <span class="lh">${bot.name}</span> Tax (+3◈)`);
+        nextTurn();
+      }); break;
+    }
     case 'Steal': {
-      if(!action.target){ np[bi].coins++; act({},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`); break; }
-      const ti=idx(action.target.id,np); const n=Math.min(np[ti].coins,2);
-      np[ti].coins-=n; np[bi].coins+=n;
-      act({},`🦹 <span class="lh">${bot.name}</span> سطا على <span class="lh">${action.target.name}</span> (+${n}◈)`); break;
+      if(!action.target){ const pls=np(); pls[bi()].coins++; pushUpdate({players:pls},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`); nextTurn(); break; }
+      glog(`🦹 <span class="lh">${bot.name}</span> يدّعي Captain — Steal على <span class="lh">${action.target.name}</span>…`);
+      botActionWithReaction(bot,'Steal',action.target,()=>{
+        const pls=np(); const b=bi(); const ti=pls.findIndex(p=>p.id===action.target.id);
+        const n=Math.min(pls[ti].coins,2); pls[ti].coins-=n; pls[b].coins+=n;
+        SFX.steal();
+        pushUpdate({players:pls},`🦹 <span class="lh">${bot.name}</span> سطا على <span class="lh">${action.target.name}</span> (+${n}◈)`);
+        nextTurn();
+      }); break;
     }
     case 'Assassinate': {
-      if(!action.target||np[bi].coins<3){ np[bi].coins++; act({},`💰 <span class="lh">${bot.name}</span> Income`); break; }
-      np[bi].coins-=3;
-      pushUpdate({players:np},`🗡️ <span class="lh">${bot.name}</span> يغتال <span class="lh">${action.target.name}</span>!`);
-      const ti2=idx(action.target.id,np); revealRandom(np,ti2);
-      pushUpdate({players:np},null); G.players=np; nextTurn(); break;
+      if(!action.target||G.players[bi()].coins<3){ const pls=np(); pls[bi()].coins++; pushUpdate({players:pls},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`); nextTurn(); break; }
+      const pls2=np(); pls2[bi()].coins-=3; pushUpdate({players:pls2},null);
+      glog(`🗡️ <span class="lh">${bot.name}</span> يدّعي Assassin — يغتال <span class="lh">${action.target.name}</span>…`);
+      botActionWithReaction(bot,'Assassinate',action.target,()=>{
+        SFX.assassin();
+        glog(`🗡️ <span class="lh">${bot.name}</span> اغتال <span class="lh">${action.target.name}</span>!`);
+        forceReveal(action.target.id,()=>nextTurn());
+      }); break;
     }
     case 'Coup': {
-      if(!action.target||np[bi].coins<7){ np[bi].coins++; act({},`💰 <span class="lh">${bot.name}</span> Income`); break; }
-      np[bi].coins-=7;
-      pushUpdate({players:np,treasury:G.treasury+7},`⚔️ <span class="lh">${bot.name}</span> Coup → <span class="lh">${action.target.name}</span>!`);
-      const ti3=idx(action.target.id,np); revealRandom(np,ti3);
-      pushUpdate({players:np},null); G.players=np; nextTurn(); break;
+      if(!action.target||G.players[bi()].coins<7){ const pls=np(); pls[bi()].coins++; pushUpdate({players:pls},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`); nextTurn(); break; }
+      const pls3=np(); pls3[bi()].coins-=7; SFX.coup();
+      pushUpdate({players:pls3,treasury:G.treasury+7},`⚔️ <span class="lh">${bot.name}</span> Coup → <span class="lh">${action.target.name}</span>!`);
+      forceReveal(action.target.id,()=>nextTurn()); break;
     }
-    default: np[bi].coins++; act({treasury:Math.max(0,G.treasury-1)},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`);
+    default: { const pls=np(); pls[bi()].coins++; pushUpdate({players:pls,treasury:Math.max(0,G.treasury-1)},`💰 <span class="lh">${bot.name}</span> Income (+1◈)`); nextTurn(); }
   }
 }
 
