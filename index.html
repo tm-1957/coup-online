@@ -39,7 +39,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg0);color:var(--text);mi
 
 #bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:1;}
 
-/* ═══ تأثيرات خلفية القائمة الرئيسية — أقوى وأوضح ═══ */
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
     radial-gradient(ellipse 100% 65% at 50% -5%,  rgba(201,168,76,.32) 0%,transparent 65%),
@@ -107,6 +106,10 @@ body.light .menu-btn:hover{background:rgba(160,120,32,.08);}
 .bots-list{display:flex;flex-direction:column;gap:6px;}
 .bot-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);}
 .bot-row-av{font-size:22px;}.bot-row-name{flex:1;font-size:13px;font-weight:700;}
+/* ═══ حقل تعديل اسم البوت ═══ */
+.bot-row-name-inp{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px 8px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;outline:none;min-width:0;}
+.bot-row-name-inp:focus{border-color:var(--border-lt);}
+body.light .bot-row-name-inp{background:rgba(0,0,0,.04);}
 .bot-row-badge{font-size:10px;padding:2px 8px;border:1px solid rgba(108,52,131,.35);border-radius:4px;color:#9b59b6;letter-spacing:1px;}
 
 #screen-lobby{justify-content:flex-start;padding-top:40px;}
@@ -130,6 +133,9 @@ body.light .player-row{background:rgba(0,0,0,.03);}
 .tag-host{color:var(--gold);border-color:rgba(201,168,76,.4);}.tag-you{color:#64b5f6;border-color:rgba(100,181,246,.3);}
 .tag-ready{color:var(--emerald-lt);border-color:rgba(45,171,95,.3);}.tag-bot{color:#9b59b6;border-color:rgba(155,89,182,.3);}
 .player-row.empty{opacity:.3;border-style:dashed;}
+/* ═══ زر طرد اللاعب في الاستقبال ═══ */
+.kick-btn-lobby{background:rgba(155,26,26,.12);border:1px solid rgba(155,26,26,.3);border-radius:6px;color:var(--crimson-lt);font-size:11px;padding:3px 8px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;flex-shrink:0;}
+.kick-btn-lobby:hover{background:rgba(155,26,26,.25);border-color:rgba(155,26,26,.5);}
 
 #screen-game{padding:0;justify-content:flex-start;min-height:100vh;background:var(--bg1);}
 #screen-game::before{content:'';position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--gold) 30%,var(--gold-lt) 50%,var(--gold) 70%,transparent 100%);z-index:20;box-shadow:0 0 12px var(--gold-glow);}
@@ -238,6 +244,13 @@ body.light .modal{background:var(--bg1);border-color:var(--border-lt);}
 .timer-lbl{font-size:11px;color:var(--text-dim);}.timer-num{font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold);}
 .timer-track{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
 .timer-bar{height:100%;background:linear-gradient(90deg,var(--crimson-lt),var(--gold));border-radius:3px;transition:width 1s linear;}
+
+/* ═══ قائمة طرد اللاعب داخل اللعبة ═══ */
+.kick-list{display:flex;flex-direction:column;gap:6px;}
+.kick-player-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.12);border-radius:var(--radius-sm);}
+.kick-player-name{flex:1;font-weight:700;}
+.kick-btn{background:rgba(155,26,26,.15);border:1px solid rgba(155,26,26,.4);border-radius:6px;color:var(--crimson-lt);font-size:12px;padding:5px 12px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;}
+.kick-btn:hover{background:rgba(155,26,26,.3);border-color:var(--crimson-lt);}
 
 .sheet-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(5px);z-index:600;}
 .sheet-bg.open{display:flex;align-items:flex-end;justify-content:center;}
@@ -353,7 +366,9 @@ body.light .rule-action-card{background:rgba(0,0,0,.03);}
 body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);}
 .theme-pill-icon{font-size:16px;}
 
-.spectator-badge{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:50;background:rgba(100,58,180,.85);border:1px solid rgba(150,100,220,.5);border-radius:20px;padding:5px 16px;font-size:11px;color:#ce93d8;letter-spacing:2px;backdrop-filter:blur(8px);pointer-events:none;}
+/* ═══ شارة المشاهدة — قابلة للإخفاء ═══ */
+.spectator-badge{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:50;background:rgba(100,58,180,.85);border:1px solid rgba(150,100,220,.5);border-radius:20px;padding:5px 16px;font-size:11px;color:#ce93d8;letter-spacing:2px;backdrop-filter:blur(8px);pointer-events:none;transition:opacity .5s;}
+.spectator-badge.hidden{opacity:0;pointer-events:none;}
 .spectator-hand{padding:16px;text-align:center;color:var(--text-dim);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius-md);margin:12px 16px;}
 
 .fb-status{position:fixed;top:8px;left:8px;z-index:9998;display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-dim);letter-spacing:1px;}
@@ -557,7 +572,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       </div>
     </div>
     <div class="form-group">
-      <div class="inp-label">منافسوك</div>
+      <div class="inp-label">منافسوك (اضغط على الاسم لتعديله)</div>
       <div class="bots-list" id="bots-preview"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
@@ -610,6 +625,12 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <div class="sheet-bg" id="game-sheet" onclick="if(event.target===this)closeSheet('game-sheet')">
   <div class="sheet">
     <div class="sheet-title">☰ قائمة اللعبة</div>
+    <!-- ═══ زر طرد اللاعب — للمضيف فقط داخل اللعبة ═══ -->
+    <div class="sheet-item" id="kick-sheet-item" onclick="closeSheet('game-sheet');openKickModal()" style="display:none;">
+      <span class="sheet-item-icon">🚫</span>
+      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--crimson-lt)">طرد لاعب</div><div class="sheet-item-sub">إزالة لاعع من الجلسة</div></div>
+      <span class="sheet-item-arr">›</span>
+    </div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');confirmLeave()">
       <span class="sheet-item-icon">🏠</span>
       <div class="sheet-item-text"><div class="sheet-item-title">العودة للرئيسية</div><div class="sheet-item-sub">الخروج من اللعبة</div></div>
@@ -754,14 +775,14 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     </div>
     <div class="about-section">
       <div class="about-section-title">🌍 عالم اللعبة</div>
-      <p>تدور الأحداث في عالم ديستوبي خيالي تسيطر عليه طبقة فاسدة من النخبة، حيث يسعى اللاعبون لإسقاط نفوذ خصومهم والسيطرة على السلطة عبر المراوغة السياسية.</p>
+      <p>تدور الأحداث في عالم ديستوبي خيالي تسيطر عليه طبقة فاسدة من النخبة، حيث يسعى اللاععون لإسقاط نفوذ خصومهم والسيطرة على السلطة عبر المراوغة السياسية.</p>
     </div>
     <div class="about-section">
       <div class="about-section-title">🎮 فكرة اللعبة</div>
-      <p>كل لاعب يمتلك بطاقتين سريتين. لا يُشترط الصدق — يمكنك ادعاء امتلاك أي شخصية، مع مخاطرة أن يتحداك أحد ويكشف كذبك. <b style="color:var(--gold-lt)">آخر لاعب يبقى يفوز.</b></p>
+      <p>كل لاعب يمتلك بطاقتين سريتين. لا يُشترط الصدق — يمكنك ادعاء امتلاك أي شخصية، مع مخاطرة أن يتحداك أحد ويكشف كذبك. <b style="color:var(--gold-lt)">آخر لاعع يبقى يفوز.</b></p>
     </div>
     <div class="about-stats">
-      <div class="about-stat"><div class="about-stat-icon">👥</div><div class="about-stat-val">2–6</div><div class="about-stat-lbl">لاعبين</div></div>
+      <div class="about-stat"><div class="about-stat-icon">👥</div><div class="about-stat-val">2–6</div><div class="about-stat-lbl">لاععين</div></div>
       <div class="about-stat"><div class="about-stat-icon">⏱</div><div class="about-stat-val">15د</div><div class="about-stat-lbl">مدة جولة</div></div>
       <div class="about-stat"><div class="about-stat-icon">🔞</div><div class="about-stat-val">13+</div><div class="about-stat-lbl">الفئة العمرية</div></div>
     </div>
@@ -812,8 +833,13 @@ const CARDS = {
 };
 const CN = Object.keys(CARDS);
 const AVATARS   = ['🤴','👸','🧙','🕵️','🦸','🦹','🧝','🧛','🤠','🥷','👮','🫅','🐉','🧜','🧚','🦊'];
-const BOT_NAMES = ['البوت الشرير 😈','الوصية الخفية 👻','اللاعب الظل 🌑','العقاب الرقمي 🦅','الذكاء الفتاك 🔮'];
+
+// ═══ أسماء البوتات الافتراضية "أبو فلان" + أفاتارات ═══
+const DEFAULT_BOT_NAMES = ['أبو سالم 🏹','أبو خالد 🗡️','أبو طلال 🔮','أبو ماجد 🦅','أبو فارس 👁️'];
 const BOT_AVS   = ['🦾','👾','🤖','🧠','🦿'];
+
+// أسماء البوتات القابلة للتعديل (يُعبّأ عند بناء البريفيو)
+let BOT_CUSTOM_NAMES = [...DEFAULT_BOT_NAMES];
 
 let ME   = { id:null, name:'', av:'🤴', host:false };
 let ROOM = null;
@@ -825,7 +851,7 @@ let CUR_SCREEN  = 'screen-title';
 let _tmr        = null;
 let _lastData   = null;
 let _unsubs     = [];
-let ALL_LOG_ENTRIES = [];
+let ALL_LOG_ENTRIES = []; // FIX 3: سيُصفَّر عند كل لعبة جديدة
 
 const uid   = ()=>Math.random().toString(36).slice(2,11);
 const code4 = ()=>Math.random().toString(36).slice(2,6).toUpperCase();
@@ -861,7 +887,12 @@ window.openModal = function(title,body,actions=[],extra=''){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
 
 window.openMoreSheet = ()=>document.getElementById('more-sheet').classList.add('open');
-window.openGameSheet = ()=>document.getElementById('game-sheet').classList.add('open');
+window.openGameSheet = ()=>{
+  // إظهار/إخفاء زر الطرد حسب المضيف
+  const kickItem = document.getElementById('kick-sheet-item');
+  if(kickItem) kickItem.style.display = ME.host && ROOM && ROOM !== 'SOLO' ? 'flex' : 'none';
+  document.getElementById('game-sheet').classList.add('open');
+};
 window.closeSheet    = id=>document.getElementById(id).classList.remove('open');
 
 window.buildAv = function(id,key){
@@ -973,8 +1004,17 @@ function setupLobbyListeners(){
     if(gd.status==='ended')
       showStats(gd);
   });
+  // ═══ الاستماع لأوامر الطرد ═══
+  dbOn(`rooms/${ROOM}/kick`, kickData=>{
+    if(!kickData) return;
+    if(kickData.targetId === ME.id){
+      alert('❌ تم طردك من الغرفة من قبل المضيف');
+      leaveRoom();
+    }
+  });
 }
 
+// ═══ FIX 7: عرض لاععي الاستقبال مع زر طرد للمضيف ═══
 function renderLobbyPlayers(pd){
   pd=pd||{};
   const maxP=+(document.getElementById('max-players')?.value||4);
@@ -986,21 +1026,34 @@ function renderLobbyPlayers(pd){
     r.className=`player-row${p.host?' is-host':''}`;
     r.innerHTML=`<span class="player-row-av">${p.av}</span><span class="player-row-name">${p.name}</span>
       ${p.host?'<span class="tag tag-host">مضيف</span>':''}
-      ${p.isBot?'<span class="tag tag-bot">بوت 🤖</span>':(isMe?'<span class="tag tag-you">أنت</span>':'<span class="tag tag-ready">جاهز</span>')}`;
+      ${p.isBot?'<span class="tag tag-bot">بوت 🤖</span>':(isMe?'<span class="tag tag-you">أنت</span>':'<span class="tag tag-ready">جاهز</span>')}
+      ${ME.host && !isMe && !p.host && !p.isBot ? `<button class="kick-btn-lobby" onclick="kickPlayerLobby('${p.id}','${p.name}')">طرد</button>` : ''}`;
     el.appendChild(r);
   });
   for(let i=pls.length;i<maxP;i++){
     const r=document.createElement('div'); r.className='player-row empty';
-    r.innerHTML='<span class="player-row-av">👤</span><span class="player-row-name" style="color:var(--text-dim)">في انتظار لاعب...</span>';
+    r.innerHTML='<span class="player-row-av">👤</span><span class="player-row-name" style="color:var(--text-dim)">في انتظار لاعع...</span>';
     el.appendChild(r);
   }
-  document.getElementById('lobby-status').textContent=`${pls.length}/${maxP} لاعبين في الغرفة`;
+  document.getElementById('lobby-status').textContent=`${pls.length}/${maxP} لاععين في الغرفة`;
   const sb=document.getElementById('start-btn');
   if(ME.host){
     sb.style.display=pls.length>=2?'flex':'none';
-    sb.querySelector('span').textContent=`🎲 ابدأ اللعبة (${pls.length} لاعبين)`;
+    sb.querySelector('span').textContent=`🎲 ابدأ اللعبة (${pls.length} لاععين)`;
   }
 }
+
+// ═══ FIX 7: طرد لاعع من الاستقبال ═══
+window.kickPlayerLobby = function(pid, pname){
+  openModal(`🚫 طرد ${pname}`, `هل تريد طرد <b>${pname}</b> من الغرفة؟`, [
+    { label:'نعم، اطرد', cls:'btn-red', cb: async ()=>{
+      await dbSet(`rooms/${ROOM}/kick`, { targetId: pid, by: ME.id, ts: Date.now() });
+      await dbSet(`rooms/${ROOM}/players/${pid}`, null);
+      setTimeout(()=> dbSet(`rooms/${ROOM}/kick`, null), 3000);
+    }},
+    { label:'إلغاء', cls:'btn-dim', cb:()=>{} }
+  ]);
+};
 
 window.hostStart = async function(){
   const pd=await dbGet(`rooms/${ROOM}/players`); if(!pd) return;
@@ -1008,9 +1061,12 @@ window.hostStart = async function(){
   const maxP=+(document.getElementById('max-players')?.value||4);
   const botC=+(document.getElementById('bot-count')?.value||0);
   for(let i=0;i<botC&&pls.length<maxP;i++)
-    pls.push({ id:'bot_'+i, name:BOT_NAMES[i]||`بوت ${i+1}`, av:BOT_AVS[i]||'🤖', isBot:true, ts:Date.now()+i });
+    pls.push({ id:'bot_'+i, name:DEFAULT_BOT_NAMES[i]||`بوت ${i+1}`, av:BOT_AVS[i]||'🤖', isBot:true, ts:Date.now()+i });
   const d=deck();
-  const players=pls.map(p=>({
+
+  // ═══ FIX 6: ترتيب عشوائي لأول دور ═══
+  const shuffledPls = shuf(pls);
+  const players=shuffledPls.map(p=>({
     id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
     coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false
   }));
@@ -1026,7 +1082,11 @@ window.hostStart = async function(){
 
 function startLocalGame(gs){
   G=gs;
+  // FIX 3: تصفير السجل عند بدء كل لعبة
   ALL_LOG_ENTRIES = [];
+  const logEl = document.getElementById('log-entries');
+  if(logEl) logEl.innerHTML = '';
+
   SPECTATING=false;
   const oldBadge=document.getElementById('spectator-badge');
   if(oldBadge) oldBadge.remove();
@@ -1044,7 +1104,6 @@ function startLocalGame(gs){
       setTimeout(()=>runBot(), 1000);
   });
 
-  // المضيف: يستلع رد الكشف من اللاععين الآخرين وينفذه
   if(ME.host){
     dbOn(`rooms/${ROOM}/revealReply`, async reply => {
       if(!reply) return;
@@ -1059,6 +1118,25 @@ function startLocalGame(gs){
       checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
       const cb=G._rCb; G._rCb=null; if(cb) cb();
     });
+
+    // ═══ FIX 7: الاستماع لطلبات الطرد داخل اللعبة ═══
+    dbOn(`rooms/${ROOM}/kickInGame`, async kickData=>{
+      if(!kickData || !ME.host) return;
+      if(kickData.processed) return;
+      await dbSet(`rooms/${ROOM}/kickInGame`, { ...kickData, processed: true });
+      const pid = kickData.targetId;
+      const pi  = G.players.findIndex(p=>p.id===pid);
+      if(pi<0) return;
+      const np = clonePlayers();
+      np[pi].eliminated = true;
+      np[pi].revealed = [true, true];
+      glog(`🚫 <span class="lr">${np[pi].name}</span> طُرد من اللعبة!`);
+      checkElim(np, pi);
+      pushUpdate({players:np}, null);
+      G.players = np;
+      const al = alive();
+      if(al.length <= 1) endGame(al[0]);
+    });
   }
 
   if(!ME.host){
@@ -1069,13 +1147,52 @@ function startLocalGame(gs){
         if(!_knownLogs.has(ts)){ _knownLogs.add(ts); glogLocal(msg); }
       });
     });
-    // اللاعب غير المضيف يستمع لطلبات الرد من Firebase
     setupReactionListener();
+
+    // ═══ الاستماع للطرد من اللعبة ═══
+    dbOn(`rooms/${ROOM}/kick`, kickData=>{
+      if(!kickData) return;
+      if(kickData.targetId === ME.id){
+        alert('❌ تم طردك من اللعبة من قبل المضيف');
+        leaveRoom();
+      }
+    });
   }
 
   setupDisconnectWatcher();
   setTimeout(()=>{ if(ME.host && G?.players?.[G.turn]?.isBot) runBot(); }, 1200);
 }
+
+// ═══ FIX 7: قائمة طرد اللاععين داخل اللعبة (للمضيف) ═══
+window.openKickModal = function(){
+  if(!G || !ME.host) return;
+  const humanPlayers = G.players.filter(p => !p.isBot && p.id !== ME.id && !p.eliminated);
+  if(!humanPlayers.length){
+    openModal('🚫 طرد لاعع', 'لا يوجد لاععون بشريون يمكن طردهم.', [{label:'إغلاق',cls:'btn-dim',cb:()=>{}}]);
+    return;
+  }
+  const rows = humanPlayers.map(p=>`
+    <div class="kick-player-row">
+      <span style="font-size:20px">${p.av}</span>
+      <span class="kick-player-name">${p.name}</span>
+      <button class="kick-btn" onclick="kickPlayerInGame('${p.id}','${p.name}')">طرد</button>
+    </div>
+  `).join('');
+  openModal('🚫 طرد لاعع', '', [{label:'إلغاء',cls:'btn-dim',cb:()=>{}}], `<div class="kick-list">${rows}</div>`);
+};
+
+window.kickPlayerInGame = async function(pid, pname){
+  closeModal();
+  openModal(`🚫 طرد ${pname}`, `هل أنت متأكد من طرد <b>${pname}</b>؟`, [
+    { label:'نعم، اطرد', cls:'btn-red', cb: async ()=>{
+      // إرسال أمر الطرد
+      await dbSet(`rooms/${ROOM}/kick`, { targetId: pid, by: ME.id, ts: Date.now() });
+      await dbSet(`rooms/${ROOM}/kickInGame`, { targetId: pid, by: ME.id, ts: Date.now(), processed: false });
+      setTimeout(()=>{ dbSet(`rooms/${ROOM}/kick`, null); dbSet(`rooms/${ROOM}/kickInGame`, null); }, 5000);
+    }},
+    { label:'إلغاء', cls:'btn-dim', cb:()=>{} }
+  ]);
+};
 
 const cur    = ()=>G.players[G.turn];
 const myP    = ()=>G.players.find(p=>p.id===ME.id);
@@ -1083,8 +1200,7 @@ const alive  = ()=>G.players.filter(p=>!p.eliminated);
 const opps   = ()=>alive().filter(p=>p.id!==ME.id);
 const myTurn = ()=>{ const c=G?.players?.[G?.turn]; return c?.id===ME.id; };
 
-// ═══ التحقق من حالة المشاهدة ═══
-// المشاهد: لاعب مُقصى (eliminated) — لا صلاحية له في أي نافذة قرار
+// ═══ FIX 4: المشاهد لا يمكنه التحدي ═══
 const isSpectating = ()=> {
   const me = myP();
   return me && me.eliminated;
@@ -1150,7 +1266,7 @@ function renderActions(){
     {id:'Coup',        icon:'⚔️', claim:null,       cost:7,    ar:'أزل نفوذ −7◈',   ok:me.coins>=7, force:must},
     {id:'Tax',         icon:'📜', claim:'Duke',     cost:null, ar:'+3◈',             ok:!must},
     {id:'Assassinate', icon:'🗡️',claim:'Assassin', cost:3,    ar:'أزل ورقة −3◈',   ok:me.coins>=3&&!must},
-    {id:'Steal',       icon:'🦹', claim:'Captain',  cost:null, ar:'+2◈ من لاعب',    ok:opps().length>0&&!must},
+    {id:'Steal',       icon:'🦹', claim:'Captain',  cost:null, ar:'+2◈ من لاعع',    ok:opps().length>0&&!must},
     {id:'Exchange',    icon:'🔄', claim:'Ambassador',cost:null, ar:'بادل أوراقك',    ok:!must},
   ];
   const panel=document.createElement('div'); panel.className='action-panel';
@@ -1231,18 +1347,15 @@ function doAction(id){
 }
 
 /* ══════════════════════════════════════════════════════════════
-   نظام الردود — يدعم اللعب المحلي (SOLO) والأونلاين بشكل كامل
+   FIX 1: نظام الردود المُصلح — يحل مشكلة عدم تطبيق التغييرات في الأونلاين
    
-   في الأونلاين:
-   - المضيف ينشر طلب رد في Firebase: rooms/{ROOM}/reaction
-   - كل لاعب يستمع ويرى نافذته إذا كان المطلوب منه
-   - اللاعب يختار ويرسل رده: rooms/{ROOM}/reactionReply
-   - المضيف يستمع للرد وينفذ المنطق ثم يكمل
+   المشكلة الأصلية: pushUpdate كان يحدّث G.players محلياً فقط دون أن ينشر
+   التغيير إلى Firebase بشكل صحيح في تسلسل الـ callbacks.
    
-   في SOLO: يعمل محلياً بدون Firebase
+   الحل: ضمان أن كل pushUpdate يُرسَل قبل استدعاء الـ callback التالي،
+   واستخدام async/await بشكل صريح.
 ══════════════════════════════════════════════════════════════ */
 
-// متغير عالمي لتخزين callback انتهاء الرد
 let _reactionSuccess = null;
 let _reactionUnsub   = null;
 
@@ -1258,29 +1371,24 @@ function askReaction(actionId, target, onSuccess){
   const ops = G.players.filter(p => !p.eliminated && p.id !== ME.id);
   if(!ops.length){ onSuccess(); return; }
 
-  // SOLO أو بدون Firebase — يعمل محلياً
   if(!ROOM || ROOM === 'SOLO'){
     askNext(ops, 0, actionId, target, onSuccess);
     return;
   }
 
-  // أونلاين — المضيف ينشر طلب الرد لكل لاعب بالترتيب
   _reactionSuccess = onSuccess;
   publishReaction(ops, 0, actionId, target);
 }
 
-// ═══ المضيف: ينشر طلب الرد لكل لاعب ═══
 async function publishReaction(ops, i, actionId, target){
   if(!ME.host) return;
   if(i >= ops.length){
-    // كل اللاعبين سمحوا — نفذ الأكشن
     clearReactionListener();
     if(_reactionSuccess){ const fn=_reactionSuccess; _reactionSuccess=null; fn(); }
     return;
   }
   const opp = ops[i];
 
-  // بوت — المضيف يقرر محلياً بدون Firebase
   if(opp.isBot){
     const blockCards = BLOCK_MAP[actionId] || [];
     const canBlock = blockCards.length > 0 && (actionId !== 'Assassinate' || opp.id === target?.id);
@@ -1325,13 +1433,14 @@ async function publishReaction(ops, i, actionId, target){
     return;
   }
 
-  // لاعب بشري — انشر الطلب في Firebase
   const blockCards = BLOCK_MAP[actionId] || [];
   const canBlock = blockCards.length > 0 && (actionId !== 'Assassinate' || opp.id === target?.id);
   const canChal  = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
-  const actor    = myP(); // المضيف هو اللي فعل الأكشن
+  const actor    = myP();
 
-  const req = {
+  // FIX 1: إرسال الطلب مع تنظيف الرد السابق أولاً
+  await dbSet(`rooms/${ROOM}/reactionReply`, null);
+  await dbSet(`rooms/${ROOM}/reaction`, {
     forId:    opp.id,
     actionId,
     actorId:  actor.id,
@@ -1343,13 +1452,10 @@ async function publishReaction(ops, i, actionId, target){
     canChal,
     blockCards,
     ts:       Date.now()
-  };
-  await dbSet(`rooms/${ROOM}/reaction`, req);
-  await dbSet(`rooms/${ROOM}/reactionReply`, null);
+  });
 
   clearReactionListener();
 
-  // المضيف يستمع للرد
   const replyPath = `rooms/${ROOM}/reactionReply`;
   _reactionUnsub = dbOn(replyPath, async reply => {
     if(!reply) return;
@@ -1362,16 +1468,21 @@ async function publishReaction(ops, i, actionId, target){
       publishReaction(ops, i+1, actionId, target);
 
     } else if(reply.type === 'challenge'){
+      // FIX 4: المشاهد لا يمكنه التحدي — تجاهل إذا كان مُقصى
+      const oppPlayer = G.players.find(p=>p.id===opp.id);
+      if(oppPlayer && oppPlayer.eliminated){ publishReaction(ops, i+1, actionId, target); return; }
       glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
       SFX.challenge();
       const fn = _reactionSuccess; _reactionSuccess = null;
       doChallengePid(opp.id, actionId, fn);
 
     } else if(reply.type === 'block'){
+      // FIX 4: المشاهد لا يمكنه الاعتراض
+      const oppPlayer = G.players.find(p=>p.id===opp.id);
+      if(oppPlayer && oppPlayer.eliminated){ publishReaction(ops, i+1, actionId, target); return; }
       glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
       SFX.block();
       const fn = _reactionSuccess; _reactionSuccess = null;
-      // المضيف ينشر طلب تحدي الاعتراض للاعب الذي يملك الأكشن
       publishBlockChallenge(opp, actionId, blockCards, fn);
 
     } else if(reply.type === 'timeout'){
@@ -1380,7 +1491,6 @@ async function publishReaction(ops, i, actionId, target){
     }
   });
 
-  // timeout: 50 ثانية
   setTimeout(async ()=>{
     const cur = await dbGet(replyPath);
     if(!cur) {
@@ -1392,14 +1502,13 @@ async function publishReaction(ops, i, actionId, target){
   }, 50000);
 }
 
-// ═══ المضيف ينشر طلب "هل تتحدى الاعتراض؟" للاعب الأصلي ═══
 async function publishBlockChallenge(blocker, actionId, blockCards, onSuccess){
   if(!ME.host) return;
   const actor = myP();
-  const lbl   = blockCards.map(c=>`${CARDS[c].icon} ${c}`).join('/');
 
-  // إذا المضيف هو صاحب الأكشن — يرى النافذة محلياً
-  const req = {
+  // FIX 1: تنظيف أولاً
+  await dbSet(`rooms/${ROOM}/reactionReply`, null);
+  await dbSet(`rooms/${ROOM}/reaction`, {
     forId:      actor.id,
     type:       'blockChallenge',
     blockerName:blocker.name,
@@ -1408,9 +1517,7 @@ async function publishBlockChallenge(blocker, actionId, blockCards, onSuccess){
     actionId,
     blockCards,
     ts: Date.now()
-  };
-  await dbSet(`rooms/${ROOM}/reaction`, req);
-  await dbSet(`rooms/${ROOM}/reactionReply`, null);
+  });
 
   clearReactionListener();
 
@@ -1451,13 +1558,21 @@ async function publishBlockChallenge(blocker, actionId, blockCards, onSuccess){
   }, 50000);
 }
 
-// ═══ اللاعع غير المضيف يستمع لطلبات الرد والكشف ═══
+// ═══ FIX 4: اللاعع غير المضيف يستمع — مع تجاهل طلبات المشاهد ═══
 function setupReactionListener(){
   if(ME.host) return;
-  // طلبات الرد (تحدي / اعتراض / سماح)
+
   dbOn(`rooms/${ROOM}/reaction`, req => {
     if(!req) return;
     if(req.forId !== ME.id) return;
+
+    // FIX 4: إذا كان المشاهد، لا يُعرض عليه أي نافذة تحدي/اعتراض
+    if(isSpectating()){
+      // رد تلقائي بالسماح
+      dbSet(`rooms/${ROOM}/reactionReply`, { type:'allow', byId: ME.id, ts: Date.now() });
+      return;
+    }
+
     if(req.type === 'blockChallenge'){
       showBlockChallengeModal(req);
       return;
@@ -1465,7 +1580,6 @@ function setupReactionListener(){
     showReactionModal(req);
   });
 
-  // طلبات الكشف (forceReveal)
   dbOn(`rooms/${ROOM}/revealRequest`, req => {
     if(!req) return;
     if(req.forId !== ME.id) return;
@@ -1473,17 +1587,21 @@ function setupReactionListener(){
     const al = p.cards.map((c,ci)=>({c,ci})).filter(x=>!p.revealed[x.ci]);
     if(!al.length) return;
     if(al.length === 1){
-      // كشف تلقائي
       dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: al[0].ci, ts: Date.now() });
       return;
     }
-    // نافذة اختيار
     const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onclick="pickRevealOnline(${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
     openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
   });
 }
 
 function showReactionModal(req){
+  // FIX 4: لا نافذة للمشاهد
+  if(isSpectating()){
+    dbSet(`rooms/${ROOM}/reactionReply`, { type:'allow', byId: ME.id, ts: Date.now() });
+    return;
+  }
+
   const cn   = CLAIM_MAP[req.actionId];
   const targetTxt = req.targetName ? `<br>الهدف: <b>${req.targetName}</b>` : '';
   const body = `<b style="color:var(--gold-lt)">${req.actorAv} ${req.actorName}</b> يدّعي:<br>
@@ -1514,6 +1632,12 @@ function showReactionModal(req){
 }
 
 function showBlockChallengeModal(req){
+  // FIX 4: لا نافذة للمشاهد
+  if(isSpectating()){
+    dbSet(`rooms/${ROOM}/reactionReply`, { type:'accept', byId: ME.id, ts: Date.now() });
+    return;
+  }
+
   const lbl = (req.blockCards||[]).map(c=>`${CARDS[c].icon} ${c}`).join('/');
   openModal(
     `🛡️ ${req.blockerAv} ${req.blockerName} يعترض`,
@@ -1526,7 +1650,6 @@ function showBlockChallengeModal(req){
   startTimer(50, ()=> dbSet(`rooms/${ROOM}/reactionReply`,{type:'timeout',byId:ME.id,ts:Date.now()}));
 }
 
-// ═══ doChallengePid: يعمل بالـ ID بدل الكائن ═══
 function doChallengePid(challengerId, actionId, onSuccess){
   const challenger = G.players.find(p => p.id === challengerId);
   const me = myP();
@@ -1534,15 +1657,14 @@ function doChallengePid(challengerId, actionId, onSuccess){
   if(!claimed){ onSuccess && onSuccess(); return; }
   const ci = me.cards.findIndex((c,i) => c===claimed && !me.revealed[i]);
   if(ci !== -1){
-    glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> تحدّى — ${me.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
+    glog(`❓ <span class="lh">${challenger?.name||'لاعع'}</span> تحدّى — ${me.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
     forceReveal(challengerId, ()=>{ replaceCard(ME.id, claimed); onSuccess && onSuccess(); });
   } else {
-    glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> كشف البلف! ${me.name} كان يكذب`);
+    glog(`❓ <span class="lh">${challenger?.name||'لاعع'}</span> كشف البلف! ${me.name} كان يكذب`);
     forceReveal(ME.id, ()=>nextTurn());
   }
 }
 
-// ═══ SOLO: نفس المنطق القديم بدون Firebase ═══
 function askNext(ops, i, actionId, target, onSuccess){
   if(i >= ops.length){ clearTimer(); onSuccess(); return; }
   const opp  = ops[i];
@@ -1581,6 +1703,9 @@ function askNext(ops, i, actionId, target, onSuccess){
   }
 
   if(opp.eliminated){ setTimeout(()=>next(), 100); return; }
+
+  // FIX 4: المشاهد لا يرى نافذة التحدي/الاعتراض في SOLO
+  if(opp.id === ME.id && isSpectating()){ setTimeout(()=>next(), 200); return; }
 
   const me  = myP();
   const cn  = CLAIM_MAP[actionId];
@@ -1643,7 +1768,6 @@ function doChallenge(challenger, actionId, onSuccess){
 }
 
 function doBlock(blocker, actionId, blockCards, onSuccess){
-  // ═══ إذا كان اللاعب مشاهداً لا يُعرض عليه نافذة الاعتراض ═══
   if(isSpectating()){ nextTurn(); return; }
 
   const lbl = blockCards.map(c=>`${CARDS[c].icon} ${c}`).join('/');
@@ -1672,7 +1796,6 @@ function forceReveal(pid,cb){
   const al=p.cards.map((c,ci)=>({c,ci})).filter(x=>!p.revealed[x.ci]);
   if(!al.length){ cb(); return; }
 
-  // ورقة واحدة — كشف تلقائي
   if(al.length===1){
     const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
     glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
@@ -1680,7 +1803,7 @@ function forceReveal(pid,cb){
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
 
-  // مشاهد — اختر تلقائياً
+  // FIX 4: المشاهد لا يُعرض عليه نافذة
   if(pid === ME.id && isSpectating()){
     const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
     glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
@@ -1688,17 +1811,13 @@ function forceReveal(pid,cb){
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
 
-  // أونلاين: اللاعب المطلوب منه الكشف ليس المضيف — ينشر المضيف طلب الكشف
   if(ROOM && ROOM !== 'SOLO' && pid !== ME.id){
-    // هل هو بوت؟
     if(p.isBot){
-      // البوت يكشف تلقائياً — اختر أول ورقة
       const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
       glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
       SFX.cardReveal();
       checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
     }
-    // لاعب بشري آخر — المضيف ينشر طلب الكشف
     if(ME.host){
       G._rCb = cb; G._rPid = pid;
       dbSet(`rooms/${ROOM}/revealRequest`, { forId: pid, ts: Date.now() });
@@ -1708,13 +1827,11 @@ function forceReveal(pid,cb){
         clearReactionListener();
         await dbSet(`rooms/${ROOM}/revealRequest`, null);
         await dbSet(`rooms/${ROOM}/revealReply`, null);
-        // التطبيق سينفذ الكشف محلياً ثم يرسل التحديث
       });
     }
     return;
   }
 
-  // محلي — أنا صاحب الكشف
   G._rCb=cb; G._rPid=pid;
   const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onclick="pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
   openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
@@ -1730,7 +1847,6 @@ window.pickReveal = function(pid,ci){
   const cb=G._rCb; G._rCb=null; if(cb) cb();
 };
 
-// اللاعع غير المضيف يختار ورقته ويرسل للمضيف
 window.pickRevealOnline = function(ci){
   closeModal();
   dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: ci, ts: Date.now() });
@@ -1780,7 +1896,6 @@ window.confirmExchange = function(){
 };
 
 function pickTarget(prompt,cb){
-  // ═══ المشاهد لا يختار هدفاً ═══
   if(isSpectating()) return;
   const ops=opps();
   const extra=`<div class="targets">${ops.map(p=>`<div class="target-row" onclick="pickTgt('${p.id}')"><span class="t-av">${p.av}</span><span class="t-name">${p.name}</span><span class="t-coins">◈${p.coins}</span></div>`).join('')}</div>`;
@@ -1808,39 +1923,22 @@ function runBot(){
   if(!ops.length) return;
   const must = bot.coins >= 10;
 
-  // الهدف الأضعف (ورقة مكشوفة) أو عشوائي
   const weakTarget = ops.find(p => p.revealed.filter(Boolean).length === 1)
                   || ops[Math.floor(Math.random() * ops.length)];
-  // الهدف الأغنى عملات
   const richTarget = ops.reduce((a,b) => b.coins > a.coins ? b : a, ops[0]);
 
   let action;
 
-  /* ══════════════════════════════════════
-     سهل 😊
-     - يلعب Income معظم الوقت
-     - نادراً يهاجم
-     - لا ينفذ Coup إلا لو عنده 7+ وبشكل عشوائي
-  ══════════════════════════════════════ */
   if(diff === 'easy'){
     if(must){ action = { id:'Coup', target:weakTarget }; }
     else if(bot.coins >= 7 && Math.random() < 0.30){ action = { id:'Coup', target:weakTarget }; }
     else if(bot.coins >= 3 && Math.random() < 0.10){ action = { id:'Assassinate', target:weakTarget }; }
     else {
-      // معظم الوقت Income أو ForeignAid
       const w = ['Income','Income','Income','ForeignAid','ForeignAid','Tax','Steal'];
       const id = w[Math.floor(Math.random() * w.length)];
       action = { id, target: id==='Steal' ? richTarget : null };
     }
-  }
-
-  /* ══════════════════════════════════════
-     متوسط 😐
-     - يستخدم Tax كثيراً
-     - يهاجم بشكل معقول
-     - يضرب لو عنده 6+
-  ══════════════════════════════════════ */
-  else if(diff === 'medium'){
+  } else if(diff === 'medium'){
     if(must){ action = { id:'Coup', target:weakTarget }; }
     else if(bot.coins >= 6 && Math.random() < 0.50){ action = { id:'Coup', target:weakTarget }; }
     else if(bot.coins >= 3 && Math.random() < 0.30){ action = { id:'Assassinate', target:weakTarget }; }
@@ -1850,17 +1948,7 @@ function runBot(){
       const id = w[Math.floor(Math.random() * w.length)];
       action = { id, target: id==='Steal' ? richTarget : null };
     }
-  }
-
-  /* ══════════════════════════════════════
-     صعب 😈
-     - يضرب بسرعة ويستهدف الأقوى
-     - يفضل Assassinate بدل Income
-     - يستخدم Steal كثيراً
-     - يضرب Coup من 5 عملات
-  ══════════════════════════════════════ */
-  else {
-    // الهدف الأخطر: أقل ورقة مكشوفة (= أقوى) وأكثر عملات
+  } else {
     const dangerTarget = ops.sort((a,b)=>{
       const aScore = a.coins + (a.revealed.filter(Boolean).length * -3);
       const bScore = b.coins + (b.revealed.filter(Boolean).length * -3);
@@ -1872,7 +1960,6 @@ function runBot(){
     else if(bot.coins >= 3 && Math.random() < 0.55){ action = { id:'Assassinate', target:weakTarget }; }
     else if(Math.random() < 0.50){ action = { id:'Steal', target:dangerTarget }; }
     else {
-      // دائماً Tax — نادراً Income
       const w = ['Tax','Tax','Tax','Tax','ForeignAid','Steal','Steal'];
       const id = w[Math.floor(Math.random() * w.length)];
       action = { id, target: id==='Steal' ? dangerTarget : null };
@@ -1882,7 +1969,6 @@ function runBot(){
   execBot(bot, action);
 }
 
-/* ═══ ردود البوت على اللاعب — يدعم أونلاين عبر Firebase ═══ */
 function botActionWithReaction(bot, actionId, target, onConfirm){
   const BLOCK   = BLOCK_MAP[actionId] || [];
   const canChal = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
@@ -1890,7 +1976,6 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
 
   if(!canChal && !canBlock){ onConfirm(); return; }
 
-  // ═══ أونلاين: المضيف ينشر طلب الرد لكل اللاعبين البشريين الأحياء ═══
   if(ROOM && ROOM !== 'SOLO'){
     const humanOps = G.players.filter(p => !p.eliminated && !p.isBot && p.id !== bot.id);
     if(!humanOps.length){ onConfirm(); return; }
@@ -1900,7 +1985,7 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
     return;
   }
 
-  // ═══ SOLO: نافذة محلية للاعب ═══
+  // FIX 4: إذا كان المشاهد هو المستهدف الوحيد، لا نافذة
   if(isSpectating()){ setTimeout(()=>onConfirm(), 300); return; }
 
   const cn = CLAIM_MAP[actionId];
@@ -1959,7 +2044,6 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
   startTimer(30, ()=>{ glog(`⏱ انتهى وقتك — سُمح تلقائياً`); onConfirm(); });
 }
 
-// ═══ المضيف ينشر رد البوت لكل اللاعبين البشريين بالترتيب ═══
 async function publishBotReaction(bot, humanOps, i, actionId, target){
   if(!ME.host) return;
   if(i >= humanOps.length){
@@ -1968,12 +2052,22 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
     fn && fn();
     return;
   }
-  const opp   = humanOps[i];
+
+  // FIX 4: تخطي المشاهدين
+  const opp = humanOps[i];
+  const oppCurrent = G.players.find(p=>p.id===opp.id);
+  if(oppCurrent && oppCurrent.eliminated){
+    publishBotReaction(bot, humanOps, i+1, actionId, target);
+    return;
+  }
+
   const BLOCK = BLOCK_MAP[actionId] || [];
   const canBlock = BLOCK.length > 0 && (actionId !== 'Assassinate' || opp.id === target?.id);
   const canChal  = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
 
-  const req = {
+  // FIX 1: تنظيف أولاً
+  await dbSet(`rooms/${ROOM}/reactionReply`, null);
+  await dbSet(`rooms/${ROOM}/reaction`, {
     forId:     opp.id,
     actionId,
     actorId:   bot.id,
@@ -1988,9 +2082,8 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
     botId:     bot.id,
     botDiff:   bot.difficulty || DIFF,
     ts: Date.now()
-  };
-  await dbSet(`rooms/${ROOM}/reaction`, req);
-  await dbSet(`rooms/${ROOM}/reactionReply`, null);
+  });
+
   clearReactionListener();
 
   const replyPath = `rooms/${ROOM}/reactionReply`;
@@ -2006,6 +2099,10 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
       publishBotReaction(bot, humanOps, i+1, actionId, target);
 
     } else if(reply.type === 'challenge'){
+      // FIX 4: تحقق من أن المستجيب ليس مشاهداً
+      const respPlayer = G.players.find(p=>p.id===opp.id);
+      if(respPlayer && respPlayer.eliminated){ publishBotReaction(bot, humanOps, i+1, actionId, target); return; }
+
       SFX.challenge();
       glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
       const claimed = CLAIM_MAP[actionId];
@@ -2021,9 +2118,12 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
       }
 
     } else if(reply.type === 'block'){
+      // FIX 4: تحقق من أن المستجيب ليس مشاهداً
+      const respPlayer = G.players.find(p=>p.id===opp.id);
+      if(respPlayer && respPlayer.eliminated){ publishBotReaction(bot, humanOps, i+1, actionId, target); return; }
+
       SFX.block();
       glog(`🛡️ <span class="lh">${opp.name}</span> يعترض على البوت!`);
-      // البوت يقرر هل يتحدى الاعتراض
       const diff = bot.difficulty || DIFF;
       const hasCard = opp.cards.some((c,bi)=> BLOCK.includes(c) && !opp.revealed[bi]);
       const chalChance = diff==='hard' ? 0.60 : diff==='medium' ? 0.35 : 0.12;
@@ -2118,10 +2218,15 @@ function execBot(bot,action){
 const clonePlayers=()=>G.players.map(p=>({...p,cards:[...p.cards],revealed:[...p.revealed]}));
 const idx=(pid,arr)=>arr.findIndex(p=>p.id===pid);
 
+// FIX 1: pushUpdate مُصلح — ينتظر Firebase قبل المتابعة
 async function pushUpdate(u,logMsg){
   Object.assign(G,u);
-  if(ROOM&&ROOM!=='SOLO'){
-    await dbUpdate(`rooms/${ROOM}/game`, u);
+  if(ROOM && ROOM !== 'SOLO'){
+    try {
+      await dbUpdate(`rooms/${ROOM}/game`, u);
+    } catch(e) {
+      console.error('pushUpdate error:', e);
+    }
   }
   if(logMsg) glog(logMsg);
   renderGame();
@@ -2169,6 +2274,9 @@ function endGame(winner){
     logEvent(analytics, 'game_end', { winner: winner.name, isBot: winner.isBot });
   }
   if(winner.id===ME.id) SFX.win(); else SFX.lose();
+  // FIX 5: إخفاء شارة المشاهدة عند انتهاء اللعبة
+  const badge = document.getElementById('spectator-badge');
+  if(badge){ badge.classList.add('hidden'); setTimeout(()=>badge.remove(), 600); }
   showStats(endData);
 }
 
@@ -2179,7 +2287,7 @@ window.showStats = function(data){
   const others=players.filter(p=>p.id!==wid);
   const ranked=[winner,...others].filter(Boolean);
   const dur=data.startedAt?Math.round((Date.now()-data.startedAt)/60000):0;
-  document.getElementById('stats-sub').textContent=`${players.length} لاعبين · ${dur>0?dur+' دقيقة':'جولة منتهية'}`;
+  document.getElementById('stats-sub').textContent=`${players.length} لاععين · ${dur>0?dur+' دقيقة':'جولة منتهية'}`;
 
   const pod=document.getElementById('podium'); pod.innerHTML='';
   const po=ranked.length>=3?[ranked[1],ranked[0],ranked[2]]:ranked.length===2?[ranked[1],ranked[0]]:[ranked[0]];
@@ -2198,7 +2306,7 @@ window.showStats = function(data){
   });
 
   const sg=document.getElementById('stat-grid'); sg.innerHTML='';
-  [{icon:'👥',lbl:'اللاعبون',val:players.length,sub:'شاركوا'},
+  [{icon:'👥',lbl:'اللاععون',val:players.length,sub:'شاركوا'},
    {icon:'⏱',lbl:'المدة',val:dur>0?dur:'<1',sub:'دقيقة'},
    {icon:'🤖',lbl:'البوتات',val:players.filter(p=>p.isBot).length,sub:'شاركوا'},
    {icon:'🏦',lbl:'الخزينة',val:G?.treasury||0,sub:'◈ متبقية'}
@@ -2228,16 +2336,28 @@ window.showStats = function(data){
 
 window.playAgain = function(){
   SCREEN_HIST=[];
+  // FIX 3: تصفير السجل عند جولة جديدة
   ALL_LOG_ENTRIES=[];
+  const logEl = document.getElementById('log-entries');
+  if(logEl) logEl.innerHTML='';
+
   if(_lastData){
-    const me=_lastData.players.find(p=>!p.isBot)||{ name:ME.name||'اللاعب', av:ME.av||'🤴' };
+    const me=_lastData.players.find(p=>!p.isBot)||{ name:ME.name||'اللاعع', av:ME.av||'🤴' };
     const bots=_lastData.players.filter(p=>p.isBot);
     ME.id=uid(); ME.name=me.name; ME.av=me.av;
     const d=deck(); const pls=[];
     pls.push({ id:ME.id, name:ME.name, av:ME.av, isBot:false, coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false });
     bots.forEach((b,i)=>pls.push({ ...b, id:'bot_'+i, coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false }));
     ROOM='SOLO';
-    G={ status:'playing', players:pls, deck:d, treasury:Math.max(0,50-pls.length*2), turn:0, phase:'action', startedAt:Date.now() };
+
+    // FIX 5: إخفاء شارة المشاهدة
+    const oldBadge=document.getElementById('spectator-badge');
+    if(oldBadge) oldBadge.remove();
+    SPECTATING = false;
+
+    // FIX 6: ترتيب عشوائي لأول دور
+    const shuffled = shuf(pls);
+    G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now() };
     S('screen-game'); renderGame();
     glog(`⚔️ جولة جديدة! دور <span class="lh">${cur().name}</span>`);
     setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },1000);
@@ -2254,7 +2374,15 @@ window.leaveRoom = async function(){
     } catch{}
   }
   unsubAll();
-  ROOM=null; G=null; ALL_LOG_ENTRIES=[];
+  ROOM=null; G=null;
+  // FIX 3: تصفير السجل عند الخروج
+  ALL_LOG_ENTRIES=[];
+  const logEl = document.getElementById('log-entries');
+  if(logEl) logEl.innerHTML='';
+  // FIX 5: إخفاء شارة المشاهدة
+  const badge = document.getElementById('spectator-badge');
+  if(badge) badge.remove();
+  SPECTATING = false;
   history.replaceState({},'',location.pathname);
   S('screen-title');
 };
@@ -2268,31 +2396,56 @@ window.confirmLeave = function(){
 
 window.goSetupOnline = function(){ buildAv('av-host','host'); S('screen-setup-online'); };
 window.goJoin = function(){ buildAv('av-join','join'); S('screen-join'); };
-window.goSolo = function(){ buildAv('av-solo','solo'); refreshBotPreview(); S('screen-solo'); };
+window.goSolo = function(){
+  buildAv('av-solo','solo');
+  // إعادة ضبط الأسماء المخصصة عند فتح شاشة SOLO
+  BOT_CUSTOM_NAMES = [...DEFAULT_BOT_NAMES];
+  refreshBotPreview();
+  S('screen-solo');
+};
 window.setDiff = function(d,el){ DIFF=d; document.querySelectorAll('.diff-pill').forEach(b=>b.classList.remove('active')); el.classList.add('active'); refreshBotPreview(); };
+
+// ═══ FIX 2: البريفيو مع حقول تعديل اسم البوت ═══
 window.refreshBotPreview = function(){
   const n=+document.getElementById('solo-bots').value;
   const p=document.getElementById('bots-preview'); p.innerHTML='';
   const dLbl={ easy:'سهل 😊', medium:'متوسط 😐', hard:'صعب 😈' }[DIFF];
+
+  // حفظ الأسماء المدخلة حالياً قبل إعادة الرسم
+  const prevInputs = document.querySelectorAll('.bot-name-inp');
+  prevInputs.forEach((inp, i)=>{ if(i < BOT_CUSTOM_NAMES.length) BOT_CUSTOM_NAMES[i] = inp.value || DEFAULT_BOT_NAMES[i]; });
+
   for(let i=0;i<n;i++){
     const r=document.createElement('div'); r.className='bot-row';
-    r.innerHTML=`<span class="bot-row-av">${BOT_AVS[i]||'🤖'}</span><span class="bot-row-name">${BOT_NAMES[i]||'بوت '+(i+1)}</span><span class="bot-row-badge">${dLbl}</span>`;
+    r.innerHTML=`<span class="bot-row-av">${BOT_AVS[i]||'🤖'}</span>
+      <input class="bot-row-name-inp bot-name-inp" value="${BOT_CUSTOM_NAMES[i]||DEFAULT_BOT_NAMES[i]}" maxlength="20" placeholder="اسم البوت">
+      <span class="bot-row-badge">${dLbl}</span>`;
     p.appendChild(r);
   }
 };
+
 window.startSolo = function(){
-  const name=document.getElementById('solo-name').value.trim()||'اللاعب';
+  // حفظ الأسماء المخصصة من الحقول
+  const inputs = document.querySelectorAll('.bot-name-inp');
+  inputs.forEach((inp,i)=>{ BOT_CUSTOM_NAMES[i] = inp.value.trim() || DEFAULT_BOT_NAMES[i]; });
+
+  const name=document.getElementById('solo-name').value.trim()||'اللاعع';
   const botN=+document.getElementById('solo-bots').value;
   ME={ id:uid(), name, av:AV.solo||'🤴', host:true };
   const d=deck(); const pls=[];
   pls.push({ id:ME.id, name:ME.name, av:ME.av, isBot:false, coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false });
   for(let i=0;i<botN;i++)
-    pls.push({ id:'bot_'+i, name:BOT_NAMES[i]||'بوت '+(i+1), av:BOT_AVS[i]||'🤖', isBot:true, difficulty:DIFF, coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false });
+    pls.push({ id:'bot_'+i, name:BOT_CUSTOM_NAMES[i]||DEFAULT_BOT_NAMES[i], av:BOT_AVS[i]||'🤖', isBot:true, difficulty:DIFF, coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false });
   ROOM='SOLO';
   SPECTATING=false;
+  // FIX 3: تصفير السجل
   ALL_LOG_ENTRIES=[];
+  const logEl=document.getElementById('log-entries'); if(logEl) logEl.innerHTML='';
   const oldBadge=document.getElementById('spectator-badge'); if(oldBadge) oldBadge.remove();
-  G={ status:'playing', players:pls, deck:d, treasury:Math.max(0,50-pls.length*2), turn:0, phase:'action', startedAt:Date.now() };
+
+  // FIX 6: ترتيب عشوائي لأول دور
+  const shuffled = shuf(pls);
+  G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now() };
   S('screen-game'); renderGame();
   glog(`⚔️ بدأت المعركة! دور <span class="lh">${cur().name}</span>`);
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },1000);
@@ -2422,8 +2575,7 @@ function checkSpectator(){
   if(!me||SPECTATING) return;
   if(me.eliminated){
     SPECTATING=true;
-    // أغلق أي نافذة مفتوحة فوراً
-    closeModal();
+    closeModal(); // FIX 4: أغلق أي نافذة مفتوحة فوراً
     if(!document.getElementById('spectator-badge')){
       const badge=document.createElement('div');
       badge.id='spectator-badge'; badge.className='spectator-badge';
@@ -2436,7 +2588,7 @@ function checkSpectator(){
       const spectDiv=document.createElement('div'); spectDiv.className='spectator-hand';
       const alivePlayers=alive().filter(p=>p.id!==ME.id);
       spectDiv.innerHTML=`<div style="margin-bottom:10px;font-weight:700;color:var(--gold);">👁 أنت تشاهد — لقد خسرت!</div>
-        <div style="font-size:12px;color:var(--text-dim)">اللاعبون المتبقون: ${alivePlayers.map(p=>`${p.av} ${p.name}`).join(' · ')}</div>`;
+        <div style="font-size:12px;color:var(--text-dim)">اللاععون المتبقون: ${alivePlayers.map(p=>`${p.av} ${p.name}`).join(' · ')}</div>`;
       handEl.appendChild(spectDiv);
     }
     const aw=document.getElementById('action-wrap');
@@ -2453,7 +2605,7 @@ function setupDisconnectWatcher(){
     if(online.length<=1&&alive().length>1){
       const winner=alive().find(p=>!p.isBot&&p.online)||(alive()[0]);
       if(ME.host&&winner){
-        glog(`🏆 <span class="lh">${winner.name}</span> فاز لأن بقية اللاعبين خرجوا!`);
+        glog(`🏆 <span class="lh">${winner.name}</span> فاز لأن بقية اللاععين خرجوا!`);
         endGame(winner);
       }
     }
@@ -2507,7 +2659,6 @@ document.addEventListener('click', e=>{
   if(btn && !btn.disabled) SFX.click();
 }, true);
 
-/* ═══ خلفية متحركة — أقوى وأوضح في القائمة الرئيسية ═══ */
 (function initBG(){
   const cv=document.getElementById('bg-canvas');
   const ctx=cv.getContext('2d');
@@ -2559,7 +2710,6 @@ document.addEventListener('click', e=>{
   function draw(){
     ctx.clearRect(0,0,W,H);
     const lt=isLight();
-    // في القائمة الرئيسية — ضاعف الكثافة
     const titleMult = isTitle() ? 2.2 : 1.0;
 
     os.forEach(o=>{
