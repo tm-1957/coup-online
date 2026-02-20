@@ -518,9 +518,12 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <div id="screen-join" class="screen">
   <div class="glass-card form-card">
     <div class="form-title">🔑 الانضمام لغرفة</div>
+    <div id="join-invite-banner" style="display:none;background:rgba(201,168,76,.12);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;text-align:center;font-size:13px;color:var(--gold-lt);">
+      📩 تمت دعوتك! أدخل اسمك واضغط انضمام
+    </div>
     <div class="form-group">
       <div class="inp-label">اسمك</div>
-      <input class="inp" id="join-name" placeholder="أدخل اسمك" maxlength="20">
+      <input class="inp" id="join-name" placeholder="أدخل اسمك" maxlength="20" onkeydown="if(event.key==='Enter')joinRoom()">
     </div>
     <div class="form-group">
       <div class="inp-label">أفاتارك</div>
@@ -528,11 +531,11 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     </div>
     <div class="form-group">
       <div class="inp-label">كود الغرفة</div>
-      <input class="inp code-inp" id="join-code" placeholder="XXXX" maxlength="4">
+      <input class="inp code-inp" id="join-code" placeholder="XXXX" maxlength="4" oninput="this.value=this.value.toUpperCase()">
     </div>
     <div style="min-height:18px;text-align:center;font-size:12px;color:var(--crimson-lt);margin-bottom:4px;" id="join-err"></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button class="btn btn-green btn-full" onclick="joinRoom()">الانضمام →</button>
+      <button class="btn btn-green btn-full" onclick="joinRoom()"><span>الانضمام →</span></button>
       <button class="btn btn-dim btn-full" onclick="back()">← رجوع</button>
     </div>
   </div>
@@ -972,12 +975,22 @@ window.createRoom = async function(){
 };
 
 window.joinRoom = async function(){
-  const name=(document.getElementById('join-name').value.trim()||'ضيف');
+  const nameVal = document.getElementById('join-name').value.trim();
+  if(!nameVal){ 
+    const errEl=document.getElementById('join-err'); 
+    errEl.textContent='⚠️ أدخل اسمك أولاً';
+    document.getElementById('join-name').focus();
+    document.getElementById('join-name').style.borderColor='var(--crimson-lt)';
+    setTimeout(()=>{ errEl.textContent=''; document.getElementById('join-name').style.borderColor=''; }, 3000);
+    return; 
+  }
+  const name = nameVal;
   const c=document.getElementById('join-code').value.trim().toUpperCase();
   const errEl=document.getElementById('join-err'); errEl.textContent='';
   if(!c||c.length!==4){ errEl.textContent='أدخل كود صحيح (4 أحرف)'; return; }
   const btn = document.querySelector('#screen-join .btn-green');
-  if(btn){ btn.disabled=true; btn.querySelector('span').textContent='⏳ جاري الانضمام...'; }
+  const btnSpan = btn ? btn.querySelector('span') : null;
+  if(btn){ btn.disabled=true; if(btnSpan) btnSpan.textContent='⏳ جاري الانضمام...'; }
   try {
     const rd=await dbGet(`rooms/${c}`);
     if(!rd){ errEl.textContent='❌ الغرفة غير موجودة'; return; }
@@ -996,7 +1009,7 @@ window.joinRoom = async function(){
     console.error('joinRoom error:', e);
     errEl.textContent='❌ فشل الاتصال. تحقق من الإنترنت وحاول مجدداً.';
   } finally {
-    if(btn){ btn.disabled=false; btn.querySelector('span').textContent='الانضمام →'; }
+    if(btn){ btn.disabled=false; if(btnSpan) btnSpan.textContent='الانضمام →'; }
   }
 };
 
@@ -2556,7 +2569,13 @@ window.confirmLeave = function(){
 };
 
 window.goSetupOnline = function(){ buildAv('av-host','host'); S('screen-setup-online'); };
-window.goJoin = function(){ buildAv('av-join','join'); S('screen-join'); };
+window.goJoin = function(){ 
+  buildAv('av-join','join'); 
+  S('screen-join'); 
+  const banner=document.getElementById('join-invite-banner');
+  if(banner) banner.style.display='none';
+  setTimeout(()=>{ document.getElementById('join-name').focus(); }, 200);
+};
 window.goSolo = function(){
   buildAv('av-solo','solo');
   BOT_CUSTOM_NAMES = [...DEFAULT_BOT_NAMES];
@@ -2866,7 +2885,14 @@ window.addEventListener('load',()=>{
   }
   const p=new URLSearchParams(location.search);
   const rc=p.get('room');
-  if(rc){ document.getElementById('join-code').value=rc.toUpperCase(); goJoin(); }
+  if(rc){
+    buildAv('av-join','join');
+    S('screen-join');
+    document.getElementById('join-code').value=rc.toUpperCase().slice(0,4);
+    const banner=document.getElementById('join-invite-banner');
+    if(banner) banner.style.display='block';
+    setTimeout(()=>{ document.getElementById('join-name').focus(); }, 300);
+  }
 });
 </script>
 </body>
