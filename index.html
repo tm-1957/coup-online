@@ -134,7 +134,6 @@ body.light .player-row{background:rgba(0,0,0,.03);}
 .player-row.empty{opacity:.3;border-style:dashed;}
 .kick-btn-lobby{background:rgba(155,26,26,.12);border:1px solid rgba(155,26,26,.3);border-radius:6px;color:var(--crimson-lt);font-size:11px;padding:3px 8px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;flex-shrink:0;}
 .kick-btn-lobby:hover{background:rgba(155,26,26,.25);border-color:rgba(155,26,26,.5);}
-/* ═══ زر تبديل الهوست في الاستقبال ═══ */
 .transfer-btn-lobby{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--gold);font-size:11px;padding:3px 8px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;flex-shrink:0;margin-left:4px;}
 .transfer-btn-lobby:hover{background:rgba(201,168,76,.2);border-color:var(--gold);}
 
@@ -246,7 +245,6 @@ body.light .modal{background:var(--bg1);border-color:var(--border-lt);}
 .timer-track{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
 .timer-bar{height:100%;background:linear-gradient(90deg,var(--crimson-lt),var(--gold));border-radius:3px;transition:width 1s linear;}
 
-/* ═══ قائمة الادعاء — اختر شخصيتك ═══ */
 .claim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;}
 .claim-card{border-radius:var(--radius-sm);padding:10px 6px 8px;border:2px solid rgba(255,255,255,.08);cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(255,255,255,.02);transition:all .2s;}
 .claim-card:hover{transform:translateY(-3px);}
@@ -263,14 +261,12 @@ body.light .modal{background:var(--bg1);border-color:var(--border-lt);}
 .claim-note{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:var(--radius-sm);padding:8px 12px;font-size:11px;color:var(--text-dim);text-align:center;line-height:1.6;}
 .claim-note b{color:var(--gold-lt);}
 
-/* ═══ قائمة طرد اللاعب داخل اللعبة ═══ */
 .kick-list{display:flex;flex-direction:column;gap:6px;}
 .kick-player-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.12);border-radius:var(--radius-sm);}
 .kick-player-name{flex:1;font-weight:700;}
 .kick-btn{background:rgba(155,26,26,.15);border:1px solid rgba(155,26,26,.4);border-radius:6px;color:var(--crimson-lt);font-size:12px;padding:5px 12px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .2s;}
 .kick-btn:hover{background:rgba(155,26,26,.3);border-color:var(--crimson-lt);}
 
-/* ═══ قائمة تبديل الهوست ═══ */
 .transfer-list{display:flex;flex-direction:column;gap:6px;}
 .transfer-player-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.12);border-radius:var(--radius-sm);}
 .transfer-player-name{flex:1;font-weight:700;}
@@ -648,7 +644,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="game-footer">© 2026 <span style="color:var(--gold-lt);font-weight:700;">Turki</span> & <span style="color:var(--gold-lt);font-weight:700;">abu essam</span> — <span style="color:var(--gold);letter-spacing:2px;">COUP™</span></div>
 </div>
 
-<!-- Game Sheet — الترتيب المطلوب: 1.رجوع 2.قواعد 3.طرد لاعب 4.تبديل هوست 5.إعدادات -->
+<!-- Game Sheet -->
 <div class="sheet-bg" id="game-sheet" onclick="if(event.target===this)closeSheet('game-sheet')">
   <div class="sheet">
     <div class="sheet-title">☰ قائمة اللعبة</div>
@@ -662,13 +658,11 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="sheet-item-text"><div class="sheet-item-title">قواعد اللعبة</div><div class="sheet-item-sub">مرجع سريع</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
-    <!-- الخيار 3: طرد لاعب (للمضيف فقط) -->
     <div class="sheet-item" id="kick-sheet-item" onclick="closeSheet('game-sheet');openKickModal()" style="display:none;">
       <span class="sheet-item-icon">🚫</span>
       <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--crimson-lt)">طرد لاعب</div><div class="sheet-item-sub">إزالة لاعب من الجلسة</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
-    <!-- الخيار 4: تبديل الهوست (للمضيف فقط) -->
     <div class="sheet-item" id="transfer-sheet-item" onclick="closeSheet('game-sheet');openTransferHostModal()" style="display:none;">
       <span class="sheet-item-icon">👑</span>
       <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--gold)">تبديل المضيف</div><div class="sheet-item-sub">نقل صلاحيات الهوست للاعب آخر</div></div>
@@ -749,7 +743,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- SETTINGS -->
 <div id="screen-settings" class="screen">
   <div class="glass-card settings-card">
-    <div class="settings-title" id="lbl-settings-title">⚙️ الإعدادات</div>
+    <div class="settings-title">⚙️ الإعدادات</div>
     <div class="settings-section">الصوت</div>
     <div class="setting-row">
       <div><div class="setting-label">🔊 أصوات التأثيرات</div></div>
@@ -789,7 +783,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
         <button class="seg-btn" onclick="setSize('lg',this)">ك</button>
       </div>
     </div>
-    <button class="btn btn-green btn-full" style="margin-top:8px;" onclick="back()"><span id="lbl-save-btn">✓ حفظ والعودة</span></button>
+    <button class="btn btn-green btn-full" style="margin-top:8px;" onclick="back()">✓ حفظ والعودة</button>
   </div>
 </div>
 
@@ -877,7 +871,13 @@ let AV   = { host:'🤴', join:'🤴', solo:'🤴' };
 let DIFF = 'medium';
 let SCREEN_HIST = [];
 let CUR_SCREEN  = 'screen-title';
+
+// ══════════════════════════════════════════════════════
+// FIX: متغير واحد للتايمر — يمنع تشغيل تايمرين في نفس الوقت
+// ══════════════════════════════════════════════════════
 let _tmr        = null;
+let _timerActive = false; // حارس إضافي
+
 let _lastData   = null;
 let _unsubs     = [];
 let ALL_LOG_ENTRIES = [];
@@ -901,6 +901,10 @@ window.closeModal = function(){
   clearTimer();
 };
 window.openModal = function(title,body,actions=[],extra=''){
+  // ══════════════════════════════════════════════════════
+  // FIX: أوقف أي تايمر قديم قبل فتح مودال جديد
+  // ══════════════════════════════════════════════════════
+  clearTimer();
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=body;
   document.getElementById('modal-extra').innerHTML=extra;
@@ -1053,23 +1057,19 @@ function setupLobbyListeners(){
       leaveRoom();
     }
   });
-  // ═══ الاستماع لتبديل الهوست ═══
   dbOn(`rooms/${ROOM}/hostTransfer`, transferData=>{
     if(!transferData) return;
     if(transferData.newHostId === ME.id){
       ME.host = true;
       glog(`👑 <span class="lh">${ME.name}</span> أصبح المضيف الجديد!`);
-      // تحديث Firebase
       dbUpdate(`rooms/${ROOM}`, { hostId: ME.id });
       dbSet(`rooms/${ROOM}/players/${ME.id}`, { ...ME, host: true, online: true, ts: Date.now() });
       dbSet(`rooms/${ROOM}/hostTransfer`, null);
-      // إعادة ضبط المستمعين لأن المضيف تغير
       startHostListeners();
     }
   });
 }
 
-// ═══ FIX 7: عرض لاعبي الاستقبال مع زر طرد وتبديل هوست ═══
 function renderLobbyPlayers(pd){
   pd=pd||{};
   const maxP=+(document.getElementById('max-players')?.value||4);
@@ -1103,11 +1103,9 @@ function renderLobbyPlayers(pd){
   }
 }
 
-// ═══ تبديل الهوست في الاستقبال ═══
 window.transferHostLobby = function(pid, pname){
   openModal(`👑 تبديل الهوست`, `هل تريد نقل صلاحيات المضيف لـ <b>${pname}</b>؟<br><small style="color:var(--text-dim)">ستفقد صلاحية إدارة الغرفة</small>`, [
     { label:'نعم، انقل', cls:'btn-gold', cb: async ()=>{
-      // إزالة host من المضيف الحالي
       await dbUpdate(`rooms/${ROOM}/players/${ME.id}`, { host: false });
       await dbUpdate(`rooms/${ROOM}/players/${pid}`, { host: true });
       await dbSet(`rooms/${ROOM}/hostTransfer`, { newHostId: pid, fromId: ME.id, ts: Date.now() });
@@ -1194,7 +1192,6 @@ function startLocalGame(gs){
         leaveRoom();
       }
     });
-    // ═══ الاستماع لتبديل الهوست أثناء اللعبة ═══
     dbOn(`rooms/${ROOM}/hostTransfer`, transferData=>{
       if(!transferData || transferData.processed) return;
       if(transferData.newHostId === ME.id){
@@ -1210,7 +1207,6 @@ function startLocalGame(gs){
   setTimeout(()=>{ if(ME.host && G?.players?.[G.turn]?.isBot) runBot(); }, 1200);
 }
 
-// ═══ تشغيل مستمعي الهوست (تُستخدم عند بدء اللعبة أو تبديل الهوست) ═══
 function startHostListeners(){
   dbOn(`rooms/${ROOM}/revealReply`, async reply => {
     if(!reply) return;
@@ -1298,31 +1294,14 @@ const BLOCK_MAP = { ForeignAid:['Duke'], Steal:['Captain','Ambassador'], Assassi
 const CLAIM_MAP = { Tax:'Duke', Exchange:'Ambassador', Steal:'Captain', Assassinate:'Assassin' };
 const CAN_CHAL  = ['Tax','Exchange','Steal','Assassinate','ForeignAid'];
 
-/* ═══════════════════════════════════════════════════════════════════
-   نظام اختيار الشخصية المُدّعاة (BLUFF SYSTEM)
-   
-   المشكلة: الأكشنات مربوطة بشخصية محددة تلقائياً، لكن في COUP
-   يمكنك ادعاء أي شخصية حتى لو لا تملكها (الكذب هو جوهر اللعبة).
-   
-   الحل: عند الضغط على أكشن يحتاج شخصية (Tax/Steal/Exchange/Assassinate)،
-   نعرض نافذة اختيار الشخصية التي تريد ادعاءها.
-   
-   - Tax → يمكنك ادعاء Duke (افتراضي) أو أي شخصية أخرى
-   - Steal → يمكنك ادعاء Captain (افتراضي) أو Ambassador
-   - Exchange → يمكنك ادعاء Ambassador (افتراضي)
-   - Assassinate → يمكنك ادعاء Assassin (افتراضي)
-═══════════════════════════════════════════════════════════════════ */
-
 const ACTION_CLAIM_OPTIONS = {
   Tax:         { default:'Duke',      options:['Duke','Captain','Assassin','Contessa','Ambassador'], desc:'أي شخصية يمكنها أخذ الضريبة نظرياً' },
   Steal:       { default:'Captain',   options:['Captain','Ambassador','Duke','Assassin','Contessa'], desc:'Captain أو Ambassador يحجبان السرقة أيضاً' },
   Exchange:    { default:'Ambassador',options:['Ambassador','Duke','Captain','Assassin','Contessa'], desc:'اختر ما تدّعيه' },
   Assassinate: { default:'Assassin',  options:['Assassin','Duke','Captain','Ambassador','Contessa'], desc:'اختر ما تدّعيه' },
   ForeignAid:  { default:null,        options:[], desc:'' },
-  Tax_block:   { default:'Duke',      options:['Duke'], desc:'' },
 };
 
-// نافذة اختيار الشخصية المُدّعاة
 function pickClaimThenDo(actionId, onClaim){
   const cfg = ACTION_CLAIM_OPTIONS[actionId];
   if(!cfg || !cfg.options.length){ onClaim(CLAIM_MAP[actionId]); return; }
@@ -1356,6 +1335,9 @@ function pickClaimThenDo(actionId, onClaim){
     <span style="color:var(--crimson-lt);font-size:10px;">⚠️ تذكر: البلف قد يكشفه أي خصم بالتحدي!</span>
   </div>`;
 
+  // ══════════════════════════════════════════════════════
+  // FIX: نافذة الادعاء لا تشغّل تايمر — لا حاجة لها
+  // ══════════════════════════════════════════════════════
   openModal(
     `🎭 ما الشخصية التي تدّعيها؟`,
     `أنت تريد تنفيذ <b>${actionId}</b> — اختر الشخصية التي ستدّعيها:`,
@@ -1365,7 +1347,6 @@ function pickClaimThenDo(actionId, onClaim){
 
   window._claimPick = (cn) => {
     closeModal();
-    // تحديث CLAIM_MAP مؤقتاً للأكشن الحالي
     onClaim(cn);
   };
 }
@@ -1418,7 +1399,6 @@ function doAction(id){
     }); return;
   }
   if(id==='Tax'){
-    // ═══ اختيار الشخصية المدّعاة ═══
     pickClaimThenDo('Tax', (claimedAs)=>{
       askReaction('Tax',null,claimedAs,()=>{
         const np=clonePlayers(); const mi=idx(ME.id,np); np[mi].coins+=3;
@@ -1473,21 +1453,14 @@ function doAction(id){
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   نظام الردود — askReaction الآن يستقبل claimedAs
-   وتُستخدم في doChallengePid لمعرفة ما ادّعاه اللاعب فعلاً
-══════════════════════════════════════════════════════════════ */
-
 let _reactionSuccess = null;
 let _reactionUnsub   = null;
-// الشخصية المدّعاة الحالية (للتحقق عند التحدي)
 let _currentClaimedAs = null;
 
 function clearReactionListener(){
   if(_reactionUnsub){ _reactionUnsub(); _reactionUnsub=null; }
 }
 
-// askReaction الآن يستقبل claimedAs كمعامل إضافي
 function askReaction(actionId, target, claimedAs, onSuccess){
   _currentClaimedAs = claimedAs || CLAIM_MAP[actionId] || null;
   const canBlock = !!BLOCK_MAP[actionId];
@@ -1592,7 +1565,6 @@ async function publishReaction(ops, i, actionId, target, claimedAs){
     if(reply.type === 'allow'){
       glog(`✅ <span class="lh">${opp.name}</span> سمح`);
       publishReaction(ops, i+1, actionId, target, claimedAs);
-
     } else if(reply.type === 'challenge'){
       const oppPlayer = G.players.find(p=>p.id===opp.id);
       if(oppPlayer && oppPlayer.eliminated){ publishReaction(ops, i+1, actionId, target, claimedAs); return; }
@@ -1600,7 +1572,6 @@ async function publishReaction(ops, i, actionId, target, claimedAs){
       SFX.challenge();
       const fn = _reactionSuccess; _reactionSuccess = null;
       doChallengePid(opp.id, actionId, claimedAs, fn);
-
     } else if(reply.type === 'block'){
       const oppPlayer = G.players.find(p=>p.id===opp.id);
       if(oppPlayer && oppPlayer.eliminated){ publishReaction(ops, i+1, actionId, target, claimedAs); return; }
@@ -1608,7 +1579,6 @@ async function publishReaction(ops, i, actionId, target, claimedAs){
       SFX.block();
       const fn = _reactionSuccess; _reactionSuccess = null;
       publishBlockChallenge(opp, actionId, blockCards, fn);
-
     } else if(reply.type === 'timeout'){
       glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`);
       publishReaction(ops, i+1, actionId, target, claimedAs);
@@ -1726,7 +1696,7 @@ function showReactionModal(req){
     <b style="font-size:15px">${req.actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>${targetTxt}`;
 
   const sendReply = async type => {
-    clearTimer();
+    clearTimer(); // ← أوقف التايمر فوراً عند الضغط
     await dbSet(`rooms/${ROOM}/reactionReply`, { type, byId: ME.id, ts: Date.now() });
   };
 
@@ -1746,6 +1716,10 @@ function showReactionModal(req){
   }
   openModal(`${myP().av} ${myP().name} — ماذا تفعل؟`, body, actions);
   SFX.modal();
+  // ══════════════════════════════════════════════════════
+  // FIX: التايمر يُشغَّل مرة واحدة فقط هنا
+  // openModal نفسه يستدعي clearTimer أولاً، فلا خطر تكرار
+  // ══════════════════════════════════════════════════════
   startTimer(50, ()=> sendReply('timeout'));
 }
 
@@ -1760,23 +1734,18 @@ function showBlockChallengeModal(req){
     `🛡️ ${req.blockerAv} ${req.blockerName} يعترض`,
     `يدّعي امتلاك: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">هل تقبل الاعتراض أم تتحدّاه؟</small>`,
     [
-      { label:'✅ أقبل', cls:'btn-green', cb:()=> dbSet(`rooms/${ROOM}/reactionReply`,{type:'accept',byId:ME.id,ts:Date.now()}) },
-      { label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{ SFX.challenge(); dbSet(`rooms/${ROOM}/reactionReply`,{type:'challenge',byId:ME.id,ts:Date.now()}); } }
+      { label:'✅ أقبل', cls:'btn-green', cb:()=>{ clearTimer(); dbSet(`rooms/${ROOM}/reactionReply`,{type:'accept',byId:ME.id,ts:Date.now()}); } },
+      { label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{ clearTimer(); SFX.challenge(); dbSet(`rooms/${ROOM}/reactionReply`,{type:'challenge',byId:ME.id,ts:Date.now()}); } }
     ]
   );
   startTimer(50, ()=> dbSet(`rooms/${ROOM}/reactionReply`,{type:'timeout',byId:ME.id,ts:Date.now()}));
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   doChallengePid الآن يستقبل claimedAs
-   يتحقق من الورقة التي ادّعاها اللاعع فعلاً (وليس الافتراضية)
-═══════════════════════════════════════════════════════════════════ */
 function doChallengePid(challengerId, actionId, claimedAs, onSuccess){
   const challenger = G.players.find(p => p.id === challengerId);
   const me = myP();
   const claimed = claimedAs || CLAIM_MAP[actionId];
   if(!claimed){ onSuccess && onSuccess(); return; }
-  // البحث عن الورقة المُدّعاة فعلاً
   const ci = me.cards.findIndex((c,i) => c===claimed && !me.revealed[i]);
   if(ci !== -1){
     glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> تحدّى — ${me.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
@@ -1787,10 +1756,16 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess){
   }
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// FIX الرئيسي: askNext — حذف openModal الداخلي ونقله لدالة منفصلة
+// المشكلة كانت: askNext تفتح مودال للاعب البشري ثم تدخل في loop بسبب
+// إعادة الاستدعاء بعد ما البوت "يسمح"، فيُشغَّل تايمر جديد فوق القديم.
+// الحل: كل خطوة في askNext تستدعي clearTimer أولاً قبل أي شيء.
+// ══════════════════════════════════════════════════════════════════════
 function askNext(ops, i, actionId, target, claimedAs, onSuccess){
   if(i >= ops.length){ clearTimer(); onSuccess(); return; }
   const opp  = ops[i];
-  const next = () => askNext(ops, i+1, actionId, target, claimedAs, onSuccess);
+  const next = () => { clearTimer(); askNext(ops, i+1, actionId, target, claimedAs, onSuccess); };
 
   const blockCards = BLOCK_MAP[actionId] || [];
   const canBlock = blockCards.length > 0 &&
@@ -1807,6 +1782,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
 
     if(canBlock && Math.random() < cfg.blk){
       setTimeout(()=>{
+        clearTimer(); // ← FIX: أوقف أي تايمر قبل قرار البوت
         glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
         const hasCard = opp.cards.some((c,ci2)=> BLOCK_MAP[actionId]?.includes(c) && !opp.revealed[ci2])
                       || Math.random() < cfg.hasCard;
@@ -1815,10 +1791,12 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
       }, diff==='hard'?500:700);
     } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
+        clearTimer(); // ← FIX
         glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
         doChallenge(opp, actionId, claimedAs, onSuccess);
       }, diff==='hard'?500:800);
     } else {
+      // البوت يسمح — لا تفتح مودال، فقط انتقل للتالي
       setTimeout(()=>next(), diff==='easy'?200:350);
     }
     return;
@@ -1827,13 +1805,19 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
   if(opp.eliminated){ setTimeout(()=>next(), 100); return; }
   if(opp.id === ME?.id && isSpectating()){ setTimeout(()=>next(), 200); return; }
 
+  // ══════════════════════════════════════════════════════
+  // FIX: clearTimer قبل فتح مودال اللاعب البشري
+  // هذا يمنع تراكم التايمرات بين جولات متعددة
+  // ══════════════════════════════════════════════════════
+  clearTimer();
+
   const me  = myP();
   const cn  = claimedAs || CLAIM_MAP[actionId];
   const body = `<b style="color:var(--gold-lt)">${me.av} ${me.name}</b> يدّعي:<br>
     <b style="font-size:15px">${actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>
     ${target ? `<br>الهدف: <b>${target.av} ${target.name}</b>` : ''}`;
   const actions = [
-    { label:'✅ أسمح', cls:'btn-green', cb:()=>{ glog(`✅ <span class="lh">${opp.name}</span> سمح`); next(); } },
+    { label:'✅ أسمح', cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${opp.name}</span> سمح`); next(); } },
   ];
   if(canChal) actions.push({
     label:'❓ أتحدّى!', cls:'btn-red',
@@ -1846,35 +1830,55 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
       cb:()=>{ clearTimer(); SFX.block(); doBlock(opp, actionId, blockCards, onSuccess); }
     });
   }
+  // openModal يستدعي clearTimer تلقائياً الآن — لا خطر تكرار
   openModal(`${opp.av} ${opp.name} — ماذا تفعل؟`, body, actions);
   SFX.modal();
   startTimer(50, ()=>{ glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`); next(); });
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// FIX التايمر — clearTimer يضمن إيقاف كل شيء نظيفاً
+// _timerActive يمنع تشغيل تايمرين في نفس الوقت
+// ══════════════════════════════════════════════════════════════════════
 function clearTimer(){
+  _timerActive = false;
   if(_tmr){ clearInterval(_tmr); _tmr=null; }
   const b=document.getElementById('timer-block'); if(b) b.remove();
 }
-function startTimer(sec,onEnd){
-  clearTimer();
+
+function startTimer(sec, onEnd){
+  // ← FIX: إذا في تايمر شغّال لا تشغّل ثاني
+  if(_timerActive) return;
+  _timerActive = true;
+
   setTimeout(()=>{
-    const modal=document.querySelector('.modal'); if(!modal) return;
+    if(!_timerActive) return; // أُلغي قبل ما يبدأ
+    const modal=document.querySelector('.modal'); if(!modal){ clearTimer(); return; }
+    
+    // إزالة أي تايمر قديم داخل المودال
+    const oldBlock = document.getElementById('timer-block');
+    if(oldBlock) oldBlock.remove();
+
     const wrap=document.createElement('div'); wrap.id='timer-block'; wrap.className='timer-wrap';
     wrap.innerHTML=`<div class="timer-row"><span class="timer-lbl">⏱ وقت القرار</span><span class="timer-num" id="t-n">${sec}</span></div><div class="timer-track"><div class="timer-bar" id="t-b"></div></div>`;
-    modal.insertBefore(wrap,modal.querySelector('.modal-actions'));
+    modal.insertBefore(wrap, modal.querySelector('.modal-actions'));
     let left=sec;
     _tmr=setInterval(()=>{
+      if(!_timerActive){ clearInterval(_tmr); _tmr=null; return; }
       left--;
       const tn=document.getElementById('t-n'); const tb=document.getElementById('t-b');
       if(tn) tn.textContent=left;
       if(tb){ tb.style.width=(left/sec*100)+'%'; if(left/sec<0.3) tb.style.background='var(--crimson-lt)'; }
       if(tn&&left<=5) tn.style.color='var(--crimson-lt)';
-      if(left<=0){ clearTimer(); closeModal(); onEnd(); }
+      if(left<=0){
+        clearTimer(); // ← يوقف الـ interval ويضع _timerActive=false
+        closeModal();
+        onEnd();
+      }
     },1000);
   },80);
 }
 
-// doChallenge يستقبل claimedAs
 function doChallenge(challenger, actionId, claimedAs, onSuccess){
   const me = myP();
   const claimed = claimedAs || CLAIM_MAP[actionId];
@@ -1893,12 +1897,14 @@ function doBlock(blocker, actionId, blockCards, onSuccess){
   if(isSpectating()){ nextTurn(); return; }
 
   const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
+  clearTimer(); // ← FIX: أوقف التايمر السابق قبل فتح مودال الاعتراض
   openModal(
     `🛡️ ${blocker.av} ${blocker.name} يعترض`,
     `يدّعي امتلاك: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">${myP().name} — هل تقبل أم تتحدّى؟</small>`,
     [
-      { label:'✅ أقبل', cls:'btn-green', cb:()=>{ glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`); nextTurn(); } },
+      { label:'✅ أقبل', cls:'btn-green', cb:()=>{ clearTimer(); glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`); nextTurn(); } },
       { label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{
+        clearTimer();
         const ci=blocker.cards.findIndex((c,i)=>blockCards.includes(c)&&!blocker.revealed[i]);
         if(ci!==-1){
           const card=blocker.cards[ci];
@@ -1911,6 +1917,7 @@ function doBlock(blocker, actionId, blockCards, onSuccess){
       }},
     ]
   );
+  startTimer(50, ()=>{ glog(`⏱ وقت انتهى — قُبل الاعتراض`); nextTurn(); });
 }
 
 function forceReveal(pid,cb){
@@ -1954,6 +1961,7 @@ function forceReveal(pid,cb){
   }
 
   G._rCb=cb; G._rPid=pid;
+  clearTimer(); // ← FIX: أوقف التايمر قبل مودال اختيار الورقة
   const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onclick="pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
   openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
 }
@@ -2026,6 +2034,7 @@ function pickTarget(prompt,cb){
 window.pickTgt = function(pid){ closeModal(); const cb=G._tCb; G._tCb=null; if(cb) cb(G.players.find(p=>p.id===pid)); };
 
 function nextTurn(){
+  clearTimer(); // ← FIX: تأكد إيقاف التايمر عند أي nextTurn
   const al=alive(); if(al.length<=1){ endGame(al[0]); return; }
   let nt=G.turn, s=0;
   do{ nt=(nt+1)%G.players.length; s++; if(s>G.players.length){ endGame(al[0]); return; } }
@@ -2070,7 +2079,7 @@ function runBot(){
       action = { id, target: id==='Steal' ? richTarget : null };
     }
   } else {
-    const dangerTarget = ops.sort((a,b)=>{
+    const dangerTarget = [...ops].sort((a,b)=>{
       const aScore = a.coins + (a.revealed.filter(Boolean).length * -3);
       const bScore = b.coins + (b.revealed.filter(Boolean).length * -3);
       return bScore - aScore;
@@ -2101,64 +2110,20 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
   if(!ops.length){ onConfirm(); return; }
 
   if(!ROOM || ROOM === 'SOLO'){
-    const claimedAs = CLAIM_MAP[actionId];
-    askNext(ops.filter(p=>!p.isBot&&p.id===ME.id), 0, actionId, target, claimedAs, onConfirm);
-    // بوت يسأل اللاعب البشري فقط إذا كان ليس مشاهداً
     if(isSpectating()){ setTimeout(()=>onConfirm(), 300); return; }
 
-    const cn = CLAIM_MAP[actionId];
-    const body = `<b style="color:var(--gold-lt)">${bot.av} ${bot.name}</b> يدّعي:<br>
-      <b style="font-size:16px">${actionId}${cn ? ` (${CARDS[cn].icon} ${cn})` : ''}</b>
-      ${target ? `<br>الهدف: <b>${target.av} ${target.name}</b>` : ''}`;
-    const acts = [
-      { label:'✅ أسمح', cls:'btn-green', cb:()=>{ glog(`✅ ${myP().name} سمح`); onConfirm(); } }
-    ];
-    if(canChal) acts.push({
-      label:'❓ أتحدّى!', cls:'btn-red',
-      cb:()=>{
-        SFX.challenge();
-        const ci = bot.cards.findIndex((c,i)=> c===cn && !bot.revealed[i]);
-        if(ci !== -1){
-          glog(`❓ ${myP().name} تحدّى — <span class="lh">${bot.name}</span> يملك ${CARDS[cn].icon} ${cn}! فشل التحدي`);
-          forceReveal(ME.id, ()=>{ replaceCard(bot.id, cn); onConfirm(); });
-        } else {
-          glog(`❓ ${myP().name} كشف البلف! <span class="lh">${bot.name}</span> كان يكذب`);
-          forceReveal(bot.id, ()=>nextTurn());
-        }
-      }
-    });
-    if(canBlock){
-      const lbl = BLOCK.map(c=>`${CARDS[c].icon} ${c}`).join('/');
-      acts.push({
-        label:`🛡️ اعترض (${lbl})`, cls:'',
-        cb:()=>{
-          SFX.block();
-          const me = myP();
-          const diff2 = bot.difficulty || DIFF;
-          const hasCard = me.cards.some((c,i)=> BLOCK.includes(c) && !me.revealed[i]);
-          const chalChance = diff2==='hard' ? 0.60 : diff2==='medium' ? 0.35 : 0.12;
-          if(!hasCard || Math.random() < chalChance){
-            setTimeout(()=>{
-              glog(`❓ <span class="lh">${bot.name}</span> يتحدّى اعتراضك!`);
-              if(hasCard){
-                const card = me.cards.find((c,i)=> BLOCK.includes(c) && !me.revealed[i]);
-                glog(`🛡️ ${me.name} يملك ${card}! اعتراضه صحيح`);
-                forceReveal(bot.id, ()=>{ replaceCard(ME.id, card); nextTurn(); });
-              } else {
-                glog(`❌ ${me.name} كان يكذب في الاعتراض! يخسر ورقة`);
-                forceReveal(ME.id, ()=>onConfirm());
-              }
-            }, 600);
-          } else {
-            glog(`🛡️ ${me.name} اعترض — <span class="lh">${bot.name}</span> قبل الاعتراض`);
-            nextTurn();
-          }
-        }
-      });
+    const humanOps = ops.filter(p => !p.isBot);
+    if(!humanOps.length){
+      // لا لاعبون بشريون — تحقق من البوتات الأخرى فقط
+      askNext(ops.filter(p=>p.isBot), 0, actionId, target, CLAIM_MAP[actionId], onConfirm);
+      return;
     }
-    openModal(`${bot.av} ${bot.name} يلعب — ماذا تفعل؟`, body, acts);
-    SFX.modal();
-    startTimer(30, ()=>{ glog(`⏱ انتهى وقتك — سُمح تلقائياً`); onConfirm(); });
+
+    // ══════════════════════════════════════════════════════
+    // FIX: البوت يسأل البشري مرة واحدة فقط، ليس loop
+    // askNext يتولى الترتيب الصحيح للبوتات والبشر
+    // ══════════════════════════════════════════════════════
+    askNext(ops, 0, actionId, target, CLAIM_MAP[actionId], onConfirm);
     return;
   }
 
@@ -2385,7 +2350,6 @@ window.openEventLogModal = function(){
   );
 };
 
-// ═══ تبديل الهوست أثناء اللعبة ═══
 window.openTransferHostModal = function(){
   if(!G || !ME.host) return;
   const humanPlayers = G.players.filter(p => !p.isBot && p.id !== ME.id && !p.eliminated);
@@ -2415,7 +2379,6 @@ window.confirmTransferHost = async function(pid, pname){
   ]);
 };
 
-// ═══ طرد لاعب من اللعبة ═══
 window.openKickModal = function(){
   if(!G || !ME.host) return;
   const humanPlayers = G.players.filter(p => !p.isBot && p.id !== ME.id && !p.eliminated);
@@ -2516,6 +2479,7 @@ window.showStats = function(data){
 window.playAgain = function(){
   SCREEN_HIST=[];
   ALL_LOG_ENTRIES=[];
+  clearTimer(); // ← FIX: أوقف أي تايمر قبل جولة جديدة
   const logEl = document.getElementById('log-entries');
   if(logEl) logEl.innerHTML='';
 
@@ -2543,6 +2507,7 @@ window.playAgain = function(){
 };
 
 window.leaveRoom = async function(){
+  clearTimer(); // ← FIX: أوقف التايمر عند مغادرة الغرفة
   if(ROOM&&ROOM!=='SOLO'&&ME.id){
     try{
       await dbUpdate(`rooms/${ROOM}/players/${ME.id}`,{ online:false });
