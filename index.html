@@ -31,6 +31,8 @@ body.light {
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:'Tajawal',sans-serif;background:var(--bg0);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;transition:background .6s,color .4s;font-size:var(--base-font);}
+/* ── إصلاح الجوال: إلغاء تأخير 300ms على كل العناصر التفاعلية ── */
+button,a,[onclick],[role="button"],.btn,.action-btn,.menu-btn,.modal-actions button,.card-opt,.target-row,.av-opt,.seg-btn,.theme-pill,.diff-pill,.sheet-item,.kick-btn,.transfer-btn-lobby,.kick-btn-lobby,.transfer-confirm-btn,.menu-btn-top{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;}
 .log-entry{font-size:calc(var(--base-font) - 3px);color:var(--text-dim);padding:5px 0;border-bottom:1px solid var(--line-gold);line-height:1.7;}
 .log-entry:first-child{color:var(--text);font-size:calc(var(--base-font) - 2px);}
 .a-name{font-family:'Cinzel',serif;font-size:calc(var(--base-font) - 4px);font-weight:700;letter-spacing:.5px;}
@@ -913,7 +915,15 @@ window.openModal = function(title,body,actions=[],extra=''){
     const b=document.createElement('button');
     b.className=`btn ${a.cls||''}`;
     b.innerHTML=`<span>${a.label}</span>`;
-    b.onclick=()=>{ closeModal(); a.cb(); };
+    // استخدم pointerdown للاستجابة الفورية على الجوال بدون 300ms delay
+    let _fired = false;
+    const fire = (e)=>{
+      if(_fired) return; _fired=true;
+      e.preventDefault();
+      closeModal(); a.cb();
+    };
+    b.addEventListener('pointerdown', fire, {passive:false});
+    b.addEventListener('click', e=>{ e.preventDefault(); }); // منع double fire
     ac.appendChild(b);
   });
   document.getElementById('modal-bg').classList.add('open');
@@ -937,7 +947,9 @@ window.buildAv = function(id,key){
     const d=document.createElement('div');
     d.className=`av-opt${AV[key]===av?' selected':''}`;
     d.textContent=av;
-    d.onclick=()=>{ AV[key]=av; c.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('selected')); d.classList.add('selected'); };
+    const _avFire = (e)=>{ e.preventDefault(); AV[key]=av; c.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('selected')); d.classList.add('selected'); };
+    d.addEventListener('pointerdown', _avFire, {passive:false});
+    d.addEventListener('click', e=>e.preventDefault());
     c.appendChild(d);
   });
 };
@@ -1169,7 +1181,7 @@ function startLocalGame(gs){
     G=gd;
     renderGame();
     if(ME.host && G.players[G.turn]?.isBot && G.turn!==prevTurn)
-      setTimeout(()=>runBot(), 1000);
+      setTimeout(()=>runBot(), 400);
   });
 
   if(ME.host){
@@ -1204,7 +1216,7 @@ function startLocalGame(gs){
   }
 
   setupDisconnectWatcher();
-  setTimeout(()=>{ if(ME.host && G?.players?.[G.turn]?.isBot) runBot(); }, 1200);
+  setTimeout(()=>{ if(ME.host && G?.players?.[G.turn]?.isBot) runBot(); }, 500);
 }
 
 function startHostListeners(){
@@ -1416,7 +1428,7 @@ function pickClaimThenDo(actionId, onClaim){
   const gridHtml = cfg.options.map(cn => {
     const ci = claimInfo[cn];
     const iHave = myCards.some((c,i) => c===cn && !myRevealed[i]);
-    return `<div class="claim-card ${cn}" onclick="window._claimPick('${cn}')">
+    return `<div class="claim-card ${cn}" onpointerdown="event.preventDefault();window._claimPick('${cn}')">
       <div class="claim-card-icon">${ci.icon}</div>
       <div class="claim-card-name">${cn}</div>
       <div class="claim-card-act">${ci.desc}</div>
@@ -1473,7 +1485,10 @@ function renderActions(){
       <div class="a-name">${a.id}</div>
       ${a.claim?`<div class="a-claim" style="color:rgba(255,200,100,.7)">🎭 يدّعي ${a.claim}</div>`:''}
       <div class="a-desc">${a.desc}${a.cost?` (${a.cost}◈)`:''}</div>`;
-    btn.onclick=()=>doAction(a.id);
+    // pointerdown للاستجابة الفورية على الجوال
+    let _af = false;
+    btn.addEventListener('pointerdown', e=>{ if(_af) return; _af=true; e.preventDefault(); doAction(a.id); setTimeout(()=>_af=false,600); }, {passive:false});
+    btn.addEventListener('click', e=>e.preventDefault());
     grid.appendChild(btn);
   });
   panel.appendChild(grid); wrap.innerHTML=''; wrap.appendChild(panel);
@@ -1679,7 +1694,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
           const fn = _reactionSuccess; _reactionSuccess = null;
           forceReveal(opp.id, ()=>fn && fn());
         }
-      }, diff==='hard'?500:700);
+      }, 250);
     } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
         glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
@@ -1687,9 +1702,9 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
         dbSet(`rooms/${ROOM}/reaction`, null);
         const fn = _reactionSuccess; _reactionSuccess = null;
         doChallengePid(opp.id, actionId, claimedAs, fn);
-      }, diff==='hard'?500:800);
+      }, 250);
     } else {
-      setTimeout(()=> publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer), diff==='easy'?300:500);
+      setTimeout(()=> publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer), 150);
     }
     return;
   }
@@ -1849,7 +1864,7 @@ function setupReactionListener(){
       dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: al[0].ci, ts: Date.now() });
       return;
     }
-    const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onclick="pickRevealOnline(${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
+    const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onpointerdown="event.preventDefault();pickRevealOnline(${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
     openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
   });
 
@@ -1967,22 +1982,21 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
 
     if(canBlock && Math.random() < cfg.blk){
       setTimeout(()=>{
-        clearTimer(); // ← FIX: أوقف أي تايمر قبل قرار البوت
+        clearTimer();
         glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
         const hasCard = opp.cards.some((c,ci2)=> BLOCK_MAP[actionId]?.includes(c) && !opp.revealed[ci2])
                       || Math.random() < cfg.hasCard;
         if(hasCard){ glog(`✅ اعتراض صحيح — حُجب الأكشن`); nextTurn(); }
         else { glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`); forceReveal(opp.id, ()=>onSuccess()); }
-      }, diff==='hard'?500:700);
+      }, 250);
     } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
-        clearTimer(); // ← FIX
+        clearTimer();
         glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
         doChallenge(opp, actionId, claimedAs, onSuccess);
-      }, diff==='hard'?500:800);
+      }, 250);
     } else {
-      // البوت يسمح — لا تفتح مودال، فقط انتقل للتالي
-      setTimeout(()=>next(), diff==='easy'?200:350);
+      setTimeout(()=>next(), 150);
     }
     return;
   }
@@ -2147,7 +2161,7 @@ function forceReveal(pid,cb){
 
   G._rCb=cb; G._rPid=pid;
   clearTimer(); // ← FIX: أوقف التايمر قبل مودال اختيار الورقة
-  const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onclick="pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
+  const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onpointerdown="event.preventDefault();pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
   openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
 }
 
@@ -2218,9 +2232,9 @@ function renderExchangeModal(){
   const {opts,keep,chosen}=G._ex;
   const avail=opts.map((c,i)=>chosen.includes(i)
     ?`<div class="card-opt ${c}" style="opacity:.15;pointer-events:none"><div class="card-opt-icon">${CARDS[c].icon}</div><div>${c}</div></div>`
-    :`<div class="card-opt ${c}" onclick="exPick(${i})"><div class="card-opt-icon">${CARDS[c].icon}</div><div>${c}</div></div>`
+    :`<div class="card-opt ${c}" onpointerdown="event.preventDefault();exPick(${i})"><div class="card-opt-icon">${CARDS[c].icon}</div><div>${c}</div></div>`
   ).join('');
-  const sel=chosen.map(i=>`<div class="card-opt ${opts[i]} selected" onclick="exRemove(${i})"><div class="card-opt-icon">${CARDS[opts[i]].icon}</div><div>${opts[i]}</div><div style="font-size:9px;color:var(--emerald-lt)">✓ محدد</div></div>`).join('');
+  const sel=chosen.map(i=>`<div class="card-opt ${opts[i]} selected" onpointerdown="event.preventDefault();exRemove(${i})"><div class="card-opt-icon">${CARDS[opts[i]].icon}</div><div>${opts[i]}</div><div style="font-size:9px;color:var(--emerald-lt)">✓ محدد</div></div>`).join('');
   const acts=chosen.length===keep?[{ label:'✅ تأكيد', cls:'btn-green', cb:confirmExchange }]:[];
   openModal('🔄 Exchange — Ambassador',`اختر ${keep} ورقة تحتفظ بها`,acts,`<div class="cards-grid">${avail}</div>${chosen.length?`<div style="height:1px;background:rgba(255,255,255,.07);margin:10px 0;"></div><div class="cards-grid">${sel}</div>`:''}`);
 }
@@ -2246,7 +2260,7 @@ window.confirmExchange = function(){
 function pickTarget(prompt,cb){
   if(isSpectating()) return;
   const ops=opps();
-  const extra=`<div class="targets">${ops.map(p=>`<div class="target-row" onclick="pickTgt('${p.id}')"><span class="t-av">${p.av}</span><span class="t-name">${p.name}</span><span class="t-coins">◈${p.coins}</span></div>`).join('')}</div>`;
+  const extra=`<div class="targets">${ops.map(p=>`<div class="target-row" onpointerdown="event.preventDefault();pickTgt('${p.id}')"><span class="t-av">${p.av}</span><span class="t-name">${p.name}</span><span class="t-coins">◈${p.coins}</span></div>`).join('')}</div>`;
   G._tCb=cb;
   openModal('🎯 اختر الهدف',prompt,[{ label:'إلغاء', cls:'btn-dim', cb:()=>{} }],extra);
 }
@@ -2260,7 +2274,7 @@ function nextTurn(){
   while(G.players[nt].eliminated);
   if(G.players[nt].id===ME.id) SFX.turnStart();
   pushUpdate({turn:nt,phase:'action'},`⏩ دور <span class="lh">${G.players[nt].name}</span>`);
-  setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },900);
+  setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },400);
 }
 
 function runBot(){
@@ -2448,7 +2462,7 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
           glog(`🛡️ <span class="lh">${bot.name}</span> قبل الاعتراض`);
           nextTurn();
         }
-      }, 700);
+      }, 250);
     }
   });
 
@@ -2719,7 +2733,7 @@ window.playAgain = function(){
     G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now() };
     S('screen-game'); renderGame();
     glog(`⚔️ جولة جديدة! دور <span class="lh">${cur().name}</span>`);
-    setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },1000);
+    setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
   } else {
     S('screen-title'); leaveRoom();
   }
@@ -2806,7 +2820,7 @@ window.startSolo = function(){
   G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now() };
   S('screen-game'); renderGame();
   glog(`⚔️ بدأت المعركة! دور <span class="lh">${cur().name}</span>`);
-  setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },1000);
+  setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
 };
 
 window.showCredits = function(){
@@ -2946,6 +2960,20 @@ document.addEventListener('click', e=>{
   const btn = e.target.closest('.btn,.action-btn,.menu-btn,.theme-pill,.seg-btn,.diff-pill');
   if(btn && !btn.disabled) SFX.click();
 }, true);
+
+// ══════════════════════════════════════════════════════════
+// إصلاح الجوال: تفعيل :active states وإزالة تأخير 300ms
+// ══════════════════════════════════════════════════════════
+document.addEventListener('touchstart', ()=>{}, {passive:true});
+
+// منع modal-bg من إغلاق المودال لما يلمس اللاعب داخل المودال نفسه
+(function(){
+  const bg = document.getElementById('modal-bg');
+  if(!bg) return;
+  bg.addEventListener('touchstart', e=>{
+    if(e.target === bg){ e.preventDefault(); }
+  }, {passive:false});
+})();
 
 (function initBG(){
   const cv=document.getElementById('bg-canvas');
