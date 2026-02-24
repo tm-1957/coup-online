@@ -1345,7 +1345,9 @@ function startHostListeners(){
     pushUpdate({players:np}, null);
     G.players = np;
     const al = alive();
-    if(al.length <= 1) endGame(al[0]);
+    if(al.length <= 1){ endGame(al[0]); return; }
+    // لو كان دور المطرود، انتقل للدور التالي
+    if(G.turn === pi) nextTurn();
   });
 }
 
@@ -1878,7 +1880,7 @@ function setupReactionListener(){
     const p = myP(); if(!p) return;
     const aliveCards = p.cards.map((c,ci)=>({c,ci})).filter(x=>!p.revealed[x.ci]);
     const opts = [...aliveCards.map(x=>x.c), ...(req.extraCards||[])].filter(Boolean);
-    G._ex = { mi: G.players.findIndex(pp=>pp.id===ME.id), alive: aliveCards, opts, keep: aliveCards.length, chosen: [], pls: clonePlayers(), extraDeck: req.extraDeck || [], onlineMode: true };
+    G._ex = { mi: G.players.findIndex(pp=>pp.id===ME.id), alive: aliveCards, opts, keep: aliveCards.length, chosen: [], pls: clonePlayers(), extraDeck: req.extraDeck || [], onlineMode: true, replyTs: req.ts };
     renderExchangeModal();
   });
 }
@@ -2202,24 +2204,29 @@ function doExchange(me,mi,pls){
 
   // لو في أونلاين والـ actor مش الهوست، أرسل exchangeRequest له
   if(ROOM && ROOM !== 'SOLO' && ME.host && me.id !== ME.id){
-    dbSet(`rooms/${ROOM}/exchangeRequest`, {
-      forId: me.id,
-      extraCards: [d1,d2].filter(Boolean),
-      extraDeck: dk,
-      ts: Date.now()
+    const reqTs = Date.now();
+    // امسح أي رد قديم أولاً قبل الاستماع
+    dbSet(`rooms/${ROOM}/exchangeReply`, null).then(()=>{
+      dbSet(`rooms/${ROOM}/exchangeRequest`, {
+        forId: me.id,
+        extraCards: [d1,d2].filter(Boolean),
+        extraDeck: dk,
+        ts: reqTs
+      });
     });
     // الهوست يستمع لـ exchangeReply
     const unsub = dbOn(`rooms/${ROOM}/exchangeReply`, async reply => {
       if(!reply || reply.byId !== me.id) return;
+      if(reply.ts < reqTs) return; // تجاهل ردود قديمة
       unsub();
       await dbSet(`rooms/${ROOM}/exchangeRequest`, null);
       await dbSet(`rooms/${ROOM}/exchangeReply`, null);
       // طبّق الاختيارات
       const chosen = reply.chosen || [];
       const nd=[...dk]; opts.forEach((_,i)=>{ if(!chosen.includes(i)) nd.push(opts[i]); });
-      const nc=chosen.map(i=>opts[i]); const np=[...pls]; const nCards=[...np[mi].cards];
-      aliveCards.forEach((x,ni)=>{ nCards[x.ci]=nc[ni]||nCards[x.ci]; }); np[mi].cards=nCards;
-      pushUpdate({players:np,deck:shuf(nd)},`🔄 <span class="lh">${me.name}</span> بادل أوراقه`);
+      const nc=chosen.map(i=>opts[i]); const np2=[...pls]; const nCards=[...np2[mi].cards];
+      aliveCards.forEach((x,ni)=>{ nCards[x.ci]=nc[ni]||nCards[x.ci]; }); np2[mi].cards=nCards;
+      pushUpdate({players:np2,deck:shuf(nd)},`🔄 <span class="lh">${me.name}</span> بادل أوراقه`);
       nextTurn();
     });
     return;
@@ -2246,7 +2253,7 @@ window.confirmExchange = function(){
   // لو في وضع أونلاين (اللاعب غير الهوست) أرسل الرد للهوست
   if(onlineMode && ROOM && ROOM !== 'SOLO'){
     closeModal();
-    dbSet(`rooms/${ROOM}/exchangeReply`, { byId: ME.id, chosen, ts: Date.now() });
+    dbSet(`rooms/${ROOM}/exchangeReply`, { byId: ME.id, chosen, ts: G._ex.replyTs || Date.now() });
     return;
   }
 
