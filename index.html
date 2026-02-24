@@ -1419,54 +1419,8 @@ const ACTION_CLAIM_OPTIONS = {
 };
 
 function pickClaimThenDo(actionId, onClaim){
-  const cfg = ACTION_CLAIM_OPTIONS[actionId];
-  if(!cfg || !cfg.options.length){ onClaim(CLAIM_MAP[actionId]); return; }
-
-  const claimInfo = {
-    Duke:       { icon:'👑', desc:'Tax +3◈ · يحجب Foreign Aid', color:'#ce93d8' },
-    Assassin:   { icon:'🗡️',desc:'Assassinate −3◈ · يزيل ورقة', color:'#bdbdbd' },
-    Contessa:   { icon:'🌹', desc:'يحجب الاغتيال', color:'#ef9a9a' },
-    Captain:    { icon:'⚓', desc:'Steal +2◈ · يحجب Steal', color:'#90caf9' },
-    Ambassador: { icon:'🕊️',desc:'بادل أوراقك · يحجب Steal', color:'#a5d6a7' },
-  };
-
-  const myCards = myP()?.cards || [];
-  const myRevealed = myP()?.revealed || [];
-
-  const gridHtml = cfg.options.map(cn => {
-    const ci = claimInfo[cn];
-    const iHave = myCards.some((c,i) => c===cn && !myRevealed[i]);
-    return `<div class="claim-card ${cn}" onpointerdown="event.preventDefault();window._claimPick('${cn}')">
-      <div class="claim-card-icon">${ci.icon}</div>
-      <div class="claim-card-name">${cn}</div>
-      <div class="claim-card-act">${ci.desc}</div>
-      ${iHave ? '<div style="font-size:9px;color:var(--emerald-lt);margin-top:2px;">✓ تملكها</div>' : '<div style="font-size:9px;color:var(--crimson-lt);margin-top:2px;">لا تملكها (بلف)</div>'}
-    </div>`;
-  }).join('');
-
-  const defaultCard = cfg.default;
-  const noteHtml = `<div class="claim-note">
-    <b>الافتراضي: ${claimInfo[defaultCard]?.icon} ${defaultCard}</b><br>
-    ${cfg.desc}<br>
-    <span style="color:var(--crimson-lt);font-size:10px;">⚠️ تذكر: البلف قد يكشفه أي خصم بالتحدي!</span>
-  </div>`;
-
-  // ══════════════════════════════════════════════════════
-  // FIX: نافذة الادعاء لا تشغّل تايمر — لا حاجة لها
-  // ══════════════════════════════════════════════════════
-  openModal(
-    `🎭 ما الشخصية التي تدّعيها؟`,
-    `أنت تريد تنفيذ <b>${actionId}</b> — اختر الشخصية التي ستدّعيها:`,
-    [{ label:'إلغاء', cls:'btn-dim', cb:()=>{} }],
-    noteHtml + `<div class="claim-grid">${gridHtml}</div>`
-  );
-
-  window._claimPick = (cn) => {
-    if(_modalLocked) return;
-    lockModal();
-    closeModal();
-    setTimeout(()=>onClaim(cn), 30);
-  };
+  // استخدم الشخصية الافتراضية مباشرة — بدون مودال اختيار
+  onClaim(CLAIM_MAP[actionId] || null);
 }
 
 function renderActions(){
