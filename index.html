@@ -920,7 +920,9 @@ window.openModal = function(title,body,actions=[],extra=''){
     const fire = (e)=>{
       if(_fired) return; _fired=true;
       e.preventDefault();
-      closeModal(); a.cb();
+      closeModal();
+      // تأخير صغير يمنع pointerup/click من الوقوع على عناصر المودال الجديد
+      setTimeout(()=>a.cb(), 80);
     };
     b.addEventListener('pointerdown', fire, {passive:false});
     b.addEventListener('click', e=>{ e.preventDefault(); }); // منع double fire
@@ -1457,7 +1459,8 @@ function pickClaimThenDo(actionId, onClaim){
 
   window._claimPick = (cn) => {
     closeModal();
-    onClaim(cn);
+    // تأخير صغير يمنع pointerup/click من الوقوع على أزرار المودال الجديد
+    setTimeout(()=>onClaim(cn), 80);
   };
 }
 
@@ -2169,17 +2172,19 @@ function forceReveal(pid,cb){
 
 window.pickReveal = function(pid,ci){
   closeModal();
-  const pi=G.players.findIndex(p=>p.id===pid); const np=clonePlayers();
-  np[pi].revealed[ci]=true;
-  SFX.cardReveal();
-  glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
-  checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
-  const cb=G._rCb; G._rCb=null; if(cb) cb();
+  setTimeout(()=>{
+    const pi=G.players.findIndex(p=>p.id===pid); const np=clonePlayers();
+    np[pi].revealed[ci]=true;
+    SFX.cardReveal();
+    glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
+    checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
+    const cb=G._rCb; G._rCb=null; if(cb) cb();
+  }, 80);
 };
 
 window.pickRevealOnline = function(ci){
   closeModal();
-  dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: ci, ts: Date.now() });
+  setTimeout(()=>dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: ci, ts: Date.now() }), 80);
 };
 
 function checkElim(pls,pi){
@@ -2245,8 +2250,8 @@ function renderExchangeModal(){
   const acts=chosen.length===keep?[{ label:'✅ تأكيد', cls:'btn-green', cb:confirmExchange }]:[];
   openModal('🔄 Exchange — Ambassador',`اختر ${keep} ورقة تحتفظ بها`,acts,`<div class="cards-grid">${avail}</div>${chosen.length?`<div style="height:1px;background:rgba(255,255,255,.07);margin:10px 0;"></div><div class="cards-grid">${sel}</div>`:''}`);
 }
-window.exPick   = i=>{ const s=G._ex; if(s.chosen.length>=s.keep) return; s.chosen.push(i); renderExchangeModal(); };
-window.exRemove = i=>{ G._ex.chosen=G._ex.chosen.filter(x=>x!==i); renderExchangeModal(); };
+window.exPick   = i=>{ const s=G._ex; if(s.chosen.length>=s.keep) return; s.chosen.push(i); setTimeout(()=>renderExchangeModal(), 80); };
+window.exRemove = i=>{ G._ex.chosen=G._ex.chosen.filter(x=>x!==i); setTimeout(()=>renderExchangeModal(), 80); };
 window.confirmExchange = function(){
   const {mi,alive,opts,chosen,pls,extraDeck,onlineMode}=G._ex;
 
@@ -2271,7 +2276,7 @@ function pickTarget(prompt,cb){
   G._tCb=cb;
   openModal('🎯 اختر الهدف',prompt,[{ label:'إلغاء', cls:'btn-dim', cb:()=>{} }],extra);
 }
-window.pickTgt = function(pid){ closeModal(); const cb=G._tCb; G._tCb=null; if(cb) cb(G.players.find(p=>p.id===pid)); };
+window.pickTgt = function(pid){ closeModal(); const cb=G._tCb; G._tCb=null; if(cb) setTimeout(()=>cb(G.players.find(p=>p.id===pid)), 80); };
 
 function nextTurn(){
   clearTimer(); // ← FIX: تأكد إيقاف التايمر عند أي nextTurn
