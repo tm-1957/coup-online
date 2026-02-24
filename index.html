@@ -222,7 +222,7 @@ body.light .log-panel{background:rgba(0,0,0,.04);}
 
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px;}
 .modal-bg.open{display:flex;}
-.modal{background:var(--bg1);border:1px solid var(--gold);border-radius:var(--radius-lg);width:min(460px,96vw);max-height:88vh;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;animation:modal-in .25s ease;box-shadow:0 30px 80px rgba(0,0,0,.8),inset 0 1px 0 rgba(201,168,76,.15),0 0 0 1px rgba(201,168,76,.06);}
+.modal{background:var(--bg1);border:1px solid var(--gold);border-radius:var(--radius-lg);width:min(460px,96vw);max-height:88vh;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 80px rgba(0,0,0,.8),inset 0 1px 0 rgba(201,168,76,.15),0 0 0 1px rgba(201,168,76,.06);}
 body.light .modal{background:var(--bg1);border-color:var(--border-lt);}
 @keyframes modal-in{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
 .modal-title{font-family:'Cinzel Decorative',serif;font-size:14px;color:var(--gold);text-align:center;border-bottom:1px solid var(--gold);padding-bottom:12px;}
@@ -902,10 +902,14 @@ window.closeModal = function(){
   document.getElementById('modal-bg').classList.remove('open');
   clearTimer();
 };
+// ── نظام حجب لمسات المودال الجديد بعد إغلاق القديم مباشرة ──
+let _modalLocked = false;
+function lockModal(ms=120){
+  _modalLocked = true;
+  setTimeout(()=>{ _modalLocked = false; }, ms);
+}
+
 window.openModal = function(title,body,actions=[],extra=''){
-  // ══════════════════════════════════════════════════════
-  // FIX: أوقف أي تايمر قديم قبل فتح مودال جديد
-  // ══════════════════════════════════════════════════════
   clearTimer();
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=body;
@@ -915,17 +919,17 @@ window.openModal = function(title,body,actions=[],extra=''){
     const b=document.createElement('button');
     b.className=`btn ${a.cls||''}`;
     b.innerHTML=`<span>${a.label}</span>`;
-    // استخدم pointerdown للاستجابة الفورية على الجوال بدون 300ms delay
     let _fired = false;
     const fire = (e)=>{
-      if(_fired) return; _fired=true;
+      if(_fired || _modalLocked) return;
+      _fired=true;
       e.preventDefault();
+      lockModal();
       closeModal();
-      // تأخير صغير يمنع pointerup/click من الوقوع على عناصر المودال الجديد
-      setTimeout(()=>a.cb(), 80);
+      setTimeout(()=>a.cb(), 30);
     };
     b.addEventListener('pointerdown', fire, {passive:false});
-    b.addEventListener('click', e=>{ e.preventDefault(); }); // منع double fire
+    b.addEventListener('click', e=>e.preventDefault());
     ac.appendChild(b);
   });
   document.getElementById('modal-bg').classList.add('open');
@@ -1458,9 +1462,10 @@ function pickClaimThenDo(actionId, onClaim){
   );
 
   window._claimPick = (cn) => {
+    if(_modalLocked) return;
+    lockModal();
     closeModal();
-    // تأخير صغير يمنع pointerup/click من الوقوع على أزرار المودال الجديد
-    setTimeout(()=>onClaim(cn), 80);
+    setTimeout(()=>onClaim(cn), 30);
   };
 }
 
@@ -2171,7 +2176,8 @@ function forceReveal(pid,cb){
 }
 
 window.pickReveal = function(pid,ci){
-  closeModal();
+  if(_modalLocked) return;
+  lockModal(); closeModal();
   setTimeout(()=>{
     const pi=G.players.findIndex(p=>p.id===pid); const np=clonePlayers();
     np[pi].revealed[ci]=true;
@@ -2179,12 +2185,13 @@ window.pickReveal = function(pid,ci){
     glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
     const cb=G._rCb; G._rCb=null; if(cb) cb();
-  }, 80);
+  }, 30);
 };
 
 window.pickRevealOnline = function(ci){
-  closeModal();
-  setTimeout(()=>dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: ci, ts: Date.now() }), 80);
+  if(_modalLocked) return;
+  lockModal(); closeModal();
+  setTimeout(()=>dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: ci, ts: Date.now() }), 30);
 };
 
 function checkElim(pls,pi){
@@ -2250,8 +2257,8 @@ function renderExchangeModal(){
   const acts=chosen.length===keep?[{ label:'✅ تأكيد', cls:'btn-green', cb:confirmExchange }]:[];
   openModal('🔄 Exchange — Ambassador',`اختر ${keep} ورقة تحتفظ بها`,acts,`<div class="cards-grid">${avail}</div>${chosen.length?`<div style="height:1px;background:rgba(255,255,255,.07);margin:10px 0;"></div><div class="cards-grid">${sel}</div>`:''}`);
 }
-window.exPick   = i=>{ const s=G._ex; if(s.chosen.length>=s.keep) return; s.chosen.push(i); setTimeout(()=>renderExchangeModal(), 80); };
-window.exRemove = i=>{ G._ex.chosen=G._ex.chosen.filter(x=>x!==i); setTimeout(()=>renderExchangeModal(), 80); };
+window.exPick   = i=>{ if(_modalLocked) return; const s=G._ex; if(s.chosen.length>=s.keep) return; lockModal(); s.chosen.push(i); setTimeout(()=>renderExchangeModal(), 30); };
+window.exRemove = i=>{ if(_modalLocked) return; lockModal(); G._ex.chosen=G._ex.chosen.filter(x=>x!==i); setTimeout(()=>renderExchangeModal(), 30); };
 window.confirmExchange = function(){
   const {mi,alive,opts,chosen,pls,extraDeck,onlineMode}=G._ex;
 
@@ -2276,7 +2283,12 @@ function pickTarget(prompt,cb){
   G._tCb=cb;
   openModal('🎯 اختر الهدف',prompt,[{ label:'إلغاء', cls:'btn-dim', cb:()=>{} }],extra);
 }
-window.pickTgt = function(pid){ closeModal(); const cb=G._tCb; G._tCb=null; if(cb) setTimeout(()=>cb(G.players.find(p=>p.id===pid)), 80); };
+window.pickTgt = function(pid){
+  if(_modalLocked) return;
+  lockModal(); closeModal();
+  const cb=G._tCb; G._tCb=null;
+  if(cb) setTimeout(()=>cb(G.players.find(p=>p.id===pid)), 30);
+};
 
 function nextTurn(){
   clearTimer(); // ← FIX: تأكد إيقاف التايمر عند أي nextTurn
