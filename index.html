@@ -1407,6 +1407,8 @@ function renderHand(){
 }
 
 const BLOCK_MAP = { ForeignAid:['Duke'], Steal:['Captain','Ambassador'], Assassinate:['Contessa'] };
+// Steal و Assassinate: الهدف فقط يقدر يحجب | ForeignAid: أي لاعب
+const BLOCK_TARGET_ONLY = { Steal:true, Assassinate:true };
 const CLAIM_MAP = { Tax:'Duke', Exchange:'Ambassador', Steal:'Captain', Assassinate:'Assassin' };
 const CAN_CHAL  = ['Tax','Exchange','Steal','Assassinate','ForeignAid'];
 
@@ -1631,7 +1633,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
 
   if(opp.isBot){
     const blockCards = BLOCK_MAP[actionId] || [];
-    const canBlock = blockCards.length > 0 && (actionId !== 'Assassinate' || opp.id === target?.id);
+    const canBlock = blockCards.length > 0 && (!BLOCK_TARGET_ONLY[actionId] || opp.id === target?.id);
     const canChal  = CAN_CHAL.includes(actionId) && !!claimedAs;
     const diff = opp.difficulty || DIFF;
     const cfg = {
@@ -1643,10 +1645,11 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
     if(canBlock && Math.random() < cfg.blk){
       setTimeout(()=>{
         glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
-        const hasCard = opp.cards.some((c,ci)=> BLOCK_MAP[actionId]?.includes(c) && !opp.revealed[ci])
-                      || Math.random() < cfg.hasCard;
+        const oppCur = G.players.find(p=>p.id===opp.id) || opp;
+        const hasCard = oppCur.cards.some((c,ci)=> BLOCK_MAP[actionId]?.includes(c) && !oppCur.revealed[ci]);
         if(hasCard){
-          glog(`✅ اعتراض صحيح — حُجب الأكشن`);
+          const blockCard = BLOCK_MAP[actionId]?.find(c=>oppCur.cards.some((oc,i)=>oc===c&&!oppCur.revealed[i]));
+          glog(`✅ اعتراض صحيح بـ ${blockCard||''} — حُجب الأكشن`);
           clearReactionListener();
           dbSet(`rooms/${ROOM}/reaction`, null);
           _reactionSuccess = null;
@@ -1665,7 +1668,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
         clearReactionListener();
         dbSet(`rooms/${ROOM}/reaction`, null);
         const fn = _reactionSuccess; _reactionSuccess = null;
-        doChallengePid(opp.id, actionId, claimedAs, fn);
+        doChallengePid(opp.id, actionId, claimedAs, fn, actorPlayer);
       }, 250);
     } else {
       setTimeout(()=> publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer), 150);
@@ -1674,7 +1677,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
   }
 
   const blockCards = BLOCK_MAP[actionId] || [];
-  const canBlock = blockCards.length > 0 && (actionId !== 'Assassinate' || opp.id === target?.id);
+  const canBlock = blockCards.length > 0 && (!BLOCK_TARGET_ONLY[actionId] || opp.id === target?.id);
   const canChal  = CAN_CHAL.includes(actionId) && !!claimedAs;
   // استخدام actorPlayer بدل myP() لدعم اللاعبين غير الهوست
   const actor = actorPlayer || myP();
@@ -1906,15 +1909,27 @@ function showBlockChallengeModal(req){
 
 function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlayer){
   const challenger = G.players.find(p => p.id === challengerId);
-  // استخدم actorPlayer إذا توفّر (لدعم اللاعبين غير الهوست)
   const actor = actorPlayer || G.players.find(p=>p.id===ME.id) || myP();
   const claimed = claimedAs || CLAIM_MAP[actionId];
   if(!claimed){ onSuccess && onSuccess(); return; }
-  const ci = actor.cards.findIndex((c,i) => c===claimed && !actor.revealed[i]);
+  // إعادة جلب actor الحالي من G.players لضمان بيانات حديثة
+  const actorCur = G.players.find(p=>p.id===actor.id) || actor;
+  const ci = actorCur.cards.findIndex((c,i) => c===claimed && !actorCur.revealed[i]);
   if(ci !== -1){
+    // فشل التحدي — المُتحدِّي يخسر ورقة، الـ actor يستبدل ورقته، الأكشن يكمل
     glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> تحدّى — ${actor.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
-    forceReveal(challengerId, ()=>{ replaceCard(actor.id, claimed); onSuccess && onSuccess(); });
+    forceReveal(challengerId, ()=>{
+      replaceCard(actor.id, claimed);
+      // لو المُتحدِّي هو نفسه الهدف وانتهى → لا حاجة لـ onSuccess (الاغتيال اكتمل فعلاً)
+      const challengerNow = G.players.find(p=>p.id===challengerId);
+      if(challengerNow && challengerNow.eliminated && actionId==='Assassinate' && challengerId === onSuccess?._targetId){
+        nextTurn();
+      } else {
+        onSuccess && onSuccess();
+      }
+    });
   } else {
+    // نجح التحدي — الـ actor بلف، يخسر ورقة، الأكشن يُلغى
     glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> كشف البلف! ${actor.name} كان يدّعي ${claimed} وهو لا يملكها`);
     forceReveal(actor.id, ()=>nextTurn());
   }
@@ -1933,7 +1948,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
 
   const blockCards = BLOCK_MAP[actionId] || [];
   const canBlock = blockCards.length > 0 &&
-    (actionId !== 'Assassinate' || opp.id === target?.id);
+    (!BLOCK_TARGET_ONLY[actionId] || opp.id === target?.id);
   const canChal = CAN_CHAL.includes(actionId) && !!claimedAs;
 
   if(opp.isBot){
@@ -1948,10 +1963,16 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
       setTimeout(()=>{
         clearTimer();
         glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
-        const hasCard = opp.cards.some((c,ci2)=> BLOCK_MAP[actionId]?.includes(c) && !opp.revealed[ci2])
-                      || Math.random() < cfg.hasCard;
-        if(hasCard){ glog(`✅ اعتراض صحيح — حُجب الأكشن`); nextTurn(); }
-        else { glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`); forceReveal(opp.id, ()=>onSuccess()); }
+        const oppCur = G.players.find(p=>p.id===opp.id) || opp;
+        const hasCard = oppCur.cards.some((c,ci2)=> BLOCK_MAP[actionId]?.includes(c) && !oppCur.revealed[ci2]);
+        if(hasCard){
+          glog(`✅ اعتراض صحيح بـ ${BLOCK_MAP[actionId]?.find(c=>oppCur.cards.includes(c))||''} — حُجب الأكشن`);
+          // المُهاجِم يتحدّى الاعتراض؟ (نادر في السولو)
+          nextTurn();
+        } else {
+          glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`);
+          forceReveal(opp.id, ()=>onSuccess());
+        }
       }, 250);
     } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
@@ -2043,14 +2064,16 @@ function startTimer(sec, onEnd){
 }
 
 function doChallenge(challenger, actionId, claimedAs, onSuccess){
-  const me = myP();
+  const me = G.players.find(p=>p.id===ME.id) || myP(); // بيانات حديثة
   const claimed = claimedAs || CLAIM_MAP[actionId];
   if(!claimed){ onSuccess(); return; }
   const ci = me.cards.findIndex((c,i) => c===claimed && !me.revealed[i]);
   if(ci !== -1){
+    // فشل التحدي — المُتحدِّي يخسر ورقة، أنا استبدل ورقتي، الأكشن يكمل
     glog(`❓ <span class="lh">${challenger.name}</span> تحدّى — ${me.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
     forceReveal(challenger.id, ()=>{ replaceCard(ME.id, claimed); onSuccess(); });
   } else {
+    // نجح التحدي — أنا بلفت، أخسر ورقة، الأكشن يُلغى
     glog(`❓ <span class="lh">${challenger.name}</span> كشف البلف! ${me.name} كان يدّعي ${claimed} وهو لا يملكها`);
     forceReveal(ME.id, ()=>nextTurn());
   }
@@ -2060,7 +2083,7 @@ function doBlock(blocker, actionId, blockCards, onSuccess){
   if(isSpectating()){ nextTurn(); return; }
 
   const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
-  clearTimer(); // ← FIX: أوقف التايمر السابق قبل فتح مودال الاعتراض
+  clearTimer();
   openModal(
     `🛡️ ${blocker.av} ${blocker.name} يعترض`,
     `يدّعي امتلاك: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">${myP().name} — هل تقبل أم تتحدّى؟</small>`,
@@ -2068,9 +2091,11 @@ function doBlock(blocker, actionId, blockCards, onSuccess){
       { label:'✅ أقبل', cls:'btn-green', cb:()=>{ clearTimer(); glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`); nextTurn(); } },
       { label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{
         clearTimer();
-        const ci=blocker.cards.findIndex((c,i)=>blockCards.includes(c)&&!blocker.revealed[i]);
+        // إعادة جلب الـ blocker من G.players لضمان البيانات الحديثة
+        const blockerCur = G.players.find(p=>p.id===blocker.id) || blocker;
+        const ci=blockerCur.cards.findIndex((c,i)=>blockCards.includes(c)&&!blockerCur.revealed[i]);
         if(ci!==-1){
-          const card=blocker.cards[ci];
+          const card=blockerCur.cards[ci];
           glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! اعتراضه صحيح`);
           forceReveal(ME.id,()=>{ replaceCard(blocker.id,card); nextTurn(); });
         } else {
@@ -2313,35 +2338,22 @@ function runBot(){
 function botActionWithReaction(bot, actionId, target, onConfirm){
   const BLOCK   = BLOCK_MAP[actionId] || [];
   const canChal = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
-  const canBlock = BLOCK.length > 0 && (actionId !== 'Assassinate' || myP()?.id === target?.id);
+  const canBlock = BLOCK.length > 0;
 
   if(!canChal && !canBlock){ onConfirm(); return; }
 
   const ops = G.players.filter(p => !p.eliminated && p.id !== bot.id);
   if(!ops.length){ onConfirm(); return; }
 
+  // Solo أو أونلاين — استخدم نفس المسار
   if(!ROOM || ROOM === 'SOLO'){
-    if(isSpectating()){ setTimeout(()=>onConfirm(), 300); return; }
-
-    const humanOps = ops.filter(p => !p.isBot);
-    if(!humanOps.length){
-      // لا لاعبون بشريون — تحقق من البوتات الأخرى فقط
-      askNext(ops.filter(p=>p.isBot), 0, actionId, target, CLAIM_MAP[actionId], onConfirm);
-      return;
-    }
-
-    // ══════════════════════════════════════════════════════
-    // FIX: البوت يسأل البشري مرة واحدة فقط، ليس loop
-    // askNext يتولى الترتيب الصحيح للبوتات والبشر
-    // ══════════════════════════════════════════════════════
     askNext(ops, 0, actionId, target, CLAIM_MAP[actionId], onConfirm);
     return;
   }
 
+  // أونلاين: البوت يلعب — استخدم publishReactionAs مع bot كـ actor
   _reactionSuccess = onConfirm;
-  const humanOps = G.players.filter(p => !p.eliminated && !p.isBot && p.id !== bot.id);
-  if(!humanOps.length){ onConfirm(); return; }
-  publishBotReaction(bot, humanOps, 0, actionId, target);
+  publishReactionAs(ops, 0, actionId, target, CLAIM_MAP[actionId], bot);
 }
 
 async function publishBotReaction(bot, humanOps, i, actionId, target){
@@ -2361,7 +2373,7 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
   }
 
   const BLOCK = BLOCK_MAP[actionId] || [];
-  const canBlock = BLOCK.length > 0 && (actionId !== 'Assassinate' || opp.id === target?.id);
+  const canBlock = BLOCK.length > 0 && (!BLOCK_TARGET_ONLY[actionId] || opp.id === target?.id);
   const canChal  = CAN_CHAL.includes(actionId) && !!CLAIM_MAP[actionId];
 
   await dbSet(`rooms/${ROOM}/reactionReply`, null);
