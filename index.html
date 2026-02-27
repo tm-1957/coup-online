@@ -481,7 +481,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- SETUP ONLINE -->
 <div id="screen-setup-online" class="screen">
   <div class="glass-card form-card" style="margin:20px 0;">
-    <div class="form-title">🌐 إعداد الغرفة الأونلاين</div>
+    <div class="form-title" data-t="setupOnlineTitle">🌐 إعداد الغرفة الأونلاين</div>
     <div class="form-group">
       <div class="inp-label">اسمك</div>
       <input class="inp" id="host-name" placeholder="أدخل اسمك" maxlength="20">
@@ -507,7 +507,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
       <button class="btn btn-green btn-full" onclick="createRoom()"><span>🚀 إنشاء الغرفة</span></button>
-      <button class="btn btn-dim btn-full" onclick="back()">← رجوع</button>
+      <button class="btn btn-dim btn-full" onclick="back()" data-t="backBtn">← رجوع</button>
     </div>
   </div>
 </div>
@@ -515,25 +515,25 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- JOIN -->
 <div id="screen-join" class="screen">
   <div class="glass-card form-card">
-    <div class="form-title">🔑 الانضمام لغرفة</div>
+    <div class="form-title" data-t="joinRoomTitle">🔑 الانضمام لغرفة</div>
     <div id="join-invite-banner" style="display:none;background:rgba(201,168,76,.12);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;text-align:center;font-size:13px;color:var(--gold-lt);">
-      📩 تمت دعوتك! أدخل اسمك واضغط انضمام
+      <span data-t="invitedMsg">📩 تمت دعوتك! أدخل اسمك واضغط انضمام</span>
     </div>
     <div class="form-group">
-      <div class="inp-label">اسمك</div>
+      <div class="inp-label" data-t="yourName">اسمك</div>
       <input class="inp" id="join-name" placeholder="أدخل اسمك" maxlength="20" onkeydown="if(event.key==='Enter')joinRoom()">
     </div>
     <div class="form-group">
-      <div class="inp-label">أفاتارك</div>
+      <div class="inp-label" data-t="yourAvatar">أفاتارك</div>
       <div class="av-grid" id="av-join"></div>
     </div>
     <div class="form-group">
-      <div class="inp-label">كود الغرفة</div>
+      <div class="inp-label" data-t="roomCode">كود الغرفة</div>
       <input class="inp code-inp" id="join-code" placeholder="XXXX" maxlength="4" oninput="this.value=this.value.toUpperCase()">
     </div>
     <div style="min-height:18px;text-align:center;font-size:12px;color:var(--crimson-lt);margin-bottom:4px;" id="join-err"></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button class="btn btn-green btn-full" onclick="joinRoom()"><span>الانضمام →</span></button>
+      <button class="btn btn-green btn-full" onclick="joinRoom()"><span data-t="joinBtn">الانضمام →</span></button>
       <button class="btn btn-dim btn-full" onclick="back()">← رجوع</button>
     </div>
   </div>
@@ -544,26 +544,26 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="lobby-wrap">
     <div class="glass-card lobby-card">
       <div class="lobby-card-hd">
-        <div class="lobby-card-title">🏰 الغرفة</div>
+        <div class="lobby-card-title" data-t="lobbyTitle">🏰 الغرفة</div>
         <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--emerald-lt);letter-spacing:1px;">
           <span class="live-dot"></span> LIVE
         </div>
       </div>
       <div class="lobby-card-body">
         <div class="room-code-box" onclick="copyCode()" id="code-copy-box">
-          <div class="room-code-lbl">كود الغرفة</div>
+          <div class="room-code-lbl" data-t="roomCode">كود الغرفة</div>
           <div class="room-code-val" id="lobby-code">----</div>
-          <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:4px;" id="code-copy-hint">📋 اضغط للنسخ</div>
+          <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:4px;" id="code-copy-hint" data-t="copyCodeHint">📋 اضغط للنسخ</div>
         </div>
         <div class="share-row">
           <div class="share-url" id="share-url">جاري التحميل...</div>
-          <button class="btn btn-sm" onclick="copyShareUrl()" id="copy-url-btn">نسخ</button>
+          <button class="btn btn-sm" onclick="copyShareUrl()" id="copy-url-btn" data-t="copying">نسخ</button>
         </div>
-        <div style="font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px;">📲 أرسل الرابط أو الكود لأصدقائك</div>
+        <div style="font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px;" data-t="shareTxt">📲 أرسل الرابط أو الكود لأصدقائك</div>
         <div class="player-list" id="lobby-players"></div>
-        <div style="text-align:center;font-size:12px;color:var(--text-dim);" id="lobby-status">في انتظار اللاعبين...</div>
+        <div style="text-align:center;font-size:12px;color:var(--text-dim);" id="lobby-status" data-t="lobbyWaiting">في انتظار اللاعبين...</div>
         <button class="btn btn-green btn-full" id="start-btn" onclick="hostStart()" style="display:none">🎲 ابدأ اللعبة!</button>
-        <button class="btn btn-dim btn-full" onclick="leaveRoom()">← مغادرة الغرفة</button>
+        <button class="btn btn-dim btn-full" onclick="leaveRoom()" data-t="leaveRoom">← مغادرة الغرفة</button>
       </div>
     </div>
   </div>
@@ -572,7 +572,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- SOLO -->
 <div id="screen-solo" class="screen">
   <div class="glass-card form-card" style="margin:20px 0;">
-    <div class="form-title">🤖 العب ضد البوتات</div>
+    <div class="form-title" data-t="playBotsTitle">🤖 العب ضد البوتات</div>
     <div class="form-group">
       <div class="inp-label">اسمك</div>
       <input class="inp" id="solo-name" placeholder="أدخل اسمك" maxlength="20">
@@ -715,8 +715,8 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <div id="screen-rules" class="screen">
   <div class="rules-wrap">
     <div class="rules-hd">
-      <div class="rules-title">📋 قواعد اللعبة</div>
-      <div class="rules-sub">COUP™ — دليل سريع</div>
+      <div class="rules-title" data-t="rules">📋 قواعد اللعبة</div>
+      <div class="rules-sub">COUP™ — Quick Guide</div>
     </div>
     <div class="rule-intro">
       <b style="color:var(--text)">Coup</b> لعبة خداع وسلطة — كل لاعب يملك <b style="color:var(--gold)">ورقتين سريتين</b>. يمكنك ادعاء أي شخصية، لكن إن كشف خداعك تخسر نفوذاً. <b style="color:var(--gold-lt)">آخر لاعب يبقى يفوز.</b>
@@ -746,14 +746,14 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- SETTINGS -->
 <div id="screen-settings" class="screen">
   <div class="glass-card settings-card">
-    <div class="settings-title">⚙️ الإعدادات</div>
-    <div class="settings-section">الصوت</div>
+    <div class="settings-title" data-t="settingsTitle">⚙️ الإعدادات</div>
+    <div class="settings-section" data-t="sound">الصوت</div>
     <div class="setting-row">
-      <div><div class="setting-label">🔊 أصوات التأثيرات</div></div>
+      <div><div class="setting-label" data-t="sfxLabel">🔊 أصوات التأثيرات</div></div>
       <label class="toggle"><input type="checkbox" id="sfx-toggle" checked><span class="toggle-slider"></span></label>
     </div>
     <div class="setting-row">
-      <div><div class="setting-label">🔉 مستوى الصوت</div></div>
+      <div><div class="setting-label" data-t="volLabel">🔉 مستوى الصوت</div></div>
       <div class="range-row">
         <input type="range" id="vol" min="0" max="100" value="70" oninput="document.getElementById('vol-val').textContent=this.value">
         <span class="range-val" id="vol-val">70</span>
@@ -1130,7 +1130,7 @@ window.transferHostLobby = function(pid, pname){
       await dbSet(`rooms/${ROOM}/hostTransfer`, { newHostId: pid, fromId: ME.id, ts: Date.now() });
       ME.host = false;
     }},
-    { label:'إلغاء', cls:'btn-dim', cb:()=>{} }
+    { label:LANG==='en'?'Cancel':'إلغاء', cls:'btn-dim', cb:()=>{} }
   ]);
 };
 
@@ -1917,13 +1917,22 @@ function setupReactionListener(){
         [
           { label: T('yes'), cls:'btn-green', cb:()=>{
             dbSet(`rooms/${ROOM}/rematchRequest/votes/${ME.id}`, true);
-            listenForNewGame();
+            listenForNewGame(); // ينتظر game جديد
           }},
           { label: T('no'), cls:'btn-red', cb:()=>{
             dbSet(`rooms/${ROOM}/rematchRequest/votes/${ME.id}`, false);
+            // الرافض يخرج من اللعبة
+            setTimeout(()=>leaveRoom(), 800);
           }}
         ]
       );
+    });
+
+    // مراقبة حقل rematchKick — إذا طُرد هذا اللاعب
+    dbOn(`rooms/${ROOM}/rematchKick`, kicks=>{
+      if(!kicks || !kicks[ME.id]) return;
+      dbSet(`rooms/${ROOM}/rematchKick/${ME.id}`, null);
+      leaveRoom();
     });
   }
 }
@@ -1933,9 +1942,12 @@ function listenForNewGame(){
   const unsub = dbOn(`rooms/${ROOM}/game`, gd=>{
     if(!gd || gd.status !== 'playing') return;
     unsub();
+    // إلغاء كل الـ listeners القديمة قبل بداية جديدة
+    unsubAll();
     ALL_LOG_ENTRIES=[];
     clearTimer();
     clearReactionListener();
+    _reactionSuccess = null;
     const logEl=document.getElementById('log-entries'); if(logEl)logEl.innerHTML='';
     SPECTATING=false;
     const oldBadge=document.getElementById('spectator-badge'); if(oldBadge)oldBadge.remove();
@@ -1943,6 +1955,13 @@ function listenForNewGame(){
     S('screen-game');
     renderGame();
     glog(`⚔️ ${T('newRound')} ${cur().name}`);
+    // إعادة ربط game listener من نقطة نظيفة
+    dbOn(`rooms/${ROOM}/game`, gd2=>{
+      if(!gd2) return;
+      if(gd2.status==='ended'){ showStats(gd2); return; }
+      G=gd2;
+      renderGame();
+    });
     setupReactionListener();
   });
 }
@@ -2713,13 +2732,13 @@ window.openKickModal = function(){
       <button class="kick-btn" onclick="kickPlayerInGame('${p.id}','${p.name}')">طرد</button>
     </div>
   `).join('');
-  openModal('🚫 طرد لاعب', '', [{label:'إلغاء',cls:'btn-dim',cb:()=>{}}], `<div class="kick-list">${rows}</div>`);
+  openModal(LANG==='en'?'🚫 Kick Player':'🚫 طرد لاعب', '', [{label:LANG==='en'?'Cancel':'إلغاء',cls:'btn-dim',cb:()=>{}}], `<div class="kick-list">${rows}</div>`);
 };
 
 window.kickPlayerInGame = async function(pid, pname){
   closeModal();
-  openModal(`🚫 طرد ${pname}`, `هل أنت متأكد من طرد <b>${pname}</b>؟`, [
-    { label:'نعم، اطرد', cls:'btn-red', cb: async ()=>{
+  openModal(LANG==='en'?`🚫 Kick ${pname}`:`🚫 طرد ${pname}`, LANG==='en'?`Are you sure you want to kick <b>${pname}</b>?`:`هل أنت متأكد من طرد <b>${pname}</b>؟`, [
+    { label:LANG==='en'?'Yes, kick':'نعم، اطرد', cls:'btn-red', cb: async ()=>{
       await dbSet(`rooms/${ROOM}/kick`, { targetId: pid, by: ME.id, ts: Date.now() });
       await dbSet(`rooms/${ROOM}/kickInGame`, { targetId: pid, by: ME.id, ts: Date.now(), processed: false });
       setTimeout(()=>{ dbSet(`rooms/${ROOM}/kick`, null); dbSet(`rooms/${ROOM}/kickInGame`, null); }, 5000);
@@ -2786,21 +2805,39 @@ function listenRematchVotes(total){
   if(_rematchUnsub){ _rematchUnsub(); _rematchUnsub=null; }
   _rematchUnsub = dbOn(`rooms/${ROOM}/rematchRequest/votes`, votes=>{
     if(!votes) return;
-    const yesCount = Object.values(votes).filter(v=>v===true).length;
-    const noCount  = Object.values(votes).filter(v=>v===false).length;
-    const answered = yesCount + noCount;
-    showRematchStatus(`⏳ ${yesCount}/${total} وافقوا...`);
-    if(noCount > 0){
-      // رفض من أحدهم
-      if(_rematchUnsub){ _rematchUnsub(); _rematchUnsub=null; }
-      dbSet(`rooms/${ROOM}/rematchRequest`, null);
+    const entries = Object.entries(votes); // [[id, true/false], ...]
+    const yesIds  = entries.filter(([,v])=>v===true).map(([id])=>id);
+    const noIds   = entries.filter(([,v])=>v===false).map(([id])=>id);
+    const answered = yesIds.length + noIds.length;
+
+    showRematchStatus(`⏳ ${yesIds.length}/${total} ${T('rematchWaiting')}...`);
+
+    // انتظر حتى يجيب الكل
+    if(answered < total) return;
+
+    if(_rematchUnsub){ _rematchUnsub(); _rematchUnsub=null; }
+    dbSet(`rooms/${ROOM}/rematchRequest`, null);
+
+    if(yesIds.length === 0){
+      // لا أحد وافق
       showRematchStatus(`❌ ${T('rematchDeclined')}`);
       setTimeout(()=>{ const el=document.getElementById('rematch-status'); if(el)el.style.display='none'; }, 3000);
-    } else if(yesCount >= total){
+      return;
+    }
+
+    if(noIds.length > 0){
+      // بعضهم رفض — نُخرجهم ونبدأ مع الموافقين
+      const label = noIds.map(id=>{
+        const p=(_lastData?.players||[]).find(pp=>pp.id===id);
+        return p ? `${p.av} ${p.name}` : id;
+      }).join(', ');
+      showRematchStatus(`${T('startingWithoutX')}: ${label}`);
+      // نُعلّم الرافضين كـ kicked عبر Firebase
+      noIds.forEach(id=>dbSet(`rooms/${ROOM}/rematchKick/${id}`, true));
+      setTimeout(()=>startOnlineRematch(yesIds), 1500);
+    } else {
       // الكل وافق
-      if(_rematchUnsub){ _rematchUnsub(); _rematchUnsub=null; }
-      dbSet(`rooms/${ROOM}/rematchRequest`, null);
-      startOnlineRematch();
+      startOnlineRematch(yesIds);
     }
   });
 }
@@ -2812,15 +2849,18 @@ function showRematchStatus(msg){
   el.textContent = msg;
 }
 
-function startOnlineRematch(){
+function startOnlineRematch(acceptedIds){
   if(!ME.host) return;
   if(!_lastData) return;
-  // أعد بناء اللعبة بنفس اللاعبين
-  const allPls = _lastData.players;
+  // أعد بناء اللعبة — الموافقون فقط + البوتات
+  let allPls = _lastData.players;
+  if(acceptedIds){
+    allPls = allPls.filter(p => p.isBot || acceptedIds.includes(p.id));
+  }
   const d = deck();
   const freshPls = shuf(allPls).map((p,i)=>({
     ...p,
-    id: p.isBot ? ('bot_'+i) : p.id, // اللاعبون الحقيقيون يحتفظون بنفس الـ id
+    id: p.isBot ? ('bot_'+i) : p.id,
     coins:2,
     cards:[d.pop(),d.pop()],
     revealed:[false,false],
@@ -2839,10 +2879,12 @@ function startOnlineRematch(){
   dbSet(`rooms/${ROOM}/game`, newG).then(()=>{
     dbSet(`rooms/${ROOM}/log`, null);
   });
-  // الهوست يبدأ محلياً
+  // الهوست يبدأ محلياً — إلغاء كل الـ listeners القديمة أولاً
+  unsubAll();           // ← يلغي كل Firebase listeners
   ALL_LOG_ENTRIES=[];
   clearTimer();
   clearReactionListener();
+  _reactionSuccess = null;
   const logEl=document.getElementById('log-entries'); if(logEl)logEl.innerHTML='';
   SPECTATING=false;
   const oldBadge=document.getElementById('spectator-badge'); if(oldBadge)oldBadge.remove();
@@ -2853,6 +2895,16 @@ function startOnlineRematch(){
   S('screen-game');
   renderGame();
   glog(`⚔️ ${T('newRound')} ${cur().name}`);
+  // إعادة ربط game listener + host listeners من نقطة نظيفة
+  dbOn(`rooms/${ROOM}/game`, gd=>{
+    if(!gd) return;
+    if(gd.status==='ended'){ showStats(gd); return; }
+    const prevTurn=G?.turn;
+    G=gd;
+    renderGame();
+    if(ME.host && G.players[G.turn]?.isBot && G.turn!==prevTurn)
+      setTimeout(()=>runBot(), 400);
+  });
   setupReactionListener();
   startHostListeners();
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
@@ -2946,12 +2998,12 @@ window.playAgain = function(){
       treasury:Math.max(0,50-freshPls.length*2),
       turn:0, phase:'action', startedAt:Date.now() };
 
-  // تشغيل كامل مثل startLocalGame (يُصلح مشكلة "أمر واحد ينهي")
+  // تشغيل كامل مثل startLocalGame
   S('screen-game');
   renderGame();
   glog(`⚔️ ${T('newRound')} ${cur().name}`);
-  // استدعاء setupReactionListener من جديد للجلسة الجديدة
   setupReactionListener();
+  // تشغيل البوت إن كان دوره
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); }, 400);
 };
 
@@ -2976,7 +3028,7 @@ window.leaveRoom = async function(){
 };
 
 window.confirmLeave = function(){
-  openModal('🏠 العودة','هل تريد الخروج من اللعبة الحالية؟',[
+  openModal(LANG==='en'?'🏠 Leave':'🏠 العودة',LANG==='en'?'Do you want to leave the current game?':'هل تريد الخروج من اللعبة الحالية؟',[
     { label:LANG==='en'?'Yes, leave':'نعم، اخرج', cls:'btn-red', cb:()=>leaveRoom() },
     { label:LANG==='en'?'No, continue':'لا، استمر', cls:'btn-green', cb:()=>{} },
   ]);
@@ -3181,6 +3233,41 @@ const TR = {
   logTimeout:         { ar:'انتهى وقته — سُمح تلقائياً', en:'timed out — auto-allowed' },
   logAllowed:         { ar:'سمح',                        en:'allowed' },
   logNewGame:         { ar:'بدأت اللعبة! دور',           en:'Game started! Turn:' },
+  // شاشة Join
+  joinRoomTitle:      { ar:'🔑 الانضمام لغرفة',          en:'🔑 Join a Room' },
+  invitedMsg:         { ar:'📩 تمت دعوتك! أدخل اسمك واضغط انضمام', en:'📩 You were invited! Enter your name and join.' },
+  yourName:           { ar:'اسمك',                        en:'Your Name' },
+  yourAvatar:         { ar:'أفاتارك',                     en:'Your Avatar' },
+  roomCode:           { ar:'كود الغرفة',                  en:'Room Code' },
+  joinBtn:            { ar:'الانضمام →',                   en:'Join →' },
+  // شاشة Setup Online
+  setupOnlineTitle:   { ar:'🌐 إعداد الغرفة الأونلاين',   en:'🌐 Online Room Setup' },
+  // شاشة Solo
+  playBotsTitle:      { ar:'🤖 العب ضد البوتات',          en:'🤖 Play vs Bots' },
+  // Lobby
+  lobbyTitle:         { ar:'🏰 الغرفة',                   en:'🏰 Room' },
+  // Settings
+  settingsTitle:      { ar:'⚙️ الإعدادات',                en:'⚙️ Settings' },
+  // Rematch
+  startingWithoutX:   { ar:'يبدأ بدون',                   en:'Starting without' },
+  rematchWaiting:     { ar:'⏳ وافقوا',                   en:'⏳ agreed' },
+  // Actions log
+  logIncome:          { ar:'يأخذ دخلاً — +1◈',            en:'takes income — +1◈' },
+  logFAid:            { ar:'يأخذ مساعدة خارجية — +2◈',     en:'takes foreign aid — +2◈' },
+  logTax:             { ar:'يأخذ ضريبة — +3◈',             en:'takes tax — +3◈' },
+  logCoup:            { ar:'ينفذ انقلاباً على',             en:'performs a Coup on' },
+  logAssassin:        { ar:'يغتال',                         en:'assassinates' },
+  logSteal:           { ar:'يسرق من',                       en:'steals from' },
+  logExchange:        { ar:'يتبادل أوراقه',                  en:'exchanges cards' },
+  logWins:            { ar:'فاز! 🏆',                      en:'wins! 🏆' },
+  lobbyWaiting:       { ar:'في انتظار اللاعبين...',          en:'Waiting for players...' },
+  copyDone:           { ar:'✅ تم النسخ!',                  en:'✅ Copied!' },
+  copyCodeHint:       { ar:'📋 اضغط للنسخ',                en:'📋 Tap to copy' },
+  shareTxt:           { ar:'📲 أرسل الرابط أو الكود لأصدقائك', en:'📲 Share the link or code' },
+  startGame:          { ar:'🎲 ابدأ اللعبة!',               en:'🎲 Start Game!' },
+  leaveRoom:          { ar:'← مغادرة الغرفة',               en:'← Leave Room' },
+  backBtn:            { ar:'← رجوع',                        en:'← Back' },
+  copying:            { ar:'نسخ',                           en:'Copy' },
 };
 function T(key){ return (TR[key]&&TR[key][LANG]) || (TR[key]&&TR[key]['ar']) || key; }
 
@@ -3196,11 +3283,36 @@ window.setLang = function(lang, el){
 };
 
 function applyLang(){
-  // تطبيق data-t على كل العناصر
+  const en = LANG === 'en';
+  // تطبيق data-t على كل العناصر الثابتة
   document.querySelectorAll('[data-t]').forEach(el=>{
     const key = el.getAttribute('data-t');
     const txt = T(key);
     if(txt && txt !== key) el.textContent = txt;
+  });
+  // placeholders
+  const joinName = document.getElementById('join-name');
+  if(joinName) joinName.placeholder = en ? 'Enter your name' : 'أدخل اسمك';
+  const hostName = document.getElementById('host-name');
+  if(hostName) hostName.placeholder = en ? 'Enter your name' : 'أدخل اسمك';
+  const soloName = document.getElementById('solo-name');
+  if(soloName) soloName.placeholder = en ? 'Enter your name' : 'أدخل اسمك';
+  const joinCode = document.getElementById('join-code');
+  if(joinCode) joinCode.placeholder = 'XXXX';
+  // copy button
+  const copyBtn = document.getElementById('copy-url-btn');
+  if(copyBtn) copyBtn.textContent = T('copying');
+  const codeHint = document.getElementById('code-copy-hint');
+  if(codeHint) codeHint.textContent = T('copyCodeHint');
+  // lobby status
+  const lobStatus = document.getElementById('lobby-status');
+  if(lobStatus && lobStatus.textContent.includes('انتظار')) lobStatus.textContent = T('lobbyWaiting');
+  // start / leave buttons in lobby
+  const startBtn = document.getElementById('start-btn');
+  if(startBtn) startBtn.innerHTML = T('startGame');
+  // screen setup labels
+  document.querySelectorAll('.inp-label').forEach(el=>{
+    if(el.hasAttribute('data-t')) return; // handled by data-t
   });
   // لوحة الأكشنات (ديناميكية)
   if(typeof renderActions === 'function') renderActions();
@@ -3213,6 +3325,8 @@ function applyLang(){
   // spectator badge
   const badge = document.getElementById('spectator-badge');
   if(badge) badge.textContent = T('spectatorMode');
+  // HTML title
+  document.title = en ? 'COUP™ — The Conspiracy' : 'COUP™ — لعبة المؤامرة';
 }
 
 let SPECTATING = false;
@@ -3238,8 +3352,8 @@ function checkSpectator(){
       handEl.appendChild(spectDiv);
     }
     const aw=document.getElementById('action-wrap');
-    if(aw) aw.innerHTML=`<div class="waiting-msg">👁 تشاهد بقية الجولة... لا يمكنك التصويت أو الاعتراض</div>`;
-    glog(`👁 <span style="color:#ce93d8">${me.name}</span> يشاهد الآن كمتفرج — بدون صلاحيات`);
+    if(aw) aw.innerHTML=`<div class="waiting-msg">👁 ${LANG==='en'?'Spectating — no voting or blocking':'تشاهد بقية الجولة... لا يمكنك التصويت أو الاعتراض'}</div>`;
+    glog(`👁 <span style="color:#ce93d8">${me.name}</span> ${LANG==='en'?'is now spectating — no permissions':'يشاهد الآن كمتفرج — بدون صلاحيات'}`);
   }
 }
 
@@ -3442,12 +3556,24 @@ window.addEventListener('load',()=>{
   const p=new URLSearchParams(location.search);
   const rc=p.get('room');
   if(rc){
+    const code = rc.toUpperCase().slice(0,4);
     buildAv('av-join','join');
+    // تحميل اللغة المحفوظة أولاً
+    const savedLang2 = localStorage.getItem('coup_lang') || 'ar';
+    if(savedLang2 !== LANG) {
+      const langBtn = document.getElementById(savedLang2==='en'?'lang-en':'lang-ar');
+      setLang(savedLang2, langBtn);
+    }
     S('screen-join');
-    document.getElementById('join-code').value=rc.toUpperCase().slice(0,4);
-    const banner=document.getElementById('join-invite-banner');
-    if(banner) banner.style.display='block';
-    setTimeout(()=>{ document.getElementById('join-name').focus(); }, 300);
+    document.getElementById('join-code').value = code;
+    const banner = document.getElementById('join-invite-banner');
+    if(banner) banner.style.display = 'block';
+    // تحديث نص البانر حسب اللغة
+    if(LANG==='en') banner.textContent = '📩 You were invited! Enter your name and join.';
+    // تركيز حقل الاسم
+    setTimeout(()=>{ document.getElementById('join-name').focus(); }, 400);
+    // تصحيح: تأكد أن الكود يبقى في الحقل بعد buildAv
+    setTimeout(()=>{ document.getElementById('join-code').value = code; }, 100);
   }
 });
 </script>
