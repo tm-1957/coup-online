@@ -1194,6 +1194,9 @@ function startLocalGame(gs){
     startHostListeners();
   }
 
+  // الكل يستمع للـ reactions الموجّهة له (هوست وغير هوست)
+  setupReactionListener();
+
   if(!ME.host){
     let _knownLogs=new Set();
     dbOn(`rooms/${ROOM}/log`, logData=>{
@@ -1202,7 +1205,6 @@ function startLocalGame(gs){
         if(!_knownLogs.has(ts)){ _knownLogs.add(ts); glogLocal(msg); }
       });
     });
-    setupReactionListener();
     dbOn(`rooms/${ROOM}/kick`, kickData=>{
       if(!kickData) return;
       if(kickData.targetId === ME.id){
@@ -1679,9 +1681,40 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
   const blockCards = BLOCK_MAP[actionId] || [];
   const canBlock = blockCards.length > 0 && (!BLOCK_TARGET_ONLY[actionId] || opp.id === target?.id);
   const canChal  = CAN_CHAL.includes(actionId) && !!claimedAs;
-  // استخدام actorPlayer بدل myP() لدعم اللاعبين غير الهوست
   const actor = actorPlayer || myP();
 
+  // ── إذا كان opp هو اللاعب المحلي → عرض مودال مباشرة بدون Firebase ──
+  if(opp.id === ME.id){
+    const next_i = ()=> publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer);
+    const cn = claimedAs || CLAIM_MAP[actionId];
+    const targetTxt = target ? `<br>الهدف: <b>${target.av} ${target.name}</b>` : '';
+    const body = `<b style="color:var(--gold-lt)">${actor.av} ${actor.name}</b> يدّعي:<br>
+      <b style="font-size:15px">${actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>${targetTxt}`;
+    const actions = [
+      { label:'✅ أسمح', cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${ME.name||'أنت'}</span> سمح`); next_i(); } }
+    ];
+    if(canChal) actions.push({ label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{
+      clearTimer(); SFX.challenge();
+      glog(`❓ <span class="lh">${ME.name||'أنت'}</span> يتحدّى!`);
+      const fn = _reactionSuccess; _reactionSuccess = null;
+      doChallengePid(ME.id, actionId, claimedAs, fn, actor);
+    }});
+    if(canBlock){ const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
+      actions.push({ label:`🛡️ اعترض (${lbl})`, cls:'', cb:()=>{
+        clearTimer(); SFX.block();
+        glog(`🛡️ <span class="lh">${ME.name||'أنت'}</span> يعترض!`);
+        const fn = _reactionSuccess; _reactionSuccess = null;
+        publishBlockChallengeFor(opp, actionId, blockCards, fn, actor);
+      }});
+    }
+    clearTimer();
+    openModal(`${myP()?.av||''} ${myP()?.name||''} — ماذا تفعل؟`, body, actions);
+    SFX.modal();
+    startTimer(50, ()=>{ glog(`⏱ انتهى وقتك — سُمح تلقائياً`); next_i(); });
+    return;
+  }
+
+  // ── لاعب بعيد → أرسل عبر Firebase ──
   await dbSet(`rooms/${ROOM}/reactionReply`, null);
   await dbSet(`rooms/${ROOM}/reaction`, {
     forId:    opp.id,
@@ -1716,7 +1749,6 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
       glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
       SFX.challenge();
       const fn = _reactionSuccess; _reactionSuccess = null;
-      // التحدي ضد الـ actor (مش الهوست)
       doChallengePid(opp.id, actionId, claimedAs, fn, actor);
     } else if(reply.type === 'block'){
       const oppPlayer = G.players.find(p=>p.id===opp.id);
@@ -1750,6 +1782,46 @@ async function publishBlockChallenge(blocker, actionId, blockCards, onSuccess){
 async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess, actorPlayer){
   if(!ME.host) return;
   const actor = actorPlayer || myP();
+
+  // دالة معالجة الرد (مشتركة بين المحلي والـ Firebase)
+  const handleReply = (type) => {
+    if(type === 'accept'){
+      glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`);
+      nextTurn();
+    } else if(type === 'challenge'){
+      const blockerCur = G.players.find(p=>p.id===blocker.id) || blocker;
+      const ci = blockerCur.cards.findIndex((c,ii)=> blockCards.includes(c) && !blockerCur.revealed[ii]);
+      if(ci !== -1){
+        const card = blockerCur.cards[ci];
+        glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! اعتراضه صحيح`);
+        forceReveal(actor.id, ()=>{ replaceCard(blocker.id, card); nextTurn(); });
+      } else {
+        glog(`🛡️ <span class="lh">${actor.name}</span> كشف بلف الاعتراض!`);
+        forceReveal(blocker.id, ()=>onSuccess && onSuccess());
+      }
+    } else {
+      glog(`⏱ انتهى الوقت — <span class="lh">${blocker.name}</span> اعترض بنجاح`);
+      nextTurn();
+    }
+  };
+
+  // ── إذا كان actor هو اللاعب المحلي → مودال مباشرة ──
+  if(actor.id === ME.id){
+    const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
+    clearTimer();
+    openModal(
+      `🛡️ ${blocker.av} ${blocker.name} يعترض`,
+      `يدّعي امتلاك: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">هل تقبل الاعتراض أم تتحدّاه؟</small>`,
+      [
+        { label:'✅ أقبل', cls:'btn-green', cb:()=>{ clearTimer(); handleReply('accept'); } },
+        { label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{ clearTimer(); SFX.challenge(); handleReply('challenge'); } }
+      ]
+    );
+    startTimer(50, ()=>{ clearTimer(); handleReply('timeout'); });
+    return;
+  }
+
+  // ── actor بعيد → Firebase ──
   await dbSet(`rooms/${ROOM}/reactionReply`, null);
   await dbSet(`rooms/${ROOM}/reaction`, {
     forId:      actor.id,
@@ -1770,25 +1842,7 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
     clearReactionListener();
     await dbSet(`rooms/${ROOM}/reaction`, null);
     await dbSet(`rooms/${ROOM}/reactionReply`, null);
-
-    if(reply.type === 'accept'){
-      glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`);
-      nextTurn();
-    } else if(reply.type === 'challenge'){
-      const blockerCur = G.players.find(p=>p.id===blocker.id) || blocker;
-      const ci = blockerCur.cards.findIndex((c,i)=> blockCards.includes(c) && !blockerCur.revealed[i]);
-      if(ci !== -1){
-        const card = blockerCur.cards[ci];
-        glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! اعتراضه صحيح`);
-        forceReveal(actor.id, ()=>{ replaceCard(blocker.id, card); nextTurn(); });
-      } else {
-        glog(`🛡️ <span class="lh">${actor.name}</span> كشف بلف الاعتراض!`);
-        forceReveal(blocker.id, ()=>onSuccess && onSuccess());
-      }
-    } else if(reply.type === 'timeout'){
-      glog(`⏱ انتهى الوقت — <span class="lh">${blocker.name}</span> اعترض بنجاح`);
-      nextTurn();
-    }
+    handleReply(reply.type);
   });
 
   setTimeout(async ()=>{
@@ -1796,18 +1850,18 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
     if(!cur2){
       clearReactionListener();
       await dbSet(`rooms/${ROOM}/reaction`, null);
-      glog(`⏱ انتهى الوقت — <span class="lh">${blocker.name}</span> اعترض بنجاح`);
-      nextTurn();
+      handleReply('timeout');
     }
   }, 50000);
 }
 
 function setupReactionListener(){
-  if(ME.host) return;
-
+  // الهوست أيضاً يحتاج يستمع — لما لاعب آخر يلعب والهوست هو المستهدف بالـ reaction
   dbOn(`rooms/${ROOM}/reaction`, req => {
     if(!req) return;
     if(req.forId !== ME.id) return;
+    // الهوست لا يرد على reactions الناتجة عن أكشناته هو
+    if(req.actorId === ME.id) return;
 
     if(isSpectating()){
       dbSet(`rooms/${ROOM}/reactionReply`, { type:'allow', byId: ME.id, ts: Date.now() });
