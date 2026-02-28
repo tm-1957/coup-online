@@ -614,31 +614,31 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     <div class="treasury-box">
       <span>🏛️</span>
       <span class="treasury-val" id="treasury-val">0</span>
-      <span class="treasury-lbl">خزينة</span>
+      <span class="treasury-lbl" data-t="treasury">خزينة</span>
     </div>
     <div class="turn-info">
       <span class="live-dot"></span>
-      <span>دور <span class="turn-name" id="turn-name">—</span></span>
+      <span><span data-t="turnLabel">دور</span> <span class="turn-name" id="turn-name">—</span></span>
     </div>
     <div class="menu-btn-top" onclick="openGameSheet()">☰</div>
   </div>
   <div class="coup-alert" id="coup-alert">
     <span style="font-size:20px">⚠️</span>
     <div>
-      <div class="coup-alert-title">انقلاب إلزامي!</div>
-      <div class="coup-alert-sub">لديك 10+ عملات — يجب تنفيذ انقلاب</div>
+      <div class="coup-alert-title" data-t="mustCoupTitle">انقلاب إلزامي!</div>
+      <div class="coup-alert-sub" data-t="mustCoupSub">لديك 10+ عملات — يجب تنفيذ انقلاب</div>
     </div>
   </div>
   <div class="game-body" id="game-body">
     <div class="my-hand">
-      <div class="hand-title" id="hand-lbl">أوراقك</div>
+      <div class="hand-title" id="hand-lbl" data-t="yourCards">أوراقك</div>
       <div class="hand-cards" id="hand-cards"></div>
     </div>
     <div id="action-wrap"></div>
     <div class="log-panel">
       <div class="log-title" style="display:flex;align-items:center;justify-content:space-between;">
-        <span>⚔️ سجل الأحداث</span>
-        <button onclick="openEventLogModal()" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:6px;color:var(--gold);font-size:10px;padding:3px 10px;cursor:pointer;font-family:'Tajawal',sans-serif;letter-spacing:1px;">📜 عرض الكل</button>
+        <span data-t="eventLog">⚔️ سجل الأحداث</span>
+        <button onclick="openEventLogModal()" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:6px;color:var(--gold);font-size:10px;padding:3px 10px;cursor:pointer;font-family:'Tajawal',sans-serif;letter-spacing:1px;" data-t="viewAll">📜 عرض الكل</button>
       </div>
       <div id="log-entries"></div>
     </div>
@@ -649,33 +649,33 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <!-- Game Sheet -->
 <div class="sheet-bg" id="game-sheet" onclick="if(event.target===this)closeSheet('game-sheet')">
   <div class="sheet">
-    <div class="sheet-title">☰ قائمة اللعبة</div>
+    <div class="sheet-title" data-t="gameMenu">☰ قائمة اللعبة</div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');confirmLeave()">
       <span class="sheet-item-icon">🏠</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">العودة للرئيسية</div><div class="sheet-item-sub">الخروج من اللعبة</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-t="home">العودة للرئيسية</div><div class="sheet-item-sub" data-t="exitGame">الخروج من اللعبة</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');S('screen-rules')">
       <span class="sheet-item-icon">📋</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">قواعد اللعبة</div><div class="sheet-item-sub">مرجع سريع</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-t="rules">قواعد اللعبة</div><div class="sheet-item-sub" data-t="quickRef">مرجع سريع</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" id="kick-sheet-item" onclick="closeSheet('game-sheet');openKickModal()" style="display:none;">
       <span class="sheet-item-icon">🚫</span>
-      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--crimson-lt)">طرد لاعب</div><div class="sheet-item-sub">إزالة لاعب من الجلسة</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--crimson-lt)" data-t="kickPlayer">طرد لاعب</div><div class="sheet-item-sub" data-t="removePlayer">إزالة لاعب من الجلسة</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" id="transfer-sheet-item" onclick="closeSheet('game-sheet');openTransferHostModal()" style="display:none;">
       <span class="sheet-item-icon">👑</span>
-      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--gold)">تبديل المضيف</div><div class="sheet-item-sub">نقل صلاحيات الهوست للاعب آخر</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" style="color:var(--gold)" data-t="transferHost">تبديل المضيف</div><div class="sheet-item-sub" data-t="transferSub">نقل صلاحيات الهوست للاعب آخر</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <div class="sheet-item" onclick="closeSheet('game-sheet');S('screen-settings')">
       <span class="sheet-item-icon">⚙️</span>
-      <div class="sheet-item-text"><div class="sheet-item-title">الإعدادات</div><div class="sheet-item-sub">الصوت والمظهر</div></div>
+      <div class="sheet-item-text"><div class="sheet-item-title" data-t="settings">الإعدادات</div><div class="sheet-item-sub" data-t="soundTheme">الصوت والمظهر</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
-    <button class="btn btn-dim btn-full" onclick="closeSheet('game-sheet')">← استمرار اللعبة</button>
+    <button class="btn btn-dim btn-full" onclick="closeSheet('game-sheet')" data-t="continueGame">← استمرار اللعبة</button>
   </div>
 </div>
 
@@ -896,6 +896,12 @@ window.S = function(id){
   CUR_SCREEN=id;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  // badge المشاهد: تظهر فقط في شاشة اللعب
+  const badge = document.getElementById('spectator-badge');
+  if(badge){
+    if(id==='screen-game') badge.classList.remove('hidden');
+    else badge.classList.add('hidden');
+  }
 };
 window.back = function(){ const p=SCREEN_HIST.pop(); p?S(p):S('screen-title'); };
 
@@ -1286,7 +1292,7 @@ function startHostListeners(){
       _reactionSuccess = ()=>{
         const np=clonePlayers(); const mi=idx(pa.actorId,np); np[mi].coins+=3;
         SFX.coins();
-        pushUpdate({players:np,treasury:Math.max(0,G.treasury-3)},`📜 <span class="lh">${me.name}</span> Tax (+3◈) [يدّعي ${claimedAs}]`);
+        pushUpdate({players:np,treasury:Math.max(0,G.treasury-3)},`📜 <span class="lh">${me.name}</span> Tax (+3◈) [${LANG==="en"?"claims":"يدّعي"} ${claimedAs}]`);
         nextTurn();
       };
       const ops = G.players.filter(p=>!p.eliminated && p.id!==pa.actorId);
@@ -1306,7 +1312,7 @@ function startHostListeners(){
         const np=clonePlayers(); const mi=idx(pa.actorId,np); const ti=idx(tgt.id,np);
         const n=Math.min(np[ti].coins,2); np[ti].coins-=n; np[mi].coins+=n;
         SFX.steal();
-        pushUpdate({players:np},`🦹 <span class="lh">${me.name}</span> سطا على <span class="lh">${tgt.name}</span> (+${n}◈) [يدّعي ${claimedAs}]`);
+        pushUpdate({players:np},`🦹 <span class="lh">${me.name}</span> ${LANG==="en"?"stole from":"سطا على"} <span class="lh">${tgt.name}</span> (+${n}◈) [${LANG==="en"?"claims":"يدّعي"} ${claimedAs}]`);
         nextTurn();
       };
       const ops = G.players.filter(p=>!p.eliminated && p.id!==pa.actorId);
@@ -1319,7 +1325,7 @@ function startHostListeners(){
       pushUpdate({players:np2},null);
       _reactionSuccess = ()=>{
         SFX.assassin();
-        glog(`🗡️ <span class="lh">${me.name}</span> اغتال <span class="lh">${tgt.name}</span>! [يدّعي ${claimedAs}]`);
+        glog(`🗡️ <span class="lh">${me.name}</span> ${LANG==="en"?"assassinated":"اغتال"} <span class="lh">${tgt.name}</span>! [${LANG==="en"?"claims":"يدّعي"} ${claimedAs}]`);
         forceReveal(tgt.id,()=>nextTurn());
       };
       const ops = G.players.filter(p=>!p.eliminated && p.id!==pa.actorId);
@@ -1345,7 +1351,7 @@ function startHostListeners(){
     await dbSet(`rooms/${ROOM}/revealReply`, null);
     const np = clonePlayers(); np[pi].revealed[ci]=true;
     SFX.cardReveal();
-    glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
+    glog(`💀 <span class="lh">${np[pi].name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
     checkElim(np,pi);
     await pushUpdate({players:np},null);
     G.players=np;
@@ -1362,7 +1368,7 @@ function startHostListeners(){
     const np = clonePlayers();
     np[pi].eliminated = true;
     np[pi].revealed = [true, true];
-    glog(`🚫 <span class="lr">${np[pi].name}</span> طُرد من اللعبة!`);
+    glog(`🚫 <span class="lr">${np[pi].name}</span> ${LANG==="en"?"was kicked!":"طُرد من اللعبة!"}`);
     checkElim(np, pi);
     pushUpdate({players:np}, null);
     G.players = np;
@@ -1400,7 +1406,7 @@ function renderBar(){
     sl.className=`p-slot${isCur?' active-turn':''}${p.eliminated?' dead':''}${isMe?' me':''}`;
     const dots=p.cards.map((_,ci)=>`<div class="p-card ${p.revealed[ci]?'dead-card':'alive'}"></div>`).join('');
     sl.innerHTML=`<div class="p-av">${p.av}</div>
-      <div class="p-name${isCur?' active':''}">${isMe?'أنت':p.name}</div>
+      <div class="p-name${isCur?' active':''}">${isMe?(LANG==='en'?'You':'أنت'):p.name}</div>
       <div class="p-coins"><span class="p-coin-sym">◈</span>${p.coins}</div>
       <div class="p-cards">${dots}</div>`;
     bar.appendChild(sl);
@@ -1511,7 +1517,7 @@ function _doActionLocal(id, me){
       askReaction('Tax',null,claimedAs,()=>{
         const np=clonePlayers(); const mi=idx(ME.id,np); np[mi].coins+=3;
         SFX.coins();
-        pushUpdate({players:np,treasury:Math.max(0,G.treasury-3)},`📜 <span class="lh">${me.name}</span> Tax (+3◈) [يدّعي ${claimedAs}]`);
+        pushUpdate({players:np,treasury:Math.max(0,G.treasury-3)},`📜 <span class="lh">${me.name}</span> Tax (+3◈) [${LANG==="en"?"claims":"يدّعي"} ${claimedAs}]`);
         nextTurn();
       });
     }); return;
@@ -1530,7 +1536,7 @@ function _doActionLocal(id, me){
           const np=clonePlayers(); const mi=idx(ME.id,np); const ti=idx(tgt.id,np);
           const n=Math.min(np[ti].coins,2); np[ti].coins-=n; np[mi].coins+=n;
           SFX.steal();
-          pushUpdate({players:np},`🦹 <span class="lh">${me.name}</span> سطا على <span class="lh">${tgt.name}</span> (+${n}◈) [يدّعي ${claimedAs}]`);
+          pushUpdate({players:np},`🦹 <span class="lh">${me.name}</span> ${LANG==="en"?"stole from":"سطا على"} <span class="lh">${tgt.name}</span> (+${n}◈) [${LANG==="en"?"claims":"يدّعي"} ${claimedAs}]`);
           nextTurn();
         });
       });
@@ -1544,7 +1550,7 @@ function _doActionLocal(id, me){
         pushUpdate({players:np},null);
         askReaction('Assassinate',tgt,claimedAs,()=>{
           SFX.assassin();
-          glog(`🗡️ <span class="lh">${me.name}</span> اغتال <span class="lh">${tgt.name}</span>! [يدّعي ${claimedAs}]`);
+          glog(`🗡️ <span class="lh">${me.name}</span> ${LANG==="en"?"assassinated":"اغتال"} <span class="lh">${tgt.name}</span>! [${LANG==="en"?"claims":"يدّعي"} ${claimedAs}]`);
           forceReveal(tgt.id,()=>nextTurn());
         });
       });
@@ -1660,18 +1666,18 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
 
     if(canBlock && Math.random() < cfg.blk){
       setTimeout(()=>{
-        glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
+        glog(`🛡️ <span class="lh">${opp.name}</span> ${LANG==="en"?"is blocking!":"يعترض!"}`);
         const oppCur = G.players.find(p=>p.id===opp.id) || opp;
         const hasCard = oppCur.cards.some((c,ci)=> BLOCK_MAP[actionId]?.includes(c) && !oppCur.revealed[ci]);
         if(hasCard){
           const blockCard = BLOCK_MAP[actionId]?.find(c=>oppCur.cards.some((oc,i)=>oc===c&&!oppCur.revealed[i]));
-          glog(`✅ اعتراض صحيح بـ ${blockCard||''} — حُجب الأكشن`);
+          glog(`✅ اعتراض صحيح بـ ${blockCard||''} ${LANG==="en"?"— action blocked!":"— حُجب الأكشن"}`);
           clearReactionListener();
           dbSet(`rooms/${ROOM}/reaction`, null);
           _reactionSuccess = null;
           nextTurn();
         } else {
-          glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`);
+          glog(`❌ ${LANG==="en"?"bluff block — ":"اعتراض كاذب — "}<span class="lh">${opp.name}</span> ${LANG==="en"?"loses a card":"يخسر ورقة"}`);
           clearReactionListener();
           dbSet(`rooms/${ROOM}/reaction`, null);
           const fn = _reactionSuccess; _reactionSuccess = null;
@@ -1680,7 +1686,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
       }, 250);
     } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
-        glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
+        glog(`❓ <span class="lh">${opp.name}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
         clearReactionListener();
         dbSet(`rooms/${ROOM}/reaction`, null);
         const fn = _reactionSuccess; _reactionSuccess = null;
@@ -1701,22 +1707,22 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
   if(opp.id === ME.id){
     const next_i = ()=> publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer);
     const cn = claimedAs || CLAIM_MAP[actionId];
-    const targetTxt = target ? `<br>الهدف: <b>${target.av} ${target.name}</b>` : '';
+    const targetTxt = target ? `<br>${T('target')}: <b>${target.av} ${target.name}</b>` : '';
     const body = `<b style="color:var(--gold-lt)">${actor.av} ${actor.name}</b> ${T('claims')}:<br>
       <b style="font-size:15px">${actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>${targetTxt}`;
     const actions = [
-      { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${ME.name||'أنت'}</span> سمح`); next_i(); } }
+      { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${ME.name||'أنت'}</span> ${LANG==="en"?"allowed":"سمح"}`); next_i(); } }
     ];
     if(canChal) actions.push({ label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{
       clearTimer(); SFX.challenge();
-      glog(`❓ <span class="lh">${ME.name||'أنت'}</span> يتحدّى!`);
+      glog(`❓ <span class="lh">${ME.name||'أنت'}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
       const fn = _reactionSuccess; _reactionSuccess = null;
       doChallengePid(ME.id, actionId, claimedAs, fn, actor, target?.id);
     }});
     if(canBlock){ const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
       actions.push({ label:`🛡️ اعترض (${lbl})`, cls:'', cb:()=>{
         clearTimer(); SFX.block();
-        glog(`🛡️ <span class="lh">${ME.name||'أنت'}</span> يعترض!`);
+        glog(`🛡️ <span class="lh">${ME.name||'أنت'}</span> ${LANG==="en"?"is blocking!":"يعترض!"}`);
         const fn = _reactionSuccess; _reactionSuccess = null;
         publishBlockChallengeFor(opp, actionId, blockCards, fn, actorPlayer || actor);
       }});
@@ -1724,7 +1730,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
     clearTimer();
     openModal(`${myP()?.av||''} ${myP()?.name||''} — ماذا تفعل؟`, body, actions);
     SFX.modal();
-    startTimer(50, ()=>{ glog(`⏱ انتهى وقتك — سُمح تلقائياً`); next_i(); });
+    startTimer(50, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — auto-allowed":"انتهى وقتك — سُمح تلقائياً"}`); next_i(); });
     return;
   }
 
@@ -1755,24 +1761,24 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
     await dbSet(`rooms/${ROOM}/reactionReply`, null);
 
     if(reply.type === 'allow'){
-      glog(`✅ <span class="lh">${opp.name}</span> سمح`);
+      glog(`✅ <span class="lh">${opp.name}</span> ${LANG==="en"?"allowed":"سمح"}`);
       publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer);
     } else if(reply.type === 'challenge'){
       const oppPlayer = G.players.find(p=>p.id===opp.id);
       if(oppPlayer && oppPlayer.eliminated){ publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer); return; }
-      glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
+      glog(`❓ <span class="lh">${opp.name}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
       SFX.challenge();
       const fn = _reactionSuccess; _reactionSuccess = null;
       doChallengePid(opp.id, actionId, claimedAs, fn, actorPlayer || actor, target?.id);
     } else if(reply.type === 'block'){
       const oppPlayer = G.players.find(p=>p.id===opp.id);
       if(oppPlayer && oppPlayer.eliminated){ publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer); return; }
-      glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
+      glog(`🛡️ <span class="lh">${opp.name}</span> ${LANG==="en"?"is blocking!":"يعترض!"}`);
       SFX.block();
       const fn = _reactionSuccess; _reactionSuccess = null;
       publishBlockChallengeFor(opp, actionId, blockCards, fn, actor);
     } else if(reply.type === 'timeout'){
-      glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`);
+      glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`);
       publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer);
     }
   });
@@ -1782,7 +1788,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
     if(!cur2) {
       clearReactionListener();
       await dbSet(`rooms/${ROOM}/reaction`, null);
-      glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`);
+      glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`);
       publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer);
     }
   }, 50000);
@@ -1800,21 +1806,21 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
   // دالة معالجة الرد (مشتركة بين المحلي والـ Firebase)
   const handleReply = (type) => {
     if(type === 'accept'){
-      glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`);
+      glog(`🛡️ <span class="lh">${blocker.name}</span> ${LANG==="en"?"blocked successfully!":"اعترض بنجاح"}`);
       nextTurn();
     } else if(type === 'challenge'){
       const blockerCur = G.players.find(p=>p.id===blocker.id) || blocker;
       const ci = blockerCur.cards.findIndex((c,ii)=> blockCards.includes(c) && !blockerCur.revealed[ii]);
       if(ci !== -1){
         const card = blockerCur.cards[ci];
-        glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! اعتراضه صحيح`);
+        glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! ${LANG==="en"?"block is valid!":"اعتراضه صحيح"}`);
         forceReveal(actor.id, ()=>{ replaceCard(blocker.id, card); nextTurn(); });
       } else {
-        glog(`🛡️ <span class="lh">${actor.name}</span> كشف بلف الاعتراض!`);
+        glog(`🛡️ <span class="lh">${actor.name}</span> ${LANG==="en"?"exposed the block bluff!":"كشف بلف الاعتراض!"}`);
         forceReveal(blocker.id, ()=>onSuccess && onSuccess());
       }
     } else {
-      glog(`⏱ انتهى الوقت — <span class="lh">${blocker.name}</span> اعترض بنجاح`);
+      glog(`⏱ ${LANG==="en"?"timed out — block accepted":"انتهى الوقت — اعتراض بنجاح"}`);
       nextTurn();
     }
   };
@@ -2046,7 +2052,7 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
   const ci = actorCur.cards.findIndex((c,i) => c===claimed && !actorCur.revealed[i]);
   if(ci !== -1){
     // فشل التحدي — المُتحدِّي يخسر ورقة، الـ actor يستبدل ورقته، الأكشن يكمل
-    glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> تحدّى — ${actor.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
+    glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> ${LANG==="en"?"challenged — "+actor.name+" has":"تحدّى — "+actor.name+" يملك"} ${CARDS[claimed].icon} ${claimed}! ${LANG==="en"?"challenge failed!":"فشل التحدي"}`);
     forceReveal(challengerId, ()=>{
       replaceCard(actor.id, claimed);
       // إعادة تحقق: لو المُتحدِّي هو نفسه الهدف وانتهى (Assassinate) → nextTurn مباشرة
@@ -2062,7 +2068,7 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
     });
   } else {
     // نجح التحدي — الـ actor بلف، يخسر ورقة، الأكشن يُلغى
-    glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> كشف البلف! ${actor.name} كان يدّعي ${claimed} وهو لا يملكها`);
+    glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> ${LANG==="en"?"caught the bluff!":"كشف البلف!"} ${actor.name} ${LANG==="en"?"was bluffing "+claimed:"كان يدّعي "+claimed+" وهو لا يملكها"}`);
     forceReveal(actor.id, ()=>nextTurn());
   }
 }
@@ -2094,22 +2100,22 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
     if(canBlock && Math.random() < cfg.blk){
       setTimeout(()=>{
         clearTimer();
-        glog(`🛡️ <span class="lh">${opp.name}</span> يعترض!`);
+        glog(`🛡️ <span class="lh">${opp.name}</span> ${LANG==="en"?"is blocking!":"يعترض!"}`);
         const oppCur = G.players.find(p=>p.id===opp.id) || opp;
         const hasCard = oppCur.cards.some((c,ci2)=> BLOCK_MAP[actionId]?.includes(c) && !oppCur.revealed[ci2]);
         if(hasCard){
-          glog(`✅ اعتراض صحيح بـ ${BLOCK_MAP[actionId]?.find(c=>oppCur.cards.includes(c))||''} — حُجب الأكشن`);
+          glog(`✅ اعتراض صحيح بـ ${BLOCK_MAP[actionId]?.find(c=>oppCur.cards.includes(c))||''} ${LANG==="en"?"— action blocked!":"— حُجب الأكشن"}`);
           // المُهاجِم يتحدّى الاعتراض؟ (نادر في السولو)
           nextTurn();
         } else {
-          glog(`❌ اعتراض كاذب — <span class="lh">${opp.name}</span> يخسر ورقة`);
+          glog(`❌ ${LANG==="en"?"bluff block — ":"اعتراض كاذب — "}<span class="lh">${opp.name}</span> ${LANG==="en"?"loses a card":"يخسر ورقة"}`);
           forceReveal(opp.id, ()=>onSuccess());
         }
       }, 250);
     } else if(canChal && Math.random() < cfg.chal){
       setTimeout(()=>{
         clearTimer();
-        glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
+        glog(`❓ <span class="lh">${opp.name}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
         doChallenge(opp, actionId, claimedAs, onSuccess, actorPlayer, target?.id);
       }, 250);
     } else {
@@ -2134,7 +2140,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
     <b style="font-size:15px">${actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>
     ${target ? `<br>${T('target')}: <b>${target.av} ${target.name}</b>` : ''}`;
   const actions = [
-    { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${opp.name}</span> سمح`); next(); } },
+    { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${opp.name}</span> ${LANG==="en"?"allowed":"سمح"}`); next(); } },
   ];
   if(canChal) actions.push({
     label:T('challengeTxt'), cls:'btn-red',
@@ -2149,7 +2155,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
   }
   openModal(`${opp.av} ${opp.name} — ${T('whatDoYouDo')}`, body, actions);
   SFX.modal();
-  startTimer(50, ()=>{ glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`); next(); });
+  startTimer(50, ()=>{ glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`); next(); });
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -2176,7 +2182,7 @@ function startTimer(sec, onEnd){
     if(oldBlock) oldBlock.remove();
 
     const wrap=document.createElement('div'); wrap.id='timer-block'; wrap.className='timer-wrap';
-    wrap.innerHTML=`<div class="timer-row"><span class="timer-lbl">⏱ وقت القرار</span><span class="timer-num" id="t-n">${sec}</span></div><div class="timer-track"><div class="timer-bar" id="t-b"></div></div>`;
+    wrap.innerHTML=`<div class="timer-row"><span class="timer-lbl">${LANG==="en"?"⏱ Decision":"⏱ وقت القرار"}</span><span class="timer-num" id="t-n">${sec}</span></div><div class="timer-track"><div class="timer-bar" id="t-b"></div></div>`;
     modal.insertBefore(wrap, modal.querySelector('.modal-actions'));
     let left=sec;
     _tmr=setInterval(()=>{
@@ -2204,7 +2210,7 @@ function doChallenge(challenger, actionId, claimedAs, onSuccess, actorOverride, 
   const ci = actorCur.cards.findIndex((c,i) => c===claimed && !actorCur.revealed[i]);
   if(ci !== -1){
     // فشل التحدي — المُتحدِّي يخسر ورقة، الـ actor يستبدل ورقته
-    glog(`❓ <span class="lh">${challenger.name}</span> تحدّى — ${actor.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
+    glog(`❓ <span class="lh">${challenger.name}</span> ${LANG==="en"?"challenged — "+actor.name+" has":"تحدّى — "+actor.name+" يملك"} ${CARDS[claimed].icon} ${claimed}! ${LANG==="en"?"challenge failed!":"فشل التحدي"}`);
     forceReveal(challenger.id, ()=>{
       replaceCard(actor.id, claimed);
       // لو المتحدي هو الهدف وانتهى (Assassinate) → nextTurn مباشرة
@@ -2220,7 +2226,7 @@ function doChallenge(challenger, actionId, claimedAs, onSuccess, actorOverride, 
     });
   } else {
     // نجح التحدي — الـ actor بلف، يخسر ورقة
-    glog(`❓ <span class="lh">${challenger.name}</span> كشف البلف! ${actor.name} كان يدّعي ${claimed} وهو لا يملكها`);
+    glog(`❓ <span class="lh">${challenger.name}</span> ${LANG==="en"?"caught the bluff!":"كشف البلف!"} ${actor.name} ${LANG==="en"?"was bluffing "+claimed:"كان يدّعي "+claimed+" وهو لا يملكها"}`);
     forceReveal(actor.id, ()=>nextTurn());
   }
 }
@@ -2236,23 +2242,23 @@ function doBlock(blocker, actionId, blockCards, onSuccess, actorOverride){
     `🛡️ ${blocker.av} ${blocker.name} ${T('blockTitle')}`,
     `${T('blockClaims')}: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">${actor.name} — ${T('yourDecision')}</small>`,
     [
-      { label:T('acceptTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`); nextTurn(); } },
+      { label:T('acceptTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`🛡️ <span class="lh">${blocker.name}</span> ${LANG==="en"?"blocked successfully!":"اعترض بنجاح"}`); nextTurn(); } },
       { label:T('challengeTxt'), cls:'btn-red', cb:()=>{
         clearTimer();
         const blockerCur = G.players.find(p=>p.id===blocker.id) || blocker;
         const ci=blockerCur.cards.findIndex((c,i)=>blockCards.includes(c)&&!blockerCur.revealed[i]);
         if(ci!==-1){
           const card=blockerCur.cards[ci];
-          glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! اعتراضه صحيح`);
+          glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! ${LANG==="en"?"block is valid!":"اعتراضه صحيح"}`);
           forceReveal(actor.id,()=>{ replaceCard(blocker.id,card); nextTurn(); });
         } else {
-          glog(`🛡️ <span class="lh">${actor.name}</span> كشف بلف الاعتراض!`);
+          glog(`🛡️ <span class="lh">${actor.name}</span> ${LANG==="en"?"exposed the block bluff!":"كشف بلف الاعتراض!"}`);
           forceReveal(blocker.id,()=>onSuccess && onSuccess());
         }
       }},
     ]
   );
-  startTimer(50, ()=>{ glog(`⏱ وقت انتهى — قُبل الاعتراض`); nextTurn(); });
+  startTimer(50, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — block accepted":"وقت انتهى — قُبل الاعتراض"}`); nextTurn(); });
 }
 
 function forceReveal(pid,cb){
@@ -2262,14 +2268,14 @@ function forceReveal(pid,cb){
 
   if(al.length===1){
     const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
-    glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
+    glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[c].icon} ${c}`);
     SFX.cardReveal();
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
 
   if(pid === ME.id && isSpectating()){
     const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
-    glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
+    glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[c].icon} ${c}`);
     SFX.cardReveal();
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
@@ -2277,7 +2283,7 @@ function forceReveal(pid,cb){
   if(ROOM && ROOM !== 'SOLO' && pid !== ME.id){
     if(p.isBot){
       const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
-      glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
+      glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[c].icon} ${c}`);
       SFX.cardReveal();
       checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
     }
@@ -2292,7 +2298,7 @@ function forceReveal(pid,cb){
   // في السولو إذا الهدف بوت → اختر ورقته تلقائياً بدون مودال
   if((!ROOM || ROOM==='SOLO') && p.isBot){
     const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
-    glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
+    glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[c].icon} ${c}`);
     SFX.cardReveal();
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
@@ -2310,7 +2316,7 @@ window.pickReveal = function(pid,ci){
     const pi=G.players.findIndex(p=>p.id===pid); const np=clonePlayers();
     np[pi].revealed[ci]=true;
     SFX.cardReveal();
-    glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
+    glog(`💀 <span class="lh">${np[pi].name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
     const cb=G._rCb; G._rCb=null;
   if(cb) cb();
@@ -2327,7 +2333,7 @@ function checkElim(pls,pi){
   const p=pls[pi];
   if(p.revealed.every(Boolean)&&!p.eliminated){
     pls[pi].eliminated=true; pls[pi].coins=0;
-    glog(`🚫 <span class="lr">${p.name}</span> مُقصى!`);
+    glog(`🚫 <span class="lr">${p.name}</span> ${T('eliminated')}!`);
   }
 }
 
@@ -2367,7 +2373,7 @@ function doExchange(me,mi,pls){
       const nd=[...dk]; opts.forEach((_,i)=>{ if(!chosen.includes(i)) nd.push(opts[i]); });
       const nc=chosen.map(i=>opts[i]); const np2=[...pls]; const nCards=[...np2[mi].cards];
       aliveCards.forEach((x,ni)=>{ nCards[x.ci]=nc[ni]||nCards[x.ci]; }); np2[mi].cards=nCards;
-      pushUpdate({players:np2,deck:shuf(nd)},`🔄 <span class="lh">${me.name}</span> بادل أوراقه`);
+      pushUpdate({players:np2,deck:shuf(nd)},`🔄 <span class="lh">${me.name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`);
       nextTurn();
     });
     return;
@@ -2401,7 +2407,7 @@ window.confirmExchange = function(){
   const nd=[...extraDeck]; opts.forEach((_,i)=>{ if(!chosen.includes(i)) nd.push(opts[i]); });
   const nc=chosen.map(i=>opts[i]); const np=[...pls]; const nCards=[...np[mi].cards];
   alive.forEach((x,ni)=>{ nCards[x.ci]=nc[ni]; }); np[mi].cards=nCards;
-  pushUpdate({players:np,deck:shuf(nd)},`🔄 <span class="lh">${np[mi].name}</span> بادل أوراقه`);
+  pushUpdate({players:np,deck:shuf(nd)},`🔄 <span class="lh">${np[mi].name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`);
   nextTurn();
 };
 
@@ -2410,7 +2416,7 @@ function pickTarget(prompt,cb){
   const ops=opps();
   const extra=`<div class="targets">${ops.map(p=>`<div class="target-row" onpointerdown="event.preventDefault();pickTgt('${p.id}')"><span class="t-av">${p.av}</span><span class="t-name">${p.name}</span><span class="t-coins">◈${p.coins}</span></div>`).join('')}</div>`;
   G._tCb=cb;
-  openModal(T('chooseTarget'),prompt,[{ label:'إلغاء', cls:'btn-dim', cb:()=>{} }],extra);
+  openModal(T('chooseTarget'),prompt,[{ label:T('cancel'), cls:'btn-dim', cb:()=>{} }],extra);
 }
 window.pickTgt = function(pid){
   if(_modalLocked) return;
@@ -2426,7 +2432,7 @@ let nt=G.turn, s=0;
   do{ nt=(nt+1)%G.players.length; s++; if(s>G.players.length){ endGame(al[0]); return; } }
   while(G.players[nt].eliminated);
   if(G.players[nt].id===ME.id) SFX.turnStart();
-  pushUpdate({turn:nt,phase:'action'},`⏩ دور <span class="lh">${G.players[nt].name}</span>`);
+  pushUpdate({turn:nt,phase:'action'},`⏩ ${T('waitingForTurn')} <span class="lh">${G.players[nt].name}</span>`);
   setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },400);
 }
 
@@ -2555,8 +2561,8 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
     await dbSet(`rooms/${ROOM}/reactionReply`, null);
 
     if(reply.type === 'allow' || reply.type === 'timeout'){
-      if(reply.type === 'timeout') glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`);
-      else glog(`✅ <span class="lh">${opp.name}</span> سمح`);
+      if(reply.type === 'timeout') glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`);
+      else glog(`✅ <span class="lh">${opp.name}</span> ${LANG==="en"?"allowed":"سمح"}`);
       publishBotReaction(bot, humanOps, i+1, actionId, target);
 
     } else if(reply.type === 'challenge'){
@@ -2564,11 +2570,11 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
       if(respPlayer && respPlayer.eliminated){ publishBotReaction(bot, humanOps, i+1, actionId, target); return; }
 
       SFX.challenge();
-      glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
+      glog(`❓ <span class="lh">${opp.name}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
       const claimed = CLAIM_MAP[actionId];
       const ci = bot.cards.findIndex((c,bi)=> c===claimed && !bot.revealed[bi]);
       if(ci !== -1){
-        glog(`❓ <span class="lh">${opp.name}</span> تحدّى — <span class="lh">${bot.name}</span> يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
+        glog(`❓ <span class="lh">${opp.name}</span> تحدّى — <span class="lh">${bot.name}</span> يملك ${CARDS[claimed].icon} ${claimed}! ${LANG==="en"?"challenge failed!":"فشل التحدي"}`);
         const fn = _reactionSuccess; _reactionSuccess = null;
         forceReveal(opp.id, ()=>{ replaceCard(bot.id, claimed); fn && fn(); });
       } else {
@@ -2592,7 +2598,7 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
           glog(`❓ <span class="lh">${bot.name}</span> يتحدّى اعتراض ${opp.name}!`);
           if(hasCard){
             const card = opp.cards.find((c,bi)=> BLOCK.includes(c) && !opp.revealed[bi]);
-            glog(`🛡️ ${opp.name} يملك ${card}! اعتراضه صحيح`);
+            glog(`🛡️ ${opp.name} يملك ${card}! ${LANG==="en"?"block is valid!":"اعتراضه صحيح"}`);
             forceReveal(bot.id, ()=>{ replaceCard(opp.id, card); nextTurn(); });
           } else {
             glog(`❌ ${opp.name} كان يكذب في الاعتراض! يخسر ورقة`);
@@ -2611,7 +2617,7 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
     if(!cur2){
       clearReactionListener();
       await dbSet(`rooms/${ROOM}/reaction`, null);
-      glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`);
+      glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`);
       publishBotReaction(bot, humanOps, i+1, actionId, target);
     }
   }, 30000);
@@ -2709,14 +2715,14 @@ function glogLocal(msg){
 
 window.openEventLogModal = function(){
   if(!ALL_LOG_ENTRIES.length){
-    openModal('📜 سجل الأحداث','<div style="text-align:center;padding:20px;color:var(--text-dim)">لا توجد أحداث بعد</div>',[{label:'إغلاق',cls:'btn-dim',cb:()=>{}}]);
+    openModal(LANG==='en'?'📜 Event Log':'📜 سجل الأحداث',`<div style="text-align:center;padding:20px;color:var(--text-dim)">${LANG==='en'?'No events yet':'لا توجد أحداث بعد'}</div>`,[{label:T('close'),cls:'btn-dim',cb:()=>{}}]);
     return;
   }
   const items = ALL_LOG_ENTRIES.map(msg =>
     `<div class="event-log-entry">${msg}</div>`
   ).join('');
   openModal(
-    '📜 سجل الأحداث الكامل',
+    LANG==='en'?'📜 Full Event Log':'📜 سجل الأحداث الكامل',
     '',
     [{label:'إغلاق', cls:'btn-dim', cb:()=>{}}],
     `<div class="event-log-modal">${items}</div>`
@@ -2742,7 +2748,7 @@ window.openTransferHostModal = function(){
 
 window.confirmTransferHost = async function(pid, pname){
   closeModal();
-  openModal(`👑 تأكيد نقل الهوست`, `هل أنت متأكد من نقل صلاحيات المضيف لـ <b>${pname}</b>؟`, [
+  openModal(LANG==='en'?`👑 Transfer Host`:`👑 تأكيد نقل الهوست`,LANG==='en'?`Transfer host to <b>${pname}</b>?`:`هل أنت متأكد من نقل صلاحيات المضيف لـ <b>${pname}</b>؟`, [
     { label:'نعم، انقل', cls:'btn-gold', cb: async ()=>{
       ME.host = false;
       await dbSet(`rooms/${ROOM}/hostTransfer`, { newHostId: pid, fromId: ME.id, ts: Date.now(), processed: false });
@@ -2791,7 +2797,7 @@ function endGame(winner){
   }
   if(winner.id===ME.id) SFX.win(); else SFX.lose();
   const badge = document.getElementById('spectator-badge');
-  if(badge){ badge.classList.add('hidden'); setTimeout(()=>badge.remove(), 600); }
+  if(badge) badge.classList.add('hidden');
   showStats(endData);
 }
 
@@ -3008,7 +3014,7 @@ window.playAgain = function(){
   if(!_lastData){ S('screen-title'); leaveRoom(); return; }
 
   const oldBadge=document.getElementById('spectator-badge');
-  if(oldBadge) oldBadge.remove();
+  if(oldBadge) oldBadge.classList.add('hidden');
   SPECTATING = false;
 
   const allPls = _lastData.players;
@@ -3121,7 +3127,7 @@ window.startSolo = function(){
   const shuffled = shuf(pls);
   G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now() };
   S('screen-game'); renderGame();
-  glog(`⚔️ بدأت المعركة! دور <span class="lh">${cur().name}</span>`);
+  glog(`⚔️ ${T('newRound')} <span class="lh">${cur().name}</span>`);
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
 };
 
@@ -3264,7 +3270,7 @@ const TR = {
   claimsAs:           { ar:'🎭 يدّعي',                   en:'🎭 claims' },
   mustCoup:           { ar:'يجب الانقلاب',               en:'Must Coup' },
   // لوج
-  logTimeout:         { ar:'انتهى وقته — سُمح تلقائياً', en:'timed out — auto-allowed' },
+  logTimeout:         { ar:'${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}', en:'timed out — auto-allowed' },
   logAllowed:         { ar:'سمح',                        en:'allowed' },
   logNewGame:         { ar:'بدأت اللعبة! دور',           en:'Game started! Turn:' },
   // شاشة Join
@@ -3302,6 +3308,23 @@ const TR = {
   leaveRoom:          { ar:'← مغادرة الغرفة',               en:'← Leave Room' },
   backBtn:            { ar:'← رجوع',                        en:'← Back' },
   copying:            { ar:'نسخ',                           en:'Copy' },
+  mustCoupTitle:      { ar:'انقلاب إلزامي!',                 en:'Coup required!' },
+  mustCoupSub:        { ar:'لديك 10+ عملات — يجب تنفيذ انقلاب', en:'You have 10+ coins — must Coup' },
+  eventLog:           { ar:'⚔️ سجل الأحداث',                en:'⚔️ Event Log' },
+  viewAll:            { ar:'📜 عرض الكل',                    en:'📜 View All' },
+  yourCards:          { ar:'أوراقك',                         en:'Your Cards' },
+  kickPlayer:         { ar:'طرد لاعب',                       en:'Kick Player' },
+  gameMenu:           { ar:'☰ قائمة اللعبة',                 en:'☰ Game Menu' },
+  exitGame:           { ar:'الخروج من اللعبة',                en:'Exit game' },
+  quickRef:           { ar:'مرجع سريع',                      en:'Quick reference' },
+  removePlayer:       { ar:'إزالة لاعب من الجلسة',            en:'Remove a player from session' },
+  transferHost:       { ar:'تبديل المضيف',                    en:'Transfer Host' },
+  transferSub:        { ar:'نقل صلاحيات الهوست للاعب آخر',    en:'Pass host controls to another player' },
+  soundTheme:         { ar:'الصوت والمظهر',                   en:'Sound & Theme' },
+  continueGame:       { ar:'← استمرار اللعبة',                en:'← Continue' },
+  // شاشة اللعب
+  turnLabel:          { ar:'دور',                             en:'Turn:' },
+  loseCard:           { ar:'يخسر',                            en:'loses' },
 };
 function T(key){ return (TR[key]&&TR[key][LANG]) || (TR[key]&&TR[key]['ar']) || key; }
 
@@ -3386,8 +3409,8 @@ function checkSpectator(){
       handEl.appendChild(spectDiv);
     }
     const aw=document.getElementById('action-wrap');
-    if(aw) aw.innerHTML=`<div class="waiting-msg">👁 ${LANG==='en'?'Spectating — no voting or blocking':'تشاهد بقية الجولة... لا يمكنك التصويت أو الاعتراض'}</div>`;
-    glog(`👁 <span style="color:#ce93d8">${me.name}</span> ${LANG==='en'?'is now spectating — no permissions':'يشاهد الآن كمتفرج — بدون صلاحيات'}`);
+    if(aw) aw.innerHTML=`<div class="waiting-msg">${T('spectatorMode')}</div>`;
+    glog(`👁 <span style="color:#ce93d8">${me.name}</span> ${LANG==='en'?'is now spectating':'يشاهد الآن كمتفرج'}`);
   }
 }
 
