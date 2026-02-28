@@ -1185,9 +1185,18 @@ function startLocalGame(gs){
     if(!gd) return;
     if(gd.status==='ended'){ showStats(gd); return; }
     const prevTurn=G?.turn;
-    // دمج بدلاً من استبدال كامل — يمنع تجاوز التغييرات المحلية أثناء معالجة الأكشن
+    // احفظ الـ callbacks المحلية قبل الدمج — Firebase لا يخزنها
+    const saved_rCb  = G?._rCb  || null;
+    const saved_tCb  = G?._tCb  || null;
+    const saved_rPid = G?._rPid || null;
+    const saved_ex   = G?._ex   || null;
     if(!G) G=gd;
     else Object.assign(G, gd);
+    // استعد الـ callbacks بعد الدمج
+    if(saved_rCb)  G._rCb  = saved_rCb;
+    if(saved_tCb)  G._tCb  = saved_tCb;
+    if(saved_rPid) G._rPid = saved_rPid;
+    if(saved_ex)   G._ex   = saved_ex;
     renderGame();
     if(ME.host && G.players[G.turn]?.isBot && G.turn!==prevTurn)
       setTimeout(()=>runBot(), 400);
@@ -2289,8 +2298,7 @@ function forceReveal(pid,cb){
   }
 
   G._rCb=cb; G._rPid=pid;
-  console.log('[forceReveal] opening pick modal for', p.name, 'pid=', pid, 'al=', al.length);
-  clearTimer();
+clearTimer();
   const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onpointerdown="event.preventDefault();pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
   openModal(`${p.av} ${p.name}`,T('chooseCard'),[],extra);
 }
@@ -2305,8 +2313,7 @@ window.pickReveal = function(pid,ci){
     glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
     const cb=G._rCb; G._rCb=null;
-    console.log('[pickReveal] cb=', !!cb, 'G.turn=', G.turn);
-    if(cb) cb();
+  if(cb) cb();
   }, 30);
 };
 
@@ -2415,11 +2422,9 @@ window.pickTgt = function(pid){
 function nextTurn(){
   clearTimer();
   const al=alive(); if(al.length<=1){ endGame(al[0]); return; }
-  const fromTurn = G.turn;
-  let nt=G.turn, s=0;
+let nt=G.turn, s=0;
   do{ nt=(nt+1)%G.players.length; s++; if(s>G.players.length){ endGame(al[0]); return; } }
   while(G.players[nt].eliminated);
-  console.log(`[nextTurn] ${G.players[fromTurn]?.name}(${fromTurn}) → ${G.players[nt]?.name}(${nt})`);
   if(G.players[nt].id===ME.id) SFX.turnStart();
   pushUpdate({turn:nt,phase:'action'},`⏩ دور <span class="lh">${G.players[nt].name}</span>`);
   setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },400);
