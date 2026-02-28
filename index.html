@@ -2271,13 +2271,7 @@ function forceReveal(pid,cb){
     if(ME.host){
       G._rCb = cb; G._rPid = pid;
       dbSet(`rooms/${ROOM}/revealRequest`, { forId: pid, ts: Date.now() });
-      clearReactionListener();
-      _reactionUnsub = dbOn(`rooms/${ROOM}/revealReply`, async reply => {
-        if(!reply || reply.byId !== pid) return;
-        clearReactionListener();
-        await dbSet(`rooms/${ROOM}/revealRequest`, null);
-        await dbSet(`rooms/${ROOM}/revealReply`, null);
-      });
+      // startHostListeners يستمع لـ revealReply ويستدعي G._rCb تلقائياً
     }
     return;
   }
