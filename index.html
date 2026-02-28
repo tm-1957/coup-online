@@ -1612,7 +1612,7 @@ function askReaction(actionId, target, claimedAs, onSuccess){
   if(!ops.length){ onSuccess(); return; }
 
   if(!ROOM || ROOM === 'SOLO'){
-    askNext(ops, 0, actionId, target, claimedAs, onSuccess);
+    askNext(ops, 0, actionId, target, claimedAs, onSuccess, myP());
     return;
   }
 
@@ -1671,7 +1671,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
         clearReactionListener();
         dbSet(`rooms/${ROOM}/reaction`, null);
         const fn = _reactionSuccess; _reactionSuccess = null;
-        doChallengePid(opp.id, actionId, claimedAs, fn, actorPlayer);
+        doChallengePid(opp.id, actionId, claimedAs, fn, actorPlayer, target?.id);
       }, 250);
     } else {
       setTimeout(()=> publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer), 150);
@@ -1698,14 +1698,14 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
       clearTimer(); SFX.challenge();
       glog(`❓ <span class="lh">${ME.name||'أنت'}</span> يتحدّى!`);
       const fn = _reactionSuccess; _reactionSuccess = null;
-      doChallengePid(ME.id, actionId, claimedAs, fn, actor);
+      doChallengePid(ME.id, actionId, claimedAs, fn, actor, target?.id);
     }});
     if(canBlock){ const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
       actions.push({ label:`🛡️ اعترض (${lbl})`, cls:'', cb:()=>{
         clearTimer(); SFX.block();
         glog(`🛡️ <span class="lh">${ME.name||'أنت'}</span> يعترض!`);
         const fn = _reactionSuccess; _reactionSuccess = null;
-        publishBlockChallengeFor(opp, actionId, blockCards, fn, actor);
+        publishBlockChallengeFor(opp, actionId, blockCards, fn, actorPlayer || actor);
       }});
     }
     clearTimer();
@@ -1750,7 +1750,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
       glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
       SFX.challenge();
       const fn = _reactionSuccess; _reactionSuccess = null;
-      doChallengePid(opp.id, actionId, claimedAs, fn, actor);
+      doChallengePid(opp.id, actionId, claimedAs, fn, actorPlayer || actor, target?.id);
     } else if(reply.type === 'block'){
       const oppPlayer = G.players.find(p=>p.id===opp.id);
       if(oppPlayer && oppPlayer.eliminated){ publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer); return; }
@@ -2023,7 +2023,7 @@ function showBlockChallengeModal(req){
   startTimer(50, ()=> dbSet(`rooms/${ROOM}/reactionReply`,{type:'timeout',byId:ME.id,ts:Date.now()}));
 }
 
-function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlayer){
+function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlayer, targetId){
   const challenger = G.players.find(p => p.id === challengerId);
   const actor = actorPlayer || G.players.find(p=>p.id===ME.id) || myP();
   const claimed = claimedAs || CLAIM_MAP[actionId];
@@ -2036,9 +2036,12 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
     glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> تحدّى — ${actor.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
     forceReveal(challengerId, ()=>{
       replaceCard(actor.id, claimed);
-      // لو المُتحدِّي هو نفسه الهدف وانتهى → لا حاجة لـ onSuccess (الاغتيال اكتمل فعلاً)
+      // إعادة تحقق: لو المُتحدِّي هو نفسه الهدف وانتهى (Assassinate) → nextTurn مباشرة
       const challengerNow = G.players.find(p=>p.id===challengerId);
-      if(challengerNow && challengerNow.eliminated && actionId==='Assassinate' && challengerId === onSuccess?._targetId){
+      const isEliminatedTarget = challengerNow?.eliminated &&
+                                  actionId === 'Assassinate' &&
+                                  (targetId ? challengerId === targetId : true);
+      if(isEliminatedTarget){
         nextTurn();
       } else {
         onSuccess && onSuccess();
@@ -2057,10 +2060,10 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
 // إعادة الاستدعاء بعد ما البوت "يسمح"، فيُشغَّل تايمر جديد فوق القديم.
 // الحل: كل خطوة في askNext تستدعي clearTimer أولاً قبل أي شيء.
 // ══════════════════════════════════════════════════════════════════════
-function askNext(ops, i, actionId, target, claimedAs, onSuccess){
+function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
   if(i >= ops.length){ clearTimer(); onSuccess(); return; }
   const opp  = ops[i];
-  const next = () => { clearTimer(); askNext(ops, i+1, actionId, target, claimedAs, onSuccess); };
+  const next = () => { clearTimer(); askNext(ops, i+1, actionId, target, claimedAs, onSuccess, actorPlayer); };
 
   const blockCards = BLOCK_MAP[actionId] || [];
   const canBlock = blockCards.length > 0 &&
@@ -2094,7 +2097,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
       setTimeout(()=>{
         clearTimer();
         glog(`❓ <span class="lh">${opp.name}</span> يتحدّى!`);
-        doChallenge(opp, actionId, claimedAs, onSuccess);
+        doChallenge(opp, actionId, claimedAs, onSuccess, actorPlayer, target?.id);
       }, 250);
     } else {
       setTimeout(()=>next(), 150);
@@ -2111,27 +2114,27 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess){
   // ══════════════════════════════════════════════════════
   clearTimer();
 
-  const me  = myP();
+  // الـ actor: إما actorPlayer المُمرَّر، أو ME (في السولو/الهوست)
+  const actor = actorPlayer || myP();
   const cn  = claimedAs || CLAIM_MAP[actionId];
-  const body = `<b style="color:var(--gold-lt)">${me.av} ${me.name}</b> يدّعي:<br>
+  const body = `<b style="color:var(--gold-lt)">${actor.av} ${actor.name}</b> ${T('claims')}:<br>
     <b style="font-size:15px">${actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>
-    ${target ? `<br>الهدف: <b>${target.av} ${target.name}</b>` : ''}`;
+    ${target ? `<br>${T('target')}: <b>${target.av} ${target.name}</b>` : ''}`;
   const actions = [
-    { label:'✅ أسمح', cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${opp.name}</span> سمح`); next(); } },
+    { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${opp.name}</span> سمح`); next(); } },
   ];
   if(canChal) actions.push({
-    label:'❓ أتحدّى!', cls:'btn-red',
-    cb:()=>{ clearTimer(); SFX.challenge(); doChallenge(opp, actionId, claimedAs, onSuccess); }
+    label:T('challengeTxt'), cls:'btn-red',
+    cb:()=>{ clearTimer(); SFX.challenge(); doChallenge(opp, actionId, claimedAs, onSuccess, actor, target?.id); }
   });
   if(canBlock){
     const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
     actions.push({
-      label:`🛡️ اعترض (${lbl})`, cls:'',
-      cb:()=>{ clearTimer(); SFX.block(); doBlock(opp, actionId, blockCards, onSuccess); }
+      label:`🛡️ ${T('blockTxt')} (${lbl})`, cls:'',
+      cb:()=>{ clearTimer(); SFX.block(); doBlock(opp, actionId, blockCards, onSuccess, actor); }
     });
   }
-  // openModal يستدعي clearTimer تلقائياً الآن — لا خطر تكرار
-  openModal(`${opp.av} ${opp.name} — ماذا تفعل؟`, body, actions);
+  openModal(`${opp.av} ${opp.name} — ${T('whatDoYouDo')}`, body, actions);
   SFX.modal();
   startTimer(50, ()=>{ glog(`⏱ <span class="lh">${opp.name}</span> انتهى وقته — سُمح تلقائياً`); next(); });
 }
@@ -2179,44 +2182,59 @@ function startTimer(sec, onEnd){
   },80);
 }
 
-function doChallenge(challenger, actionId, claimedAs, onSuccess){
-  const me = G.players.find(p=>p.id===ME.id) || myP(); // بيانات حديثة
+function doChallenge(challenger, actionId, claimedAs, onSuccess, actorOverride, targetId){
+  const actor = actorOverride || G.players.find(p=>p.id===ME.id) || myP();
   const claimed = claimedAs || CLAIM_MAP[actionId];
-  if(!claimed){ onSuccess(); return; }
-  const ci = me.cards.findIndex((c,i) => c===claimed && !me.revealed[i]);
+  if(!claimed){ onSuccess && onSuccess(); return; }
+  // جلب بيانات حديثة من G
+  const actorCur = G.players.find(p=>p.id===actor.id) || actor;
+  const ci = actorCur.cards.findIndex((c,i) => c===claimed && !actorCur.revealed[i]);
   if(ci !== -1){
-    // فشل التحدي — المُتحدِّي يخسر ورقة، أنا استبدل ورقتي، الأكشن يكمل
-    glog(`❓ <span class="lh">${challenger.name}</span> تحدّى — ${me.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
-    forceReveal(challenger.id, ()=>{ replaceCard(ME.id, claimed); onSuccess(); });
+    // فشل التحدي — المُتحدِّي يخسر ورقة، الـ actor يستبدل ورقته
+    glog(`❓ <span class="lh">${challenger.name}</span> تحدّى — ${actor.name} يملك ${CARDS[claimed].icon} ${claimed}! فشل التحدي`);
+    forceReveal(challenger.id, ()=>{
+      replaceCard(actor.id, claimed);
+      // لو المتحدي هو الهدف وانتهى (Assassinate) → nextTurn مباشرة
+      const challNow = G.players.find(p=>p.id===challenger.id);
+      const isEliminatedTarget = challNow?.eliminated &&
+                                  actionId === 'Assassinate' &&
+                                  (targetId ? challenger.id === targetId : true);
+      if(isEliminatedTarget){
+        nextTurn();
+      } else {
+        onSuccess && onSuccess();
+      }
+    });
   } else {
-    // نجح التحدي — أنا بلفت، أخسر ورقة، الأكشن يُلغى
-    glog(`❓ <span class="lh">${challenger.name}</span> كشف البلف! ${me.name} كان يدّعي ${claimed} وهو لا يملكها`);
-    forceReveal(ME.id, ()=>nextTurn());
+    // نجح التحدي — الـ actor بلف، يخسر ورقة
+    glog(`❓ <span class="lh">${challenger.name}</span> كشف البلف! ${actor.name} كان يدّعي ${claimed} وهو لا يملكها`);
+    forceReveal(actor.id, ()=>nextTurn());
   }
 }
 
-function doBlock(blocker, actionId, blockCards, onSuccess){
+function doBlock(blocker, actionId, blockCards, onSuccess, actorOverride){
   if(isSpectating()){ nextTurn(); return; }
 
+  // الـ actor: من يملك الأكشن الأصلي (ليس بالضرورة ME)
+  const actor = actorOverride || myP();
   const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
   clearTimer();
   openModal(
-    `🛡️ ${blocker.av} ${blocker.name} يعترض`,
-    `${T('blockClaims')}: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">${myP().name} — ${T('yourDecision')}</small>`,
+    `🛡️ ${blocker.av} ${blocker.name} ${T('blockTitle')}`,
+    `${T('blockClaims')}: <b style="color:var(--gold)">${lbl}</b><br><small style="color:var(--text-dim)">${actor.name} — ${T('yourDecision')}</small>`,
     [
       { label:T('acceptTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`🛡️ <span class="lh">${blocker.name}</span> اعترض بنجاح`); nextTurn(); } },
-      { label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{
+      { label:T('challengeTxt'), cls:'btn-red', cb:()=>{
         clearTimer();
-        // إعادة جلب الـ blocker من G.players لضمان البيانات الحديثة
         const blockerCur = G.players.find(p=>p.id===blocker.id) || blocker;
         const ci=blockerCur.cards.findIndex((c,i)=>blockCards.includes(c)&&!blockerCur.revealed[i]);
         if(ci!==-1){
           const card=blockerCur.cards[ci];
           glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! اعتراضه صحيح`);
-          forceReveal(ME.id,()=>{ replaceCard(blocker.id,card); nextTurn(); });
+          forceReveal(actor.id,()=>{ replaceCard(blocker.id,card); nextTurn(); });
         } else {
-          glog(`🛡️ <span class="lh">${myP().name}</span> كشف بلف الاعتراض!`);
-          forceReveal(blocker.id,()=>onSuccess());
+          glog(`🛡️ <span class="lh">${actor.name}</span> كشف بلف الاعتراض!`);
+          forceReveal(blocker.id,()=>onSuccess && onSuccess());
         }
       }},
     ]
@@ -2463,7 +2481,7 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
 
   // Solo أو أونلاين — استخدم نفس المسار
   if(!ROOM || ROOM === 'SOLO'){
-    askNext(ops, 0, actionId, target, CLAIM_MAP[actionId], onConfirm);
+    askNext(ops, 0, actionId, target, CLAIM_MAP[actionId], onConfirm, bot);
     return;
   }
 
