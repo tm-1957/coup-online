@@ -1185,7 +1185,9 @@ function startLocalGame(gs){
     if(!gd) return;
     if(gd.status==='ended'){ showStats(gd); return; }
     const prevTurn=G?.turn;
-    G=gd;
+    // دمج بدلاً من استبدال كامل — يمنع تجاوز التغييرات المحلية أثناء معالجة الأكشن
+    if(!G) G=gd;
+    else Object.assign(G, gd);
     renderGame();
     if(ME.host && G.players[G.turn]?.isBot && G.turn!==prevTurn)
       setTimeout(()=>runBot(), 400);
@@ -1335,7 +1337,9 @@ function startHostListeners(){
     const np = clonePlayers(); np[pi].revealed[ci]=true;
     SFX.cardReveal();
     glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
-    checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
+    checkElim(np,pi);
+    await pushUpdate({players:np},null);
+    G.players=np;
     const cb=G._rCb; G._rCb=null; if(cb) cb();
   });
 
@@ -2276,10 +2280,19 @@ function forceReveal(pid,cb){
     return;
   }
 
+  // في السولو إذا الهدف بوت → اختر ورقته تلقائياً بدون مودال
+  if((!ROOM || ROOM==='SOLO') && p.isBot){
+    const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
+    glog(`💀 <span class="lh">${p.name}</span> يخسر: ${CARDS[c].icon} ${c}`);
+    SFX.cardReveal();
+    checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
+  }
+
   G._rCb=cb; G._rPid=pid;
-  clearTimer(); // ← FIX: أوقف التايمر قبل مودال اختيار الورقة
+  console.log('[forceReveal] opening pick modal for', p.name, 'pid=', pid, 'al=', al.length);
+  clearTimer();
   const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onpointerdown="event.preventDefault();pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
-  openModal(`${p.av} ${p.name}`,'اختر الورقة التي تكشفها',[],extra);
+  openModal(`${p.av} ${p.name}`,T('chooseCard'),[],extra);
 }
 
 window.pickReveal = function(pid,ci){
@@ -2291,7 +2304,9 @@ window.pickReveal = function(pid,ci){
     SFX.cardReveal();
     glog(`💀 <span class="lh">${np[pi].name}</span> يخسر: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
-    const cb=G._rCb; G._rCb=null; if(cb) cb();
+    const cb=G._rCb; G._rCb=null;
+    console.log('[pickReveal] cb=', !!cb, 'G.turn=', G.turn);
+    if(cb) cb();
   }, 30);
 };
 
@@ -2398,11 +2413,13 @@ window.pickTgt = function(pid){
 };
 
 function nextTurn(){
-  clearTimer(); // ← FIX: تأكد إيقاف التايمر عند أي nextTurn
+  clearTimer();
   const al=alive(); if(al.length<=1){ endGame(al[0]); return; }
+  const fromTurn = G.turn;
   let nt=G.turn, s=0;
   do{ nt=(nt+1)%G.players.length; s++; if(s>G.players.length){ endGame(al[0]); return; } }
   while(G.players[nt].eliminated);
+  console.log(`[nextTurn] ${G.players[fromTurn]?.name}(${fromTurn}) → ${G.players[nt]?.name}(${nt})`);
   if(G.players[nt].id===ME.id) SFX.turnStart();
   pushUpdate({turn:nt,phase:'action'},`⏩ دور <span class="lh">${G.players[nt].name}</span>`);
   setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },400);
