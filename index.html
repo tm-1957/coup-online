@@ -2365,9 +2365,11 @@ function doExchange(me,mi,pls){
       });
     });
     // الهوست يستمع لـ exchangeReply
+    let _exDone = false;
     const unsub = dbOn(`rooms/${ROOM}/exchangeReply`, async reply => {
       if(!reply || reply.byId !== me.id) return;
       if(reply.ts < reqTs) return; // تجاهل ردود قديمة
+      if(_exDone) return; _exDone = true; // منع التنفيذ المزدوج
       unsub();
       await dbSet(`rooms/${ROOM}/exchangeRequest`, null);
       await dbSet(`rooms/${ROOM}/exchangeReply`, null);
@@ -2376,8 +2378,16 @@ function doExchange(me,mi,pls){
       const nd=[...dk]; opts.forEach((_,i)=>{ if(!chosen.includes(i)) nd.push(opts[i]); });
       const nc=chosen.map(i=>opts[i]); const np2=[...pls]; const nCards=[...np2[mi].cards];
       aliveCards.forEach((x,ni)=>{ nCards[x.ci]=nc[ni]||nCards[x.ci]; }); np2[mi].cards=nCards;
-      pushUpdate({players:np2,deck:shuf(nd)},`🔄 <span class="lh">${me.name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`);
-      nextTurn();
+      // احسب الـ turn الجديد واكتبه مع الـ players في write واحد
+      const _al2 = np2.filter(p=>!p.eliminated);
+      if(_al2.length <= 1){ await pushUpdate({players:np2,deck:shuf(nd)},`🔄 <span class="lh">${me.name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`); endGame(_al2[0]); return; }
+      let _nt2 = G.turn, _s2 = 0;
+      do{ _nt2=(_nt2+1)%np2.length; _s2++; if(_s2>np2.length){ endGame(_al2[0]); return; } } while(np2[_nt2].eliminated);
+      if(np2[_nt2].id===ME.id) SFX.turnStart();
+      await pushUpdate({players:np2,deck:shuf(nd),turn:_nt2,phase:'action'},`🔄 <span class="lh">${me.name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`);
+      glog(`⏩ ${T('waitingForTurn')} <span class="lh">${np2[_nt2].name}</span>`);
+      clearTimer();
+      setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },400);
     });
     return;
   }
@@ -2397,7 +2407,7 @@ function renderExchangeModal(){
 }
 window.exPick   = i=>{ if(_modalLocked) return; const s=G._ex; if(s.chosen.length>=s.keep) return; lockModal(); s.chosen.push(i); setTimeout(()=>renderExchangeModal(), 30); };
 window.exRemove = i=>{ if(_modalLocked) return; lockModal(); G._ex.chosen=G._ex.chosen.filter(x=>x!==i); setTimeout(()=>renderExchangeModal(), 30); };
-window.confirmExchange = function(){
+window.confirmExchange = async function(){
   const {mi,alive,opts,chosen,pls,extraDeck,onlineMode}=G._ex;
 
   // لو في وضع أونلاين (اللاعب غير الهوست) أرسل الرد للهوست
@@ -2410,8 +2420,16 @@ window.confirmExchange = function(){
   const nd=[...extraDeck]; opts.forEach((_,i)=>{ if(!chosen.includes(i)) nd.push(opts[i]); });
   const nc=chosen.map(i=>opts[i]); const np=[...pls]; const nCards=[...np[mi].cards];
   alive.forEach((x,ni)=>{ nCards[x.ci]=nc[ni]; }); np[mi].cards=nCards;
-  pushUpdate({players:np,deck:shuf(nd)},`🔄 <span class="lh">${np[mi].name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`);
-  nextTurn();
+  // احسب الـ turn الجديد واكتبه مع الـ players في write واحد
+  const _alC = np.filter(p=>!p.eliminated);
+  if(_alC.length <= 1){ await pushUpdate({players:np,deck:shuf(nd)},`🔄 <span class="lh">${np[mi].name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`); endGame(_alC[0]); return; }
+  let _ntC = G.turn, _sC = 0;
+  do{ _ntC=(_ntC+1)%np.length; _sC++; if(_sC>np.length){ endGame(_alC[0]); return; } } while(np[_ntC].eliminated);
+  if(np[_ntC].id===ME.id) SFX.turnStart();
+  await pushUpdate({players:np,deck:shuf(nd),turn:_ntC,phase:'action'},`🔄 <span class="lh">${np[mi].name}</span> ${LANG==="en"?"exchanged cards":"بادل أوراقه"}`);
+  glog(`⏩ ${T('waitingForTurn')} <span class="lh">${np[_ntC].name}</span>`);
+  clearTimer();
+  setTimeout(()=>{ if(ME.host&&G?.players?.[G.turn]?.isBot) runBot(); },400);
 };
 
 function pickTarget(prompt,cb){
