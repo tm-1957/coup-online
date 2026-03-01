@@ -444,7 +444,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     </button>
   </div>
   <div class="title-footer">
-    <a href="https://x.com/_turki1957" target="_blank">@_turki1957</a>
+    <a href="https://discord.com/users/1015110615200706570" target="_blank" style="color:#7289da;text-decoration:none;">Discord</a>
     <span style="color:var(--text-faint)">·</span>
     <span style="color:var(--text-dim);">© 2026 <span style="color:var(--gold-lt);font-weight:700;font-family:'Cinzel',serif;letter-spacing:1px;text-shadow:0 0 10px var(--gold-glow);">Turki</span></span>
   </div>
@@ -474,7 +474,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="sheet-item-text"><div class="sheet-item-title">Credits</div><div class="sheet-item-sub">COUP™ — © 2026 Turki</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
-    <button class="btn btn-dim btn-full" onclick="closeSheet('more-sheet')">✕ إغلاق</button>
+    <button class="btn btn-dim btn-full" onclick="closeSheet('more-sheet')" data-t="closeBtn">✕ إغلاق</button>
   </div>
 </div>
 
@@ -483,30 +483,30 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="glass-card form-card" style="margin:20px 0;">
     <div class="form-title" data-t="setupOnlineTitle">🌐 إعداد الغرفة الأونلاين</div>
     <div class="form-group">
-      <div class="inp-label">اسمك</div>
+      <div class="inp-label" data-t="yourName">اسمك</div>
       <input class="inp" id="host-name" placeholder="أدخل اسمك" maxlength="20">
     </div>
     <div class="form-group">
-      <div class="inp-label">أفاتارك</div>
+      <div class="inp-label" data-t="yourAvatar">أفاتارك</div>
       <div class="av-grid" id="av-host"></div>
     </div>
     <div class="form-group">
-      <div class="inp-label">عدد اللاعبين الإجمالي</div>
+      <div class="inp-label" data-t="totalPlayers">عدد اللاعبين الإجمالي</div>
       <select class="inp" id="max-players">
         <option value="2">2 لاعبين</option><option value="3">3 لاعبين</option>
         <option value="4" selected>4 لاعبين</option><option value="5">5 لاعبين</option><option value="6">6 لاعبين</option>
       </select>
     </div>
     <div class="form-group">
-      <div class="inp-label">بوتات تملأ الغرفة 🤖</div>
+      <div class="inp-label" data-t="fillBots">بوتات تملأ الغرفة 🤖</div>
       <select class="inp" id="bot-count">
-        <option value="0">بدون بوتات</option><option value="1">1 بوت</option>
-        <option value="2">2 بوتات</option><option value="3" selected>3 بوتات (ابدأ وحدك!)</option>
+        <option value="0" data-t="noBots">بدون بوتات</option><option value="1">1 بوت</option>
+        <option value="2">2 بوتات</option><option value="3" selected data-t="botsAlone">3 بوتات (ابدأ وحدك!)</option>
         <option value="4">4 بوتات</option><option value="5">5 بوتات</option>
       </select>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-      <button class="btn btn-green btn-full" onclick="createRoom()"><span>🚀 إنشاء الغرفة</span></button>
+      <button class="btn btn-green btn-full" onclick="createRoom()"><span data-t="createRoomBtn">🚀 إنشاء الغرفة</span></button>
       <button class="btn btn-dim btn-full" onclick="back()" data-t="backBtn">← رجوع</button>
     </div>
   </div>
@@ -534,7 +534,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
     <div style="min-height:18px;text-align:center;font-size:12px;color:var(--crimson-lt);margin-bottom:4px;" id="join-err"></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <button class="btn btn-green btn-full" onclick="joinRoom()"><span data-t="joinBtn">الانضمام →</span></button>
-      <button class="btn btn-dim btn-full" onclick="back()">← رجوع</button>
+      <button class="btn btn-dim btn-full" onclick="back()" data-t="backBtn">← رجوع</button>
     </div>
   </div>
 </div>
@@ -556,13 +556,13 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
           <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:4px;" id="code-copy-hint" data-t="copyCodeHint">📋 اضغط للنسخ</div>
         </div>
         <div class="share-row">
-          <div class="share-url" id="share-url">جاري التحميل...</div>
+          <div class="share-url" id="share-url" data-t="loading">جاري التحميل...</div>
           <button class="btn btn-sm" onclick="copyShareUrl()" id="copy-url-btn" data-t="copying">نسخ</button>
         </div>
         <div style="font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px;" data-t="shareTxt">📲 أرسل الرابط أو الكود لأصدقائك</div>
         <div class="player-list" id="lobby-players"></div>
         <div style="text-align:center;font-size:12px;color:var(--text-dim);" id="lobby-status" data-t="lobbyWaiting">في انتظار اللاعبين...</div>
-        <button class="btn btn-green btn-full" id="start-btn" onclick="hostStart()" style="display:none">🎲 ابدأ اللعبة!</button>
+        <button class="btn btn-green btn-full" id="start-btn" onclick="hostStart()" style="display:none" data-t="startGame">🎲 ابدأ اللعبة!</button>
         <button class="btn btn-dim btn-full" onclick="leaveRoom()" data-t="leaveRoom">← مغادرة الغرفة</button>
       </div>
     </div>
@@ -574,35 +574,35 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="glass-card form-card" style="margin:20px 0;">
     <div class="form-title" data-t="playBotsTitle">🤖 العب ضد البوتات</div>
     <div class="form-group">
-      <div class="inp-label">اسمك</div>
+      <div class="inp-label" data-t="yourName">اسمك</div>
       <input class="inp" id="solo-name" placeholder="أدخل اسمك" maxlength="20">
     </div>
     <div class="form-group">
-      <div class="inp-label">أفاتارك</div>
+      <div class="inp-label" data-t="yourAvatar">أفاتارك</div>
       <div class="av-grid" id="av-solo"></div>
     </div>
     <div class="form-group">
-      <div class="inp-label">عدد البوتات المنافسين</div>
+      <div class="inp-label" data-t="botCount">عدد البوتات المنافسين</div>
       <select class="inp" id="solo-bots" onchange="refreshBotPreview()">
         <option value="1">1 بوت</option><option value="2">2 بوتات</option>
         <option value="3" selected>3 بوتات</option><option value="4">4 بوتات</option><option value="5">5 بوتات</option>
       </select>
     </div>
     <div class="form-group">
-      <div class="inp-label">مستوى الصعوبة</div>
+      <div class="inp-label" data-t="difficulty">مستوى الصعوبة</div>
       <div class="diff-bar">
-        <button class="diff-pill" onclick="setDiff('easy',this)"><div class="diff-pill-icon">😊</div><span>سهل</span></button>
-        <button class="diff-pill active" onclick="setDiff('medium',this)"><div class="diff-pill-icon">😐</div><span>متوسط</span></button>
-        <button class="diff-pill" onclick="setDiff('hard',this)"><div class="diff-pill-icon">😈</div><span>صعب</span></button>
+        <button class="diff-pill" onclick="setDiff('easy',this)"><div class="diff-pill-icon">😊</div><span data-t="easy">سهل</span></button>
+        <button class="diff-pill active" onclick="setDiff('medium',this)"><div class="diff-pill-icon">😐</div><span data-t="medium">متوسط</span></button>
+        <button class="diff-pill" onclick="setDiff('hard',this)"><div class="diff-pill-icon">😈</div><span data-t="hard">صعب</span></button>
       </div>
     </div>
     <div class="form-group">
-      <div class="inp-label">منافسوك (اضغط على الاسم لتعديله)</div>
+      <div class="inp-label" data-t="opponentsLabel">منافسوك (اضغط على الاسم لتعديله)</div>
       <div class="bots-list" id="bots-preview"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-      <button class="btn btn-green btn-full" onclick="startSolo()">⚔️ ابدأ القتال!</button>
-      <button class="btn btn-dim btn-full" onclick="back()">← رجوع</button>
+      <button class="btn btn-green btn-full" onclick="startSolo()" data-t="startFight">⚔️ ابدأ القتال!</button>
+      <button class="btn btn-dim btn-full" onclick="back()" data-t="backBtn">← رجوع</button>
     </div>
   </div>
 </div>
@@ -694,7 +694,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
   <div class="stats-wrap">
     <div class="stats-hd">
       <div class="stats-title" data-t="roundResults">🏆 نتائج الجولة</div>
-      <div class="stats-sub" id="stats-sub">إحصائيات اللعبة</div>
+      <div class="stats-sub" id="stats-sub" data-t="gameStats">إحصائيات اللعبة</div>
     </div>
     <div class="podium" id="podium"></div>
     <div class="divider-gold"></div>
@@ -739,7 +739,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="rule-action-card"><div class="ra-icon">🏦</div><div class="ra-name">Foreign Aid</div><div class="ra-desc">خذ +2◈ من الخزينة<br>يُحجب بـ Duke</div></div>
       <div class="rule-action-card"><div class="ra-icon">❓</div><div class="ra-name">Challenge</div><div class="ra-desc">تحدّ أي ادعاء<br>الخاسر يكشف ورقة</div></div>
     </div>
-    <button class="btn btn-dim btn-full" onclick="back()">← العودة</button>
+    <button class="btn btn-dim btn-full" onclick="back()" data-t="backBtn">← العودة</button>
   </div>
 </div>
 
@@ -759,7 +759,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
         <span class="range-val" id="vol-val">70</span>
       </div>
     </div>
-    <div class="settings-section">المظهر</div>
+    <div class="settings-section" data-t="appearance">المظهر</div>
     <div class="setting-row">
       <div><div class="setting-label">🌐 اللغة / Language</div><div class="setting-desc">اختر لغة الواجهة</div></div>
       <div class="theme-toggle-wrap">
@@ -768,25 +768,25 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       </div>
     </div>
     <div class="setting-row">
-      <div><div class="setting-label">🌗 وضع العرض</div><div class="setting-desc">اختر بين الداكن والفاتح</div></div>
+      <div><div class="setting-label" data-t="displayMode">🌗 وضع العرض</div><div class="setting-desc" data-t="displayModeDesc">اختر بين الداكن والفاتح</div></div>
       <div class="theme-toggle-wrap">
-        <button class="theme-pill active" id="theme-dark" onclick="setTheme('dark',this)"><span class="theme-pill-icon">🌙</span><span>داكن</span></button>
-        <button class="theme-pill" id="theme-light" onclick="setTheme('light',this)"><span class="theme-pill-icon">☀️</span><span>فاتح</span></button>
+        <button class="theme-pill active" id="theme-dark" onclick="setTheme('dark',this)"><span class="theme-pill-icon">🌙</span><span data-t="dark">داكن</span></button>
+        <button class="theme-pill" id="theme-light" onclick="setTheme('light',this)"><span class="theme-pill-icon">☀️</span><span data-t="light">فاتح</span></button>
       </div>
     </div>
     <div class="setting-row">
-      <div><div class="setting-label">⏱ تأخير بين الأدوار</div><div class="setting-desc">وقت للتفكير قبل دور البوت</div></div>
+      <div><div class="setting-label" data-t="delayLabel">⏱ تأخير بين الأدوار</div><div class="setting-desc" data-t="delayDesc">وقت للتفكير قبل دور البوت</div></div>
       <label class="toggle"><input type="checkbox" id="delay-toggle" checked><span class="toggle-slider"></span></label>
     </div>
     <div class="setting-row">
-      <div><div class="setting-label">🔤 حجم النص</div></div>
+      <div><div class="setting-label" data-t="textSize">🔤 حجم النص</div></div>
       <div class="seg">
-        <button class="seg-btn" onclick="setSize('sm',this)">ص</button>
-        <button class="seg-btn active" onclick="setSize('md',this)">م</button>
-        <button class="seg-btn" onclick="setSize('lg',this)">ك</button>
+        <button class="seg-btn" onclick="setSize('sm',this)" data-t="sizeS">ص</button>
+        <button class="seg-btn active" onclick="setSize('md',this)" data-t="sizeM">م</button>
+        <button class="seg-btn" onclick="setSize('lg',this)" data-t="sizeL">ك</button>
       </div>
     </div>
-    <button class="btn btn-green btn-full" style="margin-top:8px;" onclick="back()">✓ حفظ والعودة</button>
+    <button class="btn btn-green btn-full" style="margin-top:8px;" onclick="back()" data-t="saveBack">✓ حفظ والعودة</button>
   </div>
 </div>
 
@@ -794,7 +794,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <div id="screen-about" class="screen">
   <div class="about-wrap">
     <div style="text-align:center;">
-      <div style="font-family:'Cinzel Decorative',serif;color:var(--gold);font-size:20px;letter-spacing:2px;text-shadow:0 0 20px var(--gold-glow);">🎭 شرح اللعبة</div>
+      <div style="font-family:'Cinzel Decorative',serif;color:var(--gold);font-size:20px;letter-spacing:2px;text-shadow:0 0 20px var(--gold-glow);" data-t="about">🎭 شرح اللعبة</div>
     </div>
     <div class="about-hero">
       <div class="about-hero-logo">COUP</div>
@@ -804,19 +804,19 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       </p>
     </div>
     <div class="about-section">
-      <div class="about-section-title">🌍 عالم اللعبة</div>
+      <div class="about-section-title" data-t="aboutWorld">🌍 عالم اللعبة</div>
       <p>تدور الأحداث في عالم ديستوبي خيالي تسيطر عليه طبقة فاسدة من النخبة، حيث يسعى اللاعبون لإسقاط نفوذ خصومهم والسيطرة على السلطة عبر المراوغة السياسية.</p>
     </div>
     <div class="about-section">
-      <div class="about-section-title">🎮 فكرة اللعبة</div>
+      <div class="about-section-title" data-t="aboutIdea">🎮 فكرة اللعبة</div>
       <p>كل لاعب يمتلك بطاقتين سريتين. لا يُشترط الصدق — يمكنك ادعاء امتلاك أي شخصية، مع مخاطرة أن يتحداك أحد ويكشف كذبك. <b style="color:var(--gold-lt)">آخر لاعب يبقى يفوز.</b></p>
     </div>
     <div class="about-stats">
-      <div class="about-stat"><div class="about-stat-icon">👥</div><div class="about-stat-val">2–6</div><div class="about-stat-lbl">لاعبين</div></div>
-      <div class="about-stat"><div class="about-stat-icon">⏱</div><div class="about-stat-val">15د</div><div class="about-stat-lbl">مدة جولة</div></div>
-      <div class="about-stat"><div class="about-stat-icon">🔞</div><div class="about-stat-val">13+</div><div class="about-stat-lbl">الفئة العمرية</div></div>
+      <div class="about-stat"><div class="about-stat-icon">👥</div><div class="about-stat-val">2–6</div><div class="about-stat-lbl" data-t="players">لاعبين</div></div>
+      <div class="about-stat"><div class="about-stat-icon">⏱</div><div class="about-stat-val">15د</div><div class="about-stat-lbl" data-t="duration">مدة جولة</div></div>
+      <div class="about-stat"><div class="about-stat-icon">🔞</div><div class="about-stat-val">13+</div><div class="about-stat-lbl" data-t="ageGroup">الفئة العمرية</div></div>
     </div>
-    <button class="btn btn-dim btn-full" onclick="back()">← العودة</button>
+    <button class="btn btn-dim btn-full" onclick="back()" data-t="backBtn">← العودة</button>
   </div>
 </div>
 
@@ -848,7 +848,7 @@ onValue(connRef, snap => {
   const lbl = document.getElementById('fb-status-lbl');
   if (dot) {
     dot.className = 'fb-dot ' + (connected ? 'connected' : 'error');
-    lbl.textContent = connected ? 'متصل' : 'منقطع';
+    lbl.textContent = connected ? (LANG==='en'?'Connected':'متصل') : (LANG==='en'?'Offline':'منقطع');
   }
   const bar = document.getElementById('conn-bar');
   if (bar) bar.style.display = connected ? 'none' : 'block';
@@ -981,10 +981,11 @@ function unsubAll(){ _unsubs.forEach(fn=>fn()); _unsubs=[]; }
 
 window.createRoom = async function(){
   const name=(document.getElementById('host-name').value.trim()||'المضيف');
+  if(name) localStorage.setItem('coup_name', name);
   const maxP=+document.getElementById('max-players').value;
   ME={ id:uid(), name, av:AV.host||'🤴', host:true };
   const btn = document.querySelector('#screen-setup-online .btn-green');
-  if(btn){ btn.disabled=true; btn.querySelector('span').textContent='⏳ جاري الإنشاء...'; }
+  if(btn){ btn.disabled=true; btn.querySelector('span').textContent=LANG==='en'?'⏳ Creating...':'⏳ جاري الإنشاء...'; }
   try {
     let c, t=0;
     do{ c=code4(); t++; if(t>20) break; const existing=await dbGet(`rooms/${c}`); if(!existing) break; } while(true);
@@ -997,9 +998,9 @@ window.createRoom = async function(){
     S('screen-lobby');
   } catch(e) {
     console.error('createRoom error:', e);
-    alert('❌ فشل إنشاء الغرفة. تحقق من اتصالك بالإنترنت.');
+    alert(LANG==='en'?'❌ Failed to create room. Check your connection.':'❌ فشل إنشاء الغرفة. تحقق من اتصالك بالإنترنت.');
   } finally {
-    if(btn){ btn.disabled=false; btn.querySelector('span').textContent='🚀 إنشاء الغرفة'; }
+    if(btn){ btn.disabled=false; btn.querySelector('span').textContent=T('createRoomBtn'); }
   }
 };
 
@@ -1007,25 +1008,26 @@ window.joinRoom = async function(){
   const nameVal = document.getElementById('join-name').value.trim();
   if(!nameVal){ 
     const errEl=document.getElementById('join-err'); 
-    errEl.textContent='⚠️ أدخل اسمك أولاً';
+    errEl.textContent=LANG==='en'?'⚠️ Enter your name first':'⚠️ أدخل اسمك أولاً';
     document.getElementById('join-name').focus();
     document.getElementById('join-name').style.borderColor='var(--crimson-lt)';
     setTimeout(()=>{ errEl.textContent=''; document.getElementById('join-name').style.borderColor=''; }, 3000);
     return; 
   }
   const name = nameVal;
+  localStorage.setItem('coup_name', name);
   const c=document.getElementById('join-code').value.trim().toUpperCase();
   const errEl=document.getElementById('join-err'); errEl.textContent='';
-  if(!c||c.length!==4){ errEl.textContent='أدخل كود صحيح (4 أحرف)'; return; }
+  if(!c||c.length!==4){ errEl.textContent=LANG==='en'?'Enter a valid 4-letter code':'أدخل كود صحيح (4 أحرف)'; return; }
   const btn = document.querySelector('#screen-join .btn-green');
   const btnSpan = btn ? btn.querySelector('span') : null;
-  if(btn){ btn.disabled=true; if(btnSpan) btnSpan.textContent='⏳ جاري الانضمام...'; }
+  if(btn){ btn.disabled=true; if(btnSpan) btnSpan.textContent=LANG==='en'?'⏳ Joining...':'⏳ جاري الانضمام...'; }
   try {
     const rd=await dbGet(`rooms/${c}`);
-    if(!rd){ errEl.textContent='❌ الغرفة غير موجودة'; return; }
-    if(rd.status!=='lobby'){ errEl.textContent='❌ اللعبة بدأت بالفعل'; return; }
+    if(!rd){ errEl.textContent=LANG==='en'?'❌ Room not found':'❌ الغرفة غير موجودة'; return; }
+    if(rd.status!=='lobby'){ errEl.textContent=LANG==='en'?'❌ Game already started':'❌ اللعبة بدأت بالفعل'; return; }
     const players=await dbGet(`rooms/${c}/players`);
-    if(players&&Object.keys(players).length>=rd.maxP){ errEl.textContent='❌ الغرفة ممتلئة'; return; }
+    if(players&&Object.keys(players).length>=rd.maxP){ errEl.textContent=LANG==='en'?'❌ Room is full':'❌ الغرفة ممتلئة'; return; }
     ME={ id:uid(), name, av:AV.join||'🤴', host:false };
     ROOM=c;
     await dbSet(`rooms/${c}/players/${ME.id}`,{ id:ME.id, name:ME.name, av:ME.av, host:false, online:true, ts:Date.now() });
@@ -1036,9 +1038,9 @@ window.joinRoom = async function(){
     S('screen-lobby');
   } catch(e) {
     console.error('joinRoom error:', e);
-    errEl.textContent='❌ فشل الاتصال. تحقق من الإنترنت وحاول مجدداً.';
+    errEl.textContent=LANG==='en'?'❌ Connection failed. Check your internet.':'❌ فشل الاتصال. تحقق من الإنترنت وحاول مجدداً.';
   } finally {
-    if(btn){ btn.disabled=false; if(btnSpan) btnSpan.textContent='الانضمام →'; }
+    if(btn){ btn.disabled=false; if(btnSpan) btnSpan.textContent=T('joinBtn'); }
   }
 };
 
@@ -1052,17 +1054,17 @@ window.copyCode = ()=>{
   navigator.clipboard.writeText(ROOM).catch(()=>{});
   const hint = document.getElementById('code-copy-hint');
   const box  = document.getElementById('code-copy-box');
-  if(hint){ hint.textContent='✅ تم النسخ!'; hint.style.color='var(--emerald-lt)'; }
+  if(hint){ hint.textContent=T('copyDone'); hint.style.color='var(--emerald-lt)'; }
   if(box)  box.style.borderColor='var(--emerald-lt)';
   setTimeout(()=>{
-    if(hint){ hint.textContent='📋 اضغط للنسخ'; hint.style.color='var(--gold)'; }
+    if(hint){ hint.textContent=T('copyCodeHint'); hint.style.color='var(--gold)'; }
     if(box)  box.style.borderColor='';
   }, 2000);
 };
 window.copyShareUrl = ()=>{
   navigator.clipboard.writeText(document.getElementById('share-url').textContent).catch(()=>{});
   const b=document.getElementById('copy-url-btn').querySelector('span')||document.getElementById('copy-url-btn');
-  const old=b.textContent; b.textContent='✅ تم!'; setTimeout(()=>b.textContent=old,1500);
+  const old=b.textContent; b.textContent=LANG==='en'?'✅ Done!':'✅ تم!'; setTimeout(()=>b.textContent=old,1500);
 };
 
 function setupLobbyListeners(){
@@ -1106,30 +1108,30 @@ function renderLobbyPlayers(pd){
     r.className=`player-row${p.host?' is-host':''}`;
     let btns = '';
     if(ME.host && !isMe && !p.host && !p.isBot){
-      btns += `<button class="kick-btn-lobby" onclick="kickPlayerLobby('${p.id}','${p.name}')">طرد</button>`;
+      btns += `<button class="kick-btn-lobby" onclick="kickPlayerLobby('${p.id}','${p.name}')">${LANG==='en'?'Kick':'طرد'}</button>`;
       btns += `<button class="transfer-btn-lobby" onclick="transferHostLobby('${p.id}','${p.name}')" title="نقل صلاحيات الهوست">👑</button>`;
     }
     r.innerHTML=`<span class="player-row-av">${p.av}</span><span class="player-row-name">${p.name}</span>
-      ${p.host?'<span class="tag tag-host">مضيف</span>':''}
-      ${p.isBot?'<span class="tag tag-bot">بوت 🤖</span>':(isMe?'<span class="tag tag-you">أنت</span>':'<span class="tag tag-ready">جاهز</span>')}
+      ${p.host?`<span class="tag tag-host">${LANG==='en'?'Host':'مضيف'}</span>`:''}
+      ${p.isBot?`<span class="tag tag-bot">${LANG==='en'?'Bot 🤖':'بوت 🤖'}</span>`:(isMe?`<span class="tag tag-you">${LANG==='en'?'You':'أنت'}</span>`:`<span class="tag tag-ready">${LANG==='en'?'Ready':'جاهز'}</span>`)}
       ${btns}`;
     el.appendChild(r);
   });
   for(let i=pls.length;i<maxP;i++){
     const r=document.createElement('div'); r.className='player-row empty';
-    r.innerHTML=`<span class="player-row-av">👤</span><span class="player-row-name" style="color:var(--text-dim)">في انتظار لاعب...</span>`;
+    r.innerHTML=`<span class="player-row-av">👤</span><span class="player-row-name" style="color:var(--text-dim)">${T('waitingPlayer')}</span>`;
     el.appendChild(r);
   }
-  document.getElementById('lobby-status').textContent=`${pls.length}/${maxP} لاعب في الغرفة`;
+  document.getElementById('lobby-status').textContent=`${pls.length}/${maxP} ${LANG==='en'?'players in room':'لاعب في الغرفة'}`;
   const sb=document.getElementById('start-btn');
   if(ME.host){
     sb.style.display=pls.length>=2?'flex':'none';
-    sb.textContent=`🎲 ابدأ اللعبة (${pls.length} لاعب)`;
+    sb.textContent=LANG==='en'?`🎲 Start Game (${pls.length} players)`:`🎲 ابدأ اللعبة (${pls.length} لاعب)`;
   }
 }
 
 window.transferHostLobby = function(pid, pname){
-  openModal(`👑 تبديل الهوست`, `هل تريد نقل صلاحيات المضيف لـ <b>${pname}</b>؟<br><small style="color:var(--text-dim)">ستفقد صلاحية إدارة الغرفة</small>`, [
+  openModal(LANG==='en'?`👑 Transfer Host`:`👑 تبديل الهوست`, LANG==='en'?`Transfer host to <b>${pname}</b>?`:`هل تريد نقل صلاحيات المضيف لـ <b>${pname}</b>؟<br><small style="color:var(--text-dim)">ستفقد صلاحية إدارة الغرفة</small>`, [
     { label:'نعم، انقل', cls:'btn-gold', cb: async ()=>{
       await dbUpdate(`rooms/${ROOM}/players/${ME.id}`, { host: false });
       await dbUpdate(`rooms/${ROOM}/players/${pid}`, { host: true });
@@ -1141,13 +1143,13 @@ window.transferHostLobby = function(pid, pname){
 };
 
 window.kickPlayerLobby = function(pid, pname){
-  openModal(`🚫 طرد ${pname}`, `هل تريد طرد <b>${pname}</b> من الغرفة؟`, [
+  openModal(LANG==='en'?`🚫 Kick ${pname}`:`🚫 طرد ${pname}`, LANG==='en'?`Kick <b>${pname}</b> from the room?`:`هل تريد طرد <b>${pname}</b> من الغرفة؟`, [
     { label:'نعم، اطرد', cls:'btn-red', cb: async ()=>{
       await dbSet(`rooms/${ROOM}/kick`, { targetId: pid, by: ME.id, ts: Date.now() });
       await dbSet(`rooms/${ROOM}/players/${pid}`, null);
       setTimeout(()=> dbSet(`rooms/${ROOM}/kick`, null), 3000);
     }},
-    { label:'إلغاء', cls:'btn-dim', cb:()=>{} }
+    { label:T('cancel'), cls:'btn-dim', cb:()=>{} }
   ]);
 };
 
@@ -2724,7 +2726,7 @@ window.openEventLogModal = function(){
   openModal(
     LANG==='en'?'📜 Full Event Log':'📜 سجل الأحداث الكامل',
     '',
-    [{label:'إغلاق', cls:'btn-dim', cb:()=>{}}],
+    [{label:T('close'), cls:'btn-dim', cb:()=>{}}],
     `<div class="event-log-modal">${items}</div>`
   );
 };
@@ -2733,7 +2735,7 @@ window.openTransferHostModal = function(){
   if(!G || !ME.host) return;
   const humanPlayers = G.players.filter(p => !p.isBot && p.id !== ME.id && !p.eliminated);
   if(!humanPlayers.length){
-    openModal('👑 تبديل المضيف', 'لا يوجد لاعبون بشريون يمكن نقل الهوست إليهم.', [{label:'إغلاق',cls:'btn-dim',cb:()=>{}}]);
+    openModal(LANG==='en'?'👑 Transfer Host':'👑 تبديل المضيف', LANG==='en'?'No human players to transfer host to.':'لا يوجد لاعبون بشريون يمكن نقل الهوست إليهم.', [{label:T('close'),cls:'btn-dim',cb:()=>{}}]);
     return;
   }
   const rows = humanPlayers.map(p=>`
@@ -2743,7 +2745,7 @@ window.openTransferHostModal = function(){
       <button class="transfer-confirm-btn" onclick="confirmTransferHost('${p.id}','${p.name}')">👑 اجعله هوست</button>
     </div>
   `).join('');
-  openModal('👑 تبديل المضيف', '<small style="color:var(--text-dim)">ستفقد صلاحيات الإدارة بعد النقل</small>', [{label:'إلغاء',cls:'btn-dim',cb:()=>{}}], `<div class="transfer-list">${rows}</div>`);
+  openModal(LANG==='en'?'👑 Transfer Host':'👑 تبديل المضيف', `<small style="color:var(--text-dim)">${LANG==='en'?'You will lose host controls after transfer':'ستفقد صلاحيات الإدارة بعد النقل'}</small>`, [{label:T('cancel'),cls:'btn-dim',cb:()=>{}}], `<div class="transfer-list">${rows}</div>`);
 };
 
 window.confirmTransferHost = async function(pid, pname){
@@ -2754,7 +2756,7 @@ window.confirmTransferHost = async function(pid, pname){
       await dbSet(`rooms/${ROOM}/hostTransfer`, { newHostId: pid, fromId: ME.id, ts: Date.now(), processed: false });
       glog(`👑 <span class="lh">${ME.name}</span> نقل الهوست إلى <span class="lh">${pname}</span>`);
     }},
-    { label:'إلغاء', cls:'btn-dim', cb:()=>{} }
+    { label:T('cancel'), cls:'btn-dim', cb:()=>{} }
   ]);
 };
 
@@ -2762,14 +2764,14 @@ window.openKickModal = function(){
   if(!G || !ME.host) return;
   const humanPlayers = G.players.filter(p => !p.isBot && p.id !== ME.id && !p.eliminated);
   if(!humanPlayers.length){
-    openModal('🚫 طرد لاعب', 'لا يوجد لاعبون بشريون يمكن طردهم.', [{label:'إغلاق',cls:'btn-dim',cb:()=>{}}]);
+    openModal(LANG==='en'?'🚫 Kick Player':'🚫 طرد لاعب', LANG==='en'?'No human players to kick.':'لا يوجد لاعبون بشريون يمكن طردهم.', [{label:T('close'),cls:'btn-dim',cb:()=>{}}]);
     return;
   }
   const rows = humanPlayers.map(p=>`
     <div class="kick-player-row">
       <span style="font-size:20px">${p.av}</span>
       <span class="kick-player-name">${p.name}</span>
-      <button class="kick-btn" onclick="kickPlayerInGame('${p.id}','${p.name}')">طرد</button>
+      <button class="kick-btn" onclick="kickPlayerInGame('${p.id}','${p.name}')">${LANG==='en'?'Kick':'طرد'}</button>
     </div>
   `).join('');
   openModal(LANG==='en'?'🚫 Kick Player':'🚫 طرد لاعب', '', [{label:LANG==='en'?'Cancel':'إلغاء',cls:'btn-dim',cb:()=>{}}], `<div class="kick-list">${rows}</div>`);
@@ -2783,7 +2785,7 @@ window.kickPlayerInGame = async function(pid, pname){
       await dbSet(`rooms/${ROOM}/kickInGame`, { targetId: pid, by: ME.id, ts: Date.now(), processed: false });
       setTimeout(()=>{ dbSet(`rooms/${ROOM}/kick`, null); dbSet(`rooms/${ROOM}/kickInGame`, null); }, 5000);
     }},
-    { label:'إلغاء', cls:'btn-dim', cb:()=>{} }
+    { label:T('cancel'), cls:'btn-dim', cb:()=>{} }
   ]);
 };
 
@@ -3074,16 +3076,28 @@ window.confirmLeave = function(){
   ]);
 };
 
-window.goSetupOnline = function(){ buildAv('av-host','host'); S('screen-setup-online'); };
-window.goJoin = function(){ 
-  buildAv('av-join','join'); 
-  S('screen-join'); 
+window.goSetupOnline = function(){
+  buildAv('av-host','host');
+  const _hn=document.getElementById('host-name');
+  const _sn=localStorage.getItem('coup_name');
+  if(_hn&&_sn&&!_hn.value) _hn.value=_sn;
+  S('screen-setup-online');
+};
+window.goJoin = function(){
+  buildAv('av-join','join');
+  const _jn=document.getElementById('join-name');
+  const _sn=localStorage.getItem('coup_name');
+  if(_jn&&_sn&&!_jn.value) _jn.value=_sn;
+  S('screen-join');
   const banner=document.getElementById('join-invite-banner');
   if(banner) banner.style.display='none';
-  setTimeout(()=>{ document.getElementById('join-name').focus(); }, 200);
+  setTimeout(()=>{ if(!_jn.value) _jn.focus(); else document.getElementById('join-code').focus(); }, 200);
 };
 window.goSolo = function(){
   buildAv('av-solo','solo');
+  const _soloN=document.getElementById('solo-name');
+  const _sn=localStorage.getItem('coup_name');
+  if(_soloN&&_sn&&!_soloN.value) _soloN.value=_sn;
   BOT_CUSTOM_NAMES = [...DEFAULT_BOT_NAMES];
   refreshBotPreview();
   S('screen-solo');
@@ -3093,7 +3107,8 @@ window.setDiff = function(d,el){ DIFF=d; document.querySelectorAll('.diff-pill')
 window.refreshBotPreview = function(){
   const n=+document.getElementById('solo-bots').value;
   const p=document.getElementById('bots-preview'); p.innerHTML='';
-  const dLbl={ easy:'سهل 😊', medium:'متوسط 😐', hard:'صعب 😈' }[DIFF];
+  const dLblMap={ easy: T('easy')+' 😊', medium: T('medium')+' 😐', hard: T('hard')+' 😈' };
+  const dLbl = dLblMap[DIFF];
 
   const prevInputs = document.querySelectorAll('.bot-name-inp');
   prevInputs.forEach((inp, i)=>{ if(i < BOT_CUSTOM_NAMES.length) BOT_CUSTOM_NAMES[i] = inp.value || DEFAULT_BOT_NAMES[i]; });
@@ -3111,7 +3126,9 @@ window.startSolo = function(){
   const inputs = document.querySelectorAll('.bot-name-inp');
   inputs.forEach((inp,i)=>{ BOT_CUSTOM_NAMES[i] = inp.value.trim() || DEFAULT_BOT_NAMES[i]; });
 
-  const name=document.getElementById('solo-name').value.trim()||'اللاعب';
+  const rawSoloName=document.getElementById('solo-name').value.trim();
+  if(rawSoloName) localStorage.setItem('coup_name', rawSoloName);
+  const name=rawSoloName||'اللاعب';
   const botN=+document.getElementById('solo-bots').value;
   ME={ id:uid(), name, av:AV.solo||'🤴', host:true };
   const d=deck(); const pls=[];
@@ -3141,7 +3158,7 @@ window.showCredits = function(){
         <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px 16px;">
           <div style="font-size:10px;letter-spacing:2px;color:var(--text-dim);margin-bottom:4px;">المطوّر والمصمم</div>
           <div style="font-weight:700;color:var(--text);font-size:15px;">Turki</div>
-          <a href="https://x.com/_turki1957" target="_blank" style="color:var(--gold);font-size:12px;text-decoration:none;">𝕏 @_turki1957</a>
+          <a href="https://guns.lol/.fj7" target="_blank" style="color:var(--gold);font-size:12px;text-decoration:none;">🔗 guns.lol/.fj7</a>
         </div>
         <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px 16px;">
           <div style="font-size:10px;letter-spacing:2px;color:var(--text-dim);margin-bottom:4px;">شريك المشروع</div>
@@ -3152,7 +3169,7 @@ window.showCredits = function(){
       <div style="width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:12px auto;"></div>
       <span style="color:var(--text-dim);font-size:11px;">© 2026 — جميع الحقوق محفوظة لأصحابها</span>
     </div>`,
-    [{ label:'إغلاق', cls:'btn-dim', cb:()=>{} }]
+    [{ label:T('close'), cls:'btn-dim', cb:()=>{} }]
   );
 };
 
@@ -3323,6 +3340,14 @@ const TR = {
   soundTheme:         { ar:'الصوت والمظهر',                   en:'Sound & Theme' },
   continueGame:       { ar:'← استمرار اللعبة',                en:'← Continue' },
   // شاشة اللعب
+  createRoomBtn:      { ar:'🚀 إنشاء الغرفة',                en:'🚀 Create Room' },
+  startFight:         { ar:'⚔️ ابدأ القتال!',                en:'⚔️ Start Battle!' },
+  difficulty:         { ar:'مستوى الصعوبة',                  en:'Difficulty' },
+  easy:               { ar:'سهل',                            en:'Easy' },
+  medium:             { ar:'متوسط',                          en:'Medium' },
+  hard:               { ar:'صعب',                            en:'Hard' },
+  closeBtn:           { ar:'✕ إغلاق',                        en:'✕ Close' },
+  waitingPlayer:      { ar:'في انتظار لاعب...',               en:'Waiting for player...' },
   turnLabel:          { ar:'دور',                             en:'Turn:' },
   loseCard:           { ar:'يخسر',                            en:'loses' },
 };
@@ -3359,6 +3384,15 @@ function applyLang(){
   // copy button
   const copyBtn = document.getElementById('copy-url-btn');
   if(copyBtn) copyBtn.textContent = T('copying');
+  // تحديث زر إنشاء الغرفة
+  const createBtn = document.querySelector('#screen-setup-online .btn-green span[data-t="createRoomBtn"]');
+  if(createBtn) createBtn.textContent = T('createRoomBtn');
+  // تحديث زر ابدأ القتال
+  const fightBtn = document.querySelector('[data-t="startFight"]');
+  if(fightBtn) fightBtn.textContent = T('startFight');
+  // تحديث lobby start
+  const startBtnEl = document.getElementById('start-btn');
+  if(startBtnEl) startBtnEl.innerHTML = T('startGame');
   const codeHint = document.getElementById('code-copy-hint');
   if(codeHint) codeHint.textContent = T('copyCodeHint');
   // lobby status
@@ -3614,23 +3648,43 @@ window.addEventListener('load',()=>{
   const rc=p.get('room');
   if(rc){
     const code = rc.toUpperCase().slice(0,4);
-    buildAv('av-join','join');
-    // تحميل اللغة المحفوظة أولاً
+    // تحميل اللغة المحفوظة
     const savedLang2 = localStorage.getItem('coup_lang') || 'ar';
     if(savedLang2 !== LANG) {
       const langBtn = document.getElementById(savedLang2==='en'?'lang-en':'lang-ar');
       setLang(savedLang2, langBtn);
     }
-    S('screen-join');
+    // بناء الأفاتار أولاً
+    buildAv('av-join','join');
+    // ملء الكود
     document.getElementById('join-code').value = code;
+    setTimeout(()=>{ document.getElementById('join-code').value = code; }, 150);
+    // ملء الاسم المحفوظ
+    const savedName = localStorage.getItem('coup_name');
+    if(savedName){
+      document.getElementById('join-name').value = savedName;
+    }
+    // عرض بانر الدعوة
     const banner = document.getElementById('join-invite-banner');
-    if(banner) banner.style.display = 'block';
-    // تحديث نص البانر حسب اللغة
-    if(LANG==='en') banner.textContent = '📩 You were invited! Enter your name and join.';
-    // تركيز حقل الاسم
-    setTimeout(()=>{ document.getElementById('join-name').focus(); }, 400);
-    // تصحيح: تأكد أن الكود يبقى في الحقل بعد buildAv
-    setTimeout(()=>{ document.getElementById('join-code').value = code; }, 100);
+    if(banner){
+      banner.style.display = 'block';
+      const bannerSpan = banner.querySelector('[data-t="invitedMsg"]');
+      if(bannerSpan) bannerSpan.textContent = LANG==='en'
+        ? '📩 You were invited! Enter your name and tap Join.'
+        : '📩 تمت دعوتك! أدخل اسمك واضغط انضمام';
+    }
+    S('screen-join');
+    // إذا كان الاسم محفوظاً، انضم تلقائياً بعد لحظة
+    if(savedName){
+      setTimeout(()=>{
+        // تأكد من أن الكود لا يزال في الحقل
+        document.getElementById('join-code').value = code;
+        document.getElementById('join-name').value = savedName;
+        joinRoom();
+      }, 600);
+    } else {
+      setTimeout(()=>{ document.getElementById('join-name').focus(); }, 400);
+    }
   }
 });
 </script>
