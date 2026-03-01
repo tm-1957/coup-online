@@ -1347,9 +1347,16 @@ function startHostListeners(){
 
   dbOn(`rooms/${ROOM}/revealReply`, async reply => {
     if(!reply) return;
+    if(_revealDoneFlag) return; // منع التنفيذ المزدوج
+    _revealDoneFlag = true;
+    // reset بعد لحظة قصيرة للسماح بـ reveal تالٍ
+    setTimeout(()=>{ _revealDoneFlag = false; }, 800);
     const pid = reply.byId; const ci = reply.cardIndex;
+    if(typeof ci !== 'number' || ci < 0 || ci > 1) return; // تحقق من صحة الاختيار
     const pi  = G.players.findIndex(p=>p.id===pid);
     if(pi<0) return;
+    // تأكد أن الورقة لم تُكشف بالفعل
+    if(G.players[pi].revealed[ci]) return;
     await dbSet(`rooms/${ROOM}/revealRequest`, null);
     await dbSet(`rooms/${ROOM}/revealReply`, null);
     const np = clonePlayers(); np[pi].revealed[ci]=true;
@@ -1617,6 +1624,7 @@ function _doActionNonHost(id, me){
 }
 
 let _reactionSuccess = null;
+let _revealDoneFlag = false;
 let _reactionUnsub   = null;
 let _currentClaimedAs = null;
 
@@ -1898,13 +1906,18 @@ function setupReactionListener(){
     showReactionModal(req);
   });
 
+  let _lastRevealReqTs = 0;
   dbOn(`rooms/${ROOM}/revealRequest`, req => {
     if(!req) return;
     if(req.forId !== ME.id) return;
+    if(req.ts && req.ts <= _lastRevealReqTs) return; // تجاهل طلبات قديمة
+    _lastRevealReqTs = req.ts || Date.now();
+    window._revealSent = false; // reset الـ flag لكل طلب جديد
     const p = myP(); if(!p) return;
     const al = p.cards.map((c,ci)=>({c,ci})).filter(x=>!p.revealed[x.ci]);
     if(!al.length) return;
     if(al.length === 1){
+      window._revealSent = true;
       dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: al[0].ci, ts: Date.now() });
       return;
     }
@@ -2292,6 +2305,7 @@ function forceReveal(pid,cb){
     }
     if(ME.host){
       G._rCb = cb; G._rPid = pid;
+      _revealDoneFlag = false; // reset لكل forceReveal جديد
       dbSet(`rooms/${ROOM}/revealRequest`, { forId: pid, ts: Date.now() });
       // startHostListeners يستمع لـ revealReply ويستدعي G._rCb تلقائياً
     }
@@ -2315,19 +2329,23 @@ clearTimer();
 window.pickReveal = function(pid,ci){
   if(_modalLocked) return;
   lockModal(); closeModal();
+  G._rCb_saved = G._rCb; G._rCb = null; // احجز الـ callback فوراً لمنع التنفيذ المزدوج
   setTimeout(()=>{
     const pi=G.players.findIndex(p=>p.id===pid); const np=clonePlayers();
+    if(np[pi].revealed[ci]) return; // ورقة مكشوفة بالفعل
     np[pi].revealed[ci]=true;
     SFX.cardReveal();
     glog(`💀 <span class="lh">${np[pi].name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[np[pi].cards[ci]].icon} ${np[pi].cards[ci]}`);
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np;
-    const cb=G._rCb; G._rCb=null;
-  if(cb) cb();
+    const cb=G._rCb_saved; G._rCb_saved=null;
+    if(cb) cb();
   }, 30);
 };
 
 window.pickRevealOnline = function(ci){
   if(_modalLocked) return;
+  if(window._revealSent) return; // منع أي اختيار ثاني
+  window._revealSent = true;
   lockModal(); closeModal();
   setTimeout(()=>dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: ci, ts: Date.now() }), 30);
 };
