@@ -1048,7 +1048,8 @@ function refreshShareUrl(){
   document.getElementById('lobby-code').textContent=ROOM;
   const url=location.origin+location.pathname+'?room='+ROOM;
   document.getElementById('share-url').textContent=url;
-  history.replaceState({},'',location.pathname+'?room='+ROOM);
+  // استخدم hash لضمان عمل الرابط حتى مع إعادة التوجيه
+  history.replaceState({},'',location.pathname+'?room='+ROOM+'#'+ROOM);
 }
 window.copyCode = ()=>{
   navigator.clipboard.writeText(ROOM).catch(()=>{});
@@ -3644,48 +3645,59 @@ window.addEventListener('load',()=>{
     const lBtn=document.getElementById('theme-light'); const dBtn=document.getElementById('theme-dark');
     if(lBtn) lBtn.classList.add('active'); if(dBtn) dBtn.classList.remove('active');
   }
+
+  // اقرأ الكود من query string أو hash (للتوافق مع كل المتصفحات)
   const p=new URLSearchParams(location.search);
-  const rc=p.get('room');
-  if(rc){
-    const code = rc.toUpperCase().slice(0,4);
-    // تحميل اللغة المحفوظة
-    const savedLang2 = localStorage.getItem('coup_lang') || 'ar';
-    if(savedLang2 !== LANG) {
-      const langBtn = document.getElementById(savedLang2==='en'?'lang-en':'lang-ar');
-      setLang(savedLang2, langBtn);
-    }
-    // بناء الأفاتار أولاً
-    buildAv('av-join','join');
-    // ملء الكود
+  const hash=location.hash.replace('#','').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
+  const rc=p.get('room') || (hash.length===4 ? hash : null);
+  if(!rc) return;
+
+  const code = rc.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
+  if(code.length !== 4) return;
+
+  // تحميل اللغة المحفوظة
+  const savedLang2 = localStorage.getItem('coup_lang') || 'ar';
+  if(savedLang2 !== LANG){
+    const langBtn = document.getElementById(savedLang2==='en'?'lang-en':'lang-ar');
+    setLang(savedLang2, langBtn);
+  }
+
+  // بناء الأفاتار
+  buildAv('av-join','join');
+
+  // ملء الكود والاسم
+  const savedName = localStorage.getItem('coup_name') || '';
+  document.getElementById('join-code').value = code;
+  if(savedName) document.getElementById('join-name').value = savedName;
+
+  // عرض بانر الدعوة
+  const banner = document.getElementById('join-invite-banner');
+  if(banner){
+    banner.style.display = 'block';
+    const bannerSpan = banner.querySelector('[data-t="invitedMsg"]');
+    if(bannerSpan) bannerSpan.textContent = LANG==='en'
+      ? '📩 You were invited! Enter your name and tap Join.'
+      : '📩 تمت دعوتك! أدخل اسمك واضغط انضمام';
+  }
+
+  // انتقل لشاشة الانضمام
+  S('screen-join');
+
+  // فوكس على الحقل المناسب
+  setTimeout(()=>{
     document.getElementById('join-code').value = code;
-    setTimeout(()=>{ document.getElementById('join-code').value = code; }, 150);
-    // ملء الاسم المحفوظ
-    const savedName = localStorage.getItem('coup_name');
     if(savedName){
       document.getElementById('join-name').value = savedName;
-    }
-    // عرض بانر الدعوة
-    const banner = document.getElementById('join-invite-banner');
-    if(banner){
-      banner.style.display = 'block';
-      const bannerSpan = banner.querySelector('[data-t="invitedMsg"]');
-      if(bannerSpan) bannerSpan.textContent = LANG==='en'
-        ? '📩 You were invited! Enter your name and tap Join.'
-        : '📩 تمت دعوتك! أدخل اسمك واضغط انضمام';
-    }
-    S('screen-join');
-    // إذا كان الاسم محفوظاً، انضم تلقائياً بعد لحظة
-    if(savedName){
-      setTimeout(()=>{
-        // تأكد من أن الكود لا يزال في الحقل
+      // انضم تلقائياً بعد تأكد Firebase جاهز (1.2 ثانية)
+      setTimeout(async ()=>{
         document.getElementById('join-code').value = code;
         document.getElementById('join-name').value = savedName;
-        joinRoom();
-      }, 600);
+        await joinRoom();
+      }, 1000);
     } else {
-      setTimeout(()=>{ document.getElementById('join-name').focus(); }, 400);
+      document.getElementById('join-name').focus();
     }
-  }
+  }, 200);
 });
 </script>
 </body>
