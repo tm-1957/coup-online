@@ -1741,7 +1741,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
     clearTimer();
     openModal(`${myP()?.av||''} ${myP()?.name||''} — ماذا تفعل؟`, body, actions);
     SFX.modal();
-    startTimer(50, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — auto-allowed":"انتهى وقتك — سُمح تلقائياً"}`); next_i(); });
+    startTimer(60, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — auto-allowed":"انتهى وقتك — سُمح تلقائياً"}`); next_i(); });
     return;
   }
 
@@ -1802,7 +1802,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
       glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`);
       publishReactionAs(ops, i+1, actionId, target, claimedAs, actorPlayer);
     }
-  }, 50000);
+  }, 65000);
 }
 
 async function publishBlockChallenge(blocker, actionId, blockCards, onSuccess){
@@ -1848,7 +1848,7 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
         { label:T('challengeTxt'), cls:'btn-red', cb:()=>{ clearTimer(); SFX.challenge(); handleReply('challenge'); } }
       ]
     );
-    startTimer(50, ()=>{ clearTimer(); handleReply('timeout'); });
+    startTimer(60, ()=>{ clearTimer(); handleReply('timeout'); });
     return;
   }
 
@@ -1883,7 +1883,7 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
       await dbSet(`rooms/${ROOM}/reaction`, null);
       handleReply('timeout');
     }
-  }, 50000);
+  }, 65000);
 }
 
 function setupReactionListener(){
@@ -1921,8 +1921,10 @@ function setupReactionListener(){
       dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: al[0].ci, ts: Date.now() });
       return;
     }
-    const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onpointerdown="event.preventDefault();pickRevealOnline(${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
-    openModal(`${p.av} ${p.name}`,T('chooseCard'),[],extra);
+    // اختيار عشوائي تلقائياً — اللاعب لا يختار
+    const randCard = al[Math.floor(Math.random()*al.length)];
+    window._revealSent = true;
+    dbSet(`rooms/${ROOM}/revealReply`, { byId: ME.id, cardIndex: randCard.ci, ts: Date.now() });
   });
 
   // ══════════════════════════════════════════════════════════
@@ -2037,7 +2039,7 @@ function showReactionModal(req){
   // FIX: التايمر يُشغَّل مرة واحدة فقط هنا
   // openModal نفسه يستدعي clearTimer أولاً، فلا خطر تكرار
   // ══════════════════════════════════════════════════════
-  startTimer(50, ()=> sendReply('timeout'));
+  startTimer(60, ()=> sendReply('timeout'));
 }
 
 function showBlockChallengeModal(req){
@@ -2055,7 +2057,7 @@ function showBlockChallengeModal(req){
       { label:T('challengeTxt'), cls:'btn-red', cb:()=>{ clearTimer(); SFX.challenge(); dbSet(`rooms/${ROOM}/reactionReply`,{type:'challenge',byId:ME.id,ts:Date.now()}); } }
     ]
   );
-  startTimer(50, ()=> dbSet(`rooms/${ROOM}/reactionReply`,{type:'timeout',byId:ME.id,ts:Date.now()}));
+  startTimer(60, ()=> dbSet(`rooms/${ROOM}/reactionReply`,{type:'timeout',byId:ME.id,ts:Date.now()}));
 }
 
 function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlayer, targetId){
@@ -2171,7 +2173,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
   }
   openModal(`${opp.av} ${opp.name} — ${T('whatDoYouDo')}`, body, actions);
   SFX.modal();
-  startTimer(50, ()=>{ glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`); next(); });
+  startTimer(60, ()=>{ glog(`⏱ <span class="lh">${opp.name}</span> ${LANG==="en"?"timed out — auto-allowed":"انتهى وقته — سُمح تلقائياً"}`); next(); });
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -2185,8 +2187,8 @@ function clearTimer(){
 }
 
 function startTimer(sec, onEnd){
-  // ← FIX: إذا في تايمر شغّال لا تشغّل ثاني
-  if(_timerActive) return;
+  // أوقف أي تايمر قديم أولاً ثم ابدأ جديد
+  clearTimer();
   _timerActive = true;
 
   setTimeout(()=>{
@@ -2274,7 +2276,7 @@ function doBlock(blocker, actionId, blockCards, onSuccess, actorOverride){
       }},
     ]
   );
-  startTimer(50, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — block accepted":"وقت انتهى — قُبل الاعتراض"}`); nextTurn(); });
+  startTimer(60, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — block accepted":"وقت انتهى — قُبل الاعتراض"}`); nextTurn(); });
 }
 
 function forceReveal(pid,cb){
@@ -2320,10 +2322,15 @@ function forceReveal(pid,cb){
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
 
-  G._rCb=cb; G._rPid=pid;
-clearTimer();
-  const extra=`<div class="cards-grid">${al.map(x=>`<div class="card-opt ${x.c}" onpointerdown="event.preventDefault();pickReveal('${pid}',${x.ci})"><div class="card-opt-icon">${CARDS[x.c].icon}</div><div>${x.c}</div></div>`).join('')}</div>`;
-  openModal(`${p.av} ${p.name}`,T('chooseCard'),[],extra);
+  // اختيار عشوائي — اللاعب لا يختار الورقة
+  const randAl = al[Math.floor(Math.random()*al.length)];
+  const {c:rc, ci:rci} = randAl;
+  const np2=clonePlayers(); np2[pi].revealed[rci]=true;
+  glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[rc].icon} ${rc}`);
+  SFX.cardReveal();
+  checkElim(np2,pi); pushUpdate({players:np2},null); G.players=np2;
+  const cb2=G._rCb; G._rCb=null;
+  if(cb2) cb2();
 }
 
 window.pickReveal = function(pid,ci){
