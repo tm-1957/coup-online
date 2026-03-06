@@ -917,7 +917,9 @@ function lockModal(ms=120){
 }
 
 window.openModal = function(title,body,actions=[],extra=''){
-  clearTimer();
+  // لا نُلغي التايمر هنا — فقط نُزيل UI القديم إذا وُجد
+  const oldTimerBlock = document.getElementById('timer-block');
+  if(oldTimerBlock) oldTimerBlock.remove();
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=body;
   document.getElementById('modal-extra').innerHTML=extra;
@@ -979,6 +981,51 @@ function dbOn(path,cb){
 }
 function unsubAll(){ _unsubs.forEach(fn=>fn()); _unsubs=[]; }
 
+// ════════════════════════════════════════════
+// ADMIN TRACKING — تتبع اللاعبين للوحة التحكم
+// ════════════════════════════════════════════
+async function trackPlayer(name, av){
+  if(!name) return;
+  const pid = uid();
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  let country = '—';
+  try{
+    const geo = await fetch('https://ipapi.co/json/').then(r=>r.json());
+    country = geo.country_name || '—';
+  }catch(e){}
+  const now = Date.now();
+  try{
+    const snap = await get(ref(db,`admin/players/${pid}`));
+    const existing = snap.exists() ? snap.val() : null;
+    if(!existing){
+      await set(ref(db,`admin/players/${pid}`),{
+        uid:pid, name, av,
+        firstSeen:now, lastSeen:now,
+        sessions:1, totalPlayMs:0,
+        device:isMobile?'mobile':'desktop',
+        country
+      });
+      await push(ref(db,'admin/activity'),{ type:'join', msg:`🟢 لاعب جديد: ${name}`, uid:pid, ts:now });
+    } else {
+      await update(ref(db,`admin/players/${pid}`),{
+        lastSeen:now, name, av,
+        sessions:(existing.sessions||0)+1
+      });
+    }
+  }catch(e){ console.warn('trackPlayer error:',e); }
+}
+
+async function trackSessionEnd(playMs){
+  const pid = uid(); if(!playMs) return;
+  try{
+    const snap = await get(ref(db,`admin/players/${pid}/totalPlayMs`));
+    const prev = snap.exists() ? (snap.val()||0) : 0;
+    await update(ref(db,`admin/players/${pid}`),{ totalPlayMs: prev+playMs, lastSeen: Date.now() });
+  }catch(e){}
+}
+
+
+
 window.createRoom = async function(){
   const name=(document.getElementById('host-name').value.trim()||'المضيف');
   if(name) localStorage.setItem('coup_name', name);
@@ -993,6 +1040,7 @@ window.createRoom = async function(){
     await dbSet(`rooms/${c}`,{ code:c, maxP, status:'lobby', hostId:ME.id, ts:Date.now() });
     await dbSet(`rooms/${c}/players/${ME.id}`,{ id:ME.id, name:ME.name, av:ME.av, host:true, online:true, ts:Date.now() });
     logEvent(analytics, 'create_room', { room: c, maxPlayers: maxP });
+    trackPlayer(name, ME.av);
     setupLobbyListeners();
     refreshShareUrl();
     S('screen-lobby');
@@ -1032,6 +1080,7 @@ window.joinRoom = async function(){
     ROOM=c;
     await dbSet(`rooms/${c}/players/${ME.id}`,{ id:ME.id, name:ME.name, av:ME.av, host:false, online:true, ts:Date.now() });
     logEvent(analytics, 'join_room', { room: c });
+    trackPlayer(name, ME.av);
     SFX.lobbyJoin();
     setupLobbyListeners();
     refreshShareUrl();
@@ -1178,6 +1227,7 @@ window.hostStart = async function(){
 };
 
 function startLocalGame(gs){
+  if(gs && !gs._gameStartTs) gs._gameStartTs = Date.now();
   G=gs;
   ALL_LOG_ENTRIES = [];
   const logEl = document.getElementById('log-entries');
@@ -1692,7 +1742,7 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
           clearReactionListener();
           dbSet(`rooms/${ROOM}/reaction`, null);
           const fn = _reactionSuccess; _reactionSuccess = null;
-          forceReveal(opp.id, ()=>fn && fn());
+          forceRevealRandom(opp.id, ()=>fn && fn());
         }
       }, 250);
     } else if(canChal && Math.random() < cfg.chal){
@@ -1825,10 +1875,10 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
       if(ci !== -1){
         const card = blockerCur.cards[ci];
         glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! ${LANG==="en"?"block is valid!":"اعتراضه صحيح"}`);
-        forceReveal(actor.id, ()=>{ replaceCard(blocker.id, card); nextTurn(); });
+        forceRevealRandom(actor.id, ()=>{ replaceCard(blocker.id, card); nextTurn(); });
       } else {
         glog(`🛡️ <span class="lh">${actor.name}</span> ${LANG==="en"?"exposed the block bluff!":"كشف بلف الاعتراض!"}`);
-        forceReveal(blocker.id, ()=>onSuccess && onSuccess());
+        forceRevealRandom(blocker.id, ()=>onSuccess && onSuccess());
       }
     } else {
       glog(`⏱ ${LANG==="en"?"timed out — block accepted":"انتهى الوقت — اعتراض بنجاح"}`);
@@ -1887,6 +1937,15 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
 }
 
 function setupReactionListener(){
+  // استماع لإعلانات المطور
+  dbOn('admin/announcement', ann=>{
+    if(!ann || !ann.title) return;
+    const lastSeen = localStorage.getItem('coup_last_ann');
+    if(lastSeen && +lastSeen >= ann.ts) return;
+    localStorage.setItem('coup_last_ann', ann.ts);
+    openModal('📢 ' + ann.title, ann.body, [{ label:T('close'), cls:'btn-dim', cb:()=>{} }]);
+  });
+
   // الهوست أيضاً يحتاج يستمع — لما لاعب آخر يلعب والهوست هو المستهدف بالـ reaction
   dbOn(`rooms/${ROOM}/reaction`, req => {
     if(!req) return;
@@ -2069,9 +2128,9 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
   const actorCur = G.players.find(p=>p.id===actor.id) || actor;
   const ci = actorCur.cards.findIndex((c,i) => c===claimed && !actorCur.revealed[i]);
   if(ci !== -1){
-    // فشل التحدي — المُتحدِّي يخسر ورقة، الـ actor يستبدل ورقته، الأكشن يكمل
+    // فشل التحدي — المُتحدِّي يخسر ورقة عشوائياً، الـ actor يستبدل ورقته
     glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> ${LANG==="en"?"challenged — "+actor.name+" has":"تحدّى — "+actor.name+" يملك"} ${CARDS[claimed].icon} ${claimed}! ${LANG==="en"?"challenge failed!":"فشل التحدي"}`);
-    forceReveal(challengerId, ()=>{
+    forceRevealRandom(challengerId, ()=>{
       replaceCard(actor.id, claimed);
       // إعادة تحقق: لو المُتحدِّي هو نفسه الهدف وانتهى (Assassinate) → nextTurn مباشرة
       const challengerNow = G.players.find(p=>p.id===challengerId);
@@ -2085,9 +2144,9 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
       }
     });
   } else {
-    // نجح التحدي — الـ actor بلف، يخسر ورقة، الأكشن يُلغى
+    // نجح التحدي — الـ actor بلف، يخسر ورقة عشوائياً
     glog(`❓ <span class="lh">${challenger?.name||'لاعب'}</span> ${LANG==="en"?"caught the bluff!":"كشف البلف!"} ${actor.name} ${LANG==="en"?"was bluffing "+claimed:"كان يدّعي "+claimed+" وهو لا يملكها"}`);
-    forceReveal(actor.id, ()=>nextTurn());
+    forceRevealRandom(actor.id, ()=>nextTurn());
   }
 }
 
@@ -2127,7 +2186,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
           nextTurn();
         } else {
           glog(`❌ ${LANG==="en"?"bluff block — ":"اعتراض كاذب — "}<span class="lh">${opp.name}</span> ${LANG==="en"?"loses a card":"يخسر ورقة"}`);
-          forceReveal(opp.id, ()=>onSuccess());
+          forceRevealRandom(opp.id, ()=>onSuccess());
         }
       }, 250);
     } else if(canChal && Math.random() < cfg.chal){
@@ -2229,9 +2288,8 @@ function doChallenge(challenger, actionId, claimedAs, onSuccess, actorOverride, 
   if(ci !== -1){
     // فشل التحدي — المُتحدِّي يخسر ورقة، الـ actor يستبدل ورقته
     glog(`❓ <span class="lh">${challenger.name}</span> ${LANG==="en"?"challenged — "+actor.name+" has":"تحدّى — "+actor.name+" يملك"} ${CARDS[claimed].icon} ${claimed}! ${LANG==="en"?"challenge failed!":"فشل التحدي"}`);
-    forceReveal(challenger.id, ()=>{
+    forceRevealRandom(challenger.id, ()=>{
       replaceCard(actor.id, claimed);
-      // لو المتحدي هو الهدف وانتهى (Assassinate) → nextTurn مباشرة
       const challNow = G.players.find(p=>p.id===challenger.id);
       const isEliminatedTarget = challNow?.eliminated &&
                                   actionId === 'Assassinate' &&
@@ -2243,9 +2301,9 @@ function doChallenge(challenger, actionId, claimedAs, onSuccess, actorOverride, 
       }
     });
   } else {
-    // نجح التحدي — الـ actor بلف، يخسر ورقة
+    // نجح التحدي — الـ actor بلف، يخسر ورقة عشوائياً
     glog(`❓ <span class="lh">${challenger.name}</span> ${LANG==="en"?"caught the bluff!":"كشف البلف!"} ${actor.name} ${LANG==="en"?"was bluffing "+claimed:"كان يدّعي "+claimed+" وهو لا يملكها"}`);
-    forceReveal(actor.id, ()=>nextTurn());
+    forceRevealRandom(actor.id, ()=>nextTurn());
   }
 }
 
@@ -2268,15 +2326,34 @@ function doBlock(blocker, actionId, blockCards, onSuccess, actorOverride){
         if(ci!==-1){
           const card=blockerCur.cards[ci];
           glog(`🛡️ <span class="lh">${blocker.name}</span> يملك ${card}! ${LANG==="en"?"block is valid!":"اعتراضه صحيح"}`);
-          forceReveal(actor.id,()=>{ replaceCard(blocker.id,card); nextTurn(); });
+          forceRevealRandom(actor.id,()=>{ replaceCard(blocker.id,card); nextTurn(); });
         } else {
           glog(`🛡️ <span class="lh">${actor.name}</span> ${LANG==="en"?"exposed the block bluff!":"كشف بلف الاعتراض!"}`);
-          forceReveal(blocker.id,()=>onSuccess && onSuccess());
+          forceRevealRandom(blocker.id,()=>onSuccess && onSuccess());
         }
       }},
     ]
   );
   startTimer(60, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — block accepted":"وقت انتهى — قُبل الاعتراض"}`); nextTurn(); });
+}
+
+// forceRevealRandom: تكشف ورقة عشوائية بدون مودال (تُستخدم عند خسارة التحدي)
+function forceRevealRandom(pid, cb){
+  const pi = G.players.findIndex(p=>p.id===pid);
+  const p  = G.players[pi];
+  const al = p.cards.map((c,ci)=>({c,ci})).filter(x=>!p.revealed[x.ci]);
+  if(!al.length){ if(cb) cb(); return; }
+  // اختر ورقة عشوائية
+  const pick = al[Math.floor(Math.random() * al.length)];
+  const np = clonePlayers(); np[pi].revealed[pick.ci] = true;
+  glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[pick.c].icon} ${pick.c}`);
+  SFX.cardReveal();
+  checkElim(np, pi); pushUpdate({players:np}, null); G.players = np;
+  if(ROOM && ROOM !== 'SOLO' && pid !== ME.id && ME.host){
+    // في الأونلاين: أرسل revealRequest بالفعل الـ host اختار — لكن نُبلّغ اللاعب
+    // لا نحتاج revealRequest هنا لأن الهوست اختار عشوائياً
+  }
+  if(cb) cb();
 }
 
 function forceReveal(pid,cb){
@@ -2648,7 +2725,7 @@ async function publishBotReaction(bot, humanOps, i, actionId, target){
             forceReveal(bot.id, ()=>{ replaceCard(opp.id, card); nextTurn(); });
           } else {
             glog(`❌ ${opp.name} كان يكذب في الاعتراض! يخسر ورقة`);
-            forceReveal(opp.id, ()=>fn && fn());
+            forceRevealRandom(opp.id, ()=>fn && fn());
           }
         } else {
           glog(`🛡️ <span class="lh">${bot.name}</span> قبل الاعتراض`);
@@ -2834,6 +2911,8 @@ window.kickPlayerInGame = async function(pid, pname){
 };
 
 function endGame(winner){
+  // تتبع وقت اللعبة
+  if(G && G._gameStartTs) trackSessionEnd(Date.now()-G._gameStartTs);
   if(!winner){ S('screen-title'); return; }
   const endData={ ...G, status:'ended', winnerId:winner.id };
   if(ROOM&&ROOM!=='SOLO'){
@@ -3173,6 +3252,7 @@ window.startSolo = function(){
   const rawSoloName=document.getElementById('solo-name').value.trim();
   if(rawSoloName) localStorage.setItem('coup_name', rawSoloName);
   const name=rawSoloName||'اللاعب';
+    trackPlayer(rawSoloName||'اللاعب', AV.solo||'🤴');
   const botN=+document.getElementById('solo-bots').value;
   ME={ id:uid(), name, av:AV.solo||'🤴', host:true };
   const d=deck(); const pls=[];
@@ -3717,7 +3797,22 @@ function confetti(){
   })();
 }
 
-window.addEventListener('load',()=>{
+
+  // تحقق من الحظر
+  async function checkBanned(){
+    const pid = uid();
+    try{
+      const snap = await get(ref(db,`admin/banned/${pid}`));
+      if(snap.exists()){
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#080b10;color:#e74c3c;font-family:monospace;font-size:18px;text-align:center;padding:40px;">🚫 تم حظرك من اللعبة<br><small style="color:#666;font-size:12px;margin-top:10px;display:block;">للتواصل: تواصل مع المطور</small></div>';
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+window.addEventListener('load', async ()=>{
+  if(await checkBanned()) return;
   const savedFont = localStorage.getItem('coup_fontsize')||'md';
   setSize(savedFont, document.querySelector(`.seg-btn:nth-child(${savedFont==='sm'?1:savedFont==='lg'?3:2})`));
   const savedTheme = localStorage.getItem('coup_theme') || 'dark';
