@@ -2158,7 +2158,12 @@ function doChallengePid(challengerId, actionId, claimedAs, onSuccess, actorPlaye
 // ══════════════════════════════════════════════════════════════════════
 function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
   if(i >= ops.length){ clearTimer(); onSuccess(); return; }
+  // تحقق: هل بقي لاعب واحد فقط؟ أنهِ اللعبة فوراً
+  const alNow = alive();
+  if(alNow.length <= 1){ clearTimer(); endGame(alNow[0]); return; }
   const opp  = ops[i];
+  // اقرأ الحالة المحدَّثة من G.players بدلاً من ops القديمة
+  const oppCurrent = G.players.find(p=>p.id===opp.id) || opp;
   const next = () => { clearTimer(); askNext(ops, i+1, actionId, target, claimedAs, onSuccess, actorPlayer); };
 
   const blockCards = BLOCK_MAP[actionId] || [];
@@ -2166,7 +2171,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
     (!BLOCK_TARGET_ONLY[actionId] || opp.id === target?.id);
   const canChal = CAN_CHAL.includes(actionId) && !!claimedAs;
 
-  if(opp.isBot){
+  if(oppCurrent.isBot){
     const diff = opp.difficulty || DIFF;
     const cfg = {
       easy:   { blk:0.06, chal:0.03, hasCard:0.20 },
@@ -2201,7 +2206,7 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
     return;
   }
 
-  if(opp.eliminated){ setTimeout(()=>next(), 100); return; }
+  if(oppCurrent.eliminated){ setTimeout(()=>next(), 100); return; }
   if(opp.id === ME?.id && isSpectating()){ setTimeout(()=>next(), 200); return; }
 
   // ══════════════════════════════════════════════════════
@@ -2550,8 +2555,10 @@ window.pickTgt = function(pid){
 
 function nextTurn(){
   clearTimer();
+  // إغلاق أي مودال مفتوح
+  if(document.querySelector('.modal')) closeModal();
   const al=alive(); if(al.length<=1){ endGame(al[0]); return; }
-let nt=G.turn, s=0;
+  let nt=G.turn, s=0;
   do{ nt=(nt+1)%G.players.length; s++; if(s>G.players.length){ endGame(al[0]); return; } }
   while(G.players[nt].eliminated);
   if(G.players[nt].id===ME.id) SFX.turnStart();
@@ -2562,10 +2569,12 @@ let nt=G.turn, s=0;
 function runBot(){
   if(!G) return;
   const bot = cur(); if(!bot?.isBot) return;
-  const diff = bot.difficulty || DIFF;
   const al   = alive();
+  // تحقق: لو بقي لاعع واحد فقط — أنهِ اللعبة
+  if(al.length <= 1){ endGame(al[0]); return; }
+  const diff = bot.difficulty || DIFF;
   const ops  = al.filter(p => p.id !== bot.id);
-  if(!ops.length) return;
+  if(!ops.length){ endGame(al[0]); return; }
   const must = bot.coins >= 10;
 
   const weakTarget = ops.find(p => p.revealed.filter(Boolean).length === 1)
@@ -2623,6 +2632,9 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
 
   const ops = G.players.filter(p => !p.eliminated && p.id !== bot.id);
   if(!ops.length){ onConfirm(); return; }
+  // تحقق من alive قبل المتابعة
+  const _alBot = alive();
+  if(_alBot.length <= 1){ endGame(_alBot[0]); return; }
 
   // Solo أو أونلاين — استخدم نفس المسار
   if(!ROOM || ROOM === 'SOLO'){
