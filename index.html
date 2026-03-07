@@ -1016,12 +1016,18 @@ async function trackPlayer(name, av){
 }
 
 async function trackSessionEnd(playMs){
-  const pid = uid(); if(!playMs) return;
+  if(!playMs || playMs <= 0) return;
+  const pid = ME?.id || uid();
+  if(!pid) return;
   try{
-    const snap = await get(ref(db,`admin/players/${pid}/totalPlayMs`));
-    const prev = snap.exists() ? (snap.val()||0) : 0;
-    await update(ref(db,`admin/players/${pid}`),{ totalPlayMs: prev+playMs, lastSeen: Date.now() });
-  }catch(e){}
+    const snap = await get(ref(db,`admin/players/${pid}`));
+    if(!snap.exists()) return; // اللاعع غير مسجل — لا تتبع
+    const prev = snap.val()?.totalPlayMs || 0;
+    await update(ref(db,`admin/players/${pid}`),{
+      totalPlayMs: prev + playMs,
+      lastSeen: Date.now()
+    });
+  }catch(e){ console.warn('trackSessionEnd error:',e); }
 }
 
 
@@ -1227,8 +1233,9 @@ window.hostStart = async function(){
 };
 
 function startLocalGame(gs){
-  if(gs && !gs._gameStartTs) gs._gameStartTs = Date.now();
+  const _sTs = (gs && gs._gameStartTs) ? gs._gameStartTs : Date.now();
   G=gs;
+  if(G) G._gameStartTs = _sTs;
   ALL_LOG_ENTRIES = [];
   const logEl = document.getElementById('log-entries');
   if(logEl) logEl.innerHTML = '';
@@ -2924,7 +2931,11 @@ window.kickPlayerInGame = async function(pid, pname){
 
 function endGame(winner){
   // تتبع وقت اللعبة
-  if(G && G._gameStartTs) trackSessionEnd(Date.now()-G._gameStartTs);
+  if(G && G._gameStartTs){
+    const playMs = Date.now() - G._gameStartTs;
+    if(playMs > 30000) trackSessionEnd(playMs); // تجاهل الجلسات أقل من 30 ثانية
+    G._gameStartTs = null; // reset لمنع التسجيل المزدوج
+  }
   if(!winner){ S('screen-title'); return; }
   const endData={ ...G, status:'ended', winnerId:winner.id };
   if(ROOM&&ROOM!=='SOLO'){
@@ -3173,7 +3184,7 @@ window.playAgain = function(){
 
   G={ status:'playing', players:freshPls, deck:d,
       treasury:Math.max(0,50-freshPls.length*2),
-      turn:0, phase:'action', startedAt:Date.now() };
+      turn:0, phase:'action', startedAt:Date.now(), _gameStartTs:Date.now() };
 
   // تشغيل كامل مثل startLocalGame
   S('screen-game');
@@ -3278,7 +3289,7 @@ window.startSolo = function(){
   const oldBadge=document.getElementById('spectator-badge'); if(oldBadge) oldBadge.remove();
 
   const shuffled = shuf(pls);
-  G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now() };
+  G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now(), _gameStartTs:Date.now() };
   S('screen-game'); renderGame();
   glog(`⚔️ ${T('newRound')} <span class="lh">${cur().name}</span>`);
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
