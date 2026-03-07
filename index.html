@@ -887,6 +887,12 @@ let ALL_LOG_ENTRIES = [];
 let LANG = 'ar';
 
 const uid   = ()=>Math.random().toString(36).slice(2,11);
+// ID ثابت للاعب يُخزَّن في localStorage
+function getPlayerUid(){
+  let pid = localStorage.getItem('coup_player_uid');
+  if(!pid){ pid = Math.random().toString(36).slice(2,11) + Math.random().toString(36).slice(2,11); localStorage.setItem('coup_player_uid', pid); }
+  return pid;
+}
 const code4 = ()=>Math.random().toString(36).slice(2,6).toUpperCase();
 const shuf  = a=>{ const r=[...a]; for(let i=r.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[r[i],r[j]]=[r[j],r[i]];} return r; };
 const deck  = ()=>shuf(CN.flatMap(c=>[c,c,c]));
@@ -986,7 +992,7 @@ function unsubAll(){ _unsubs.forEach(fn=>fn()); _unsubs=[]; }
 // ════════════════════════════════════════════
 async function trackPlayer(name, av){
   if(!name) return;
-  const pid = uid();
+  const pid = getPlayerUid(); // ID ثابت من localStorage
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   let country = '—';
   try{
@@ -1017,16 +1023,29 @@ async function trackPlayer(name, av){
 
 async function trackSessionEnd(playMs){
   if(!playMs || playMs <= 0) return;
-  const pid = ME?.id || uid();
+  const pid = getPlayerUid(); // نفس الـ ID المستخدم في trackPlayer
   if(!pid) return;
   try{
     const snap = await get(ref(db,`admin/players/${pid}`));
-    if(!snap.exists()) return; // اللاعع غير مسجل — لا تتبع
+    if(!snap.exists()){
+      console.warn('[trackSessionEnd] لاعب غير مسجل في admin/players/'+pid);
+      // سجّله أولاً ثم أضف الوقت
+      await set(ref(db,`admin/players/${pid}`),{
+        uid:pid, name:ME?.name||'لاعب', av:ME?.av||'🤴',
+        firstSeen:Date.now(), lastSeen:Date.now(),
+        sessions:1, totalPlayMs:playMs,
+        device:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'mobile':'desktop',
+        country:'—'
+      });
+      console.log('[trackSessionEnd] أُنشئ سجل جديد + playMs='+playMs);
+      return;
+    }
     const prev = snap.val()?.totalPlayMs || 0;
     await update(ref(db,`admin/players/${pid}`),{
       totalPlayMs: prev + playMs,
       lastSeen: Date.now()
     });
+    console.log('[trackSessionEnd] ✅ pid='+pid+' prev='+prev+' +'+playMs+'='+(prev+playMs));
   }catch(e){ console.warn('trackSessionEnd error:',e); }
 }
 
@@ -1036,7 +1055,7 @@ window.createRoom = async function(){
   const name=(document.getElementById('host-name').value.trim()||'المضيف');
   if(name) localStorage.setItem('coup_name', name);
   const maxP=+document.getElementById('max-players').value;
-  ME={ id:uid(), name, av:AV.host||'🤴', host:true };
+  ME={ id:getPlayerUid(), name, av:AV.host||'🤴', host:true };
   const btn = document.querySelector('#screen-setup-online .btn-green');
   if(btn){ btn.disabled=true; btn.querySelector('span').textContent=LANG==='en'?'⏳ Creating...':'⏳ جاري الإنشاء...'; }
   try {
@@ -1082,7 +1101,7 @@ window.joinRoom = async function(){
     if(rd.status!=='lobby'){ errEl.textContent=LANG==='en'?'❌ Game already started':'❌ اللعبة بدأت بالفعل'; return; }
     const players=await dbGet(`rooms/${c}/players`);
     if(players&&Object.keys(players).length>=rd.maxP){ errEl.textContent=LANG==='en'?'❌ Room is full':'❌ الغرفة ممتلئة'; return; }
-    ME={ id:uid(), name, av:AV.join||'🤴', host:false };
+    ME={ id:getPlayerUid(), name, av:AV.join||'🤴', host:false };
     ROOM=c;
     await dbSet(`rooms/${c}/players/${ME.id}`,{ id:ME.id, name:ME.name, av:ME.av, host:false, online:true, ts:Date.now() });
     logEvent(analytics, 'join_room', { room: c });
@@ -1225,7 +1244,8 @@ window.hostStart = async function(){
   const gs={
     status:'playing', players, deck:d,
     treasury:Math.max(0,50-players.length*2),
-    turn:0, phase:'action', startedAt:Date.now()
+    turn:0, phase:'action', startedAt:Date.now(),
+    _gameStartTs:Date.now()  // وقت بدء اللعبة لحساب مدة الجلسة
   };
   await dbSet(`rooms/${ROOM}/game`, gs);
   await dbUpdate(`rooms/${ROOM}`, { status:'playing' });
@@ -1233,9 +1253,10 @@ window.hostStart = async function(){
 };
 
 function startLocalGame(gs){
+  // احفظ وقت البدء — إما من Firebase أو من الآن
   const _sTs = (gs && gs._gameStartTs) ? gs._gameStartTs : Date.now();
-  G=gs;
-  if(G) G._gameStartTs = _sTs;
+  G = {...gs}; // نسخة محلية لا تُرفع لـ Firebase
+  G._gameStartTs = _sTs; // دائماً موجود
   ALL_LOG_ENTRIES = [];
   const logEl = document.getElementById('log-entries');
   if(logEl) logEl.innerHTML = '';
@@ -1256,6 +1277,8 @@ function startLocalGame(gs){
     const saved_tCb  = G?._tCb  || null;
     const saved_rPid = G?._rPid || null;
     const saved_ex   = G?._ex   || null;
+    // احفظ القيم المحلية قبل الدمج (Firebase لا يخزنها)
+    const saved_startTs = G?._gameStartTs || null;
     if(!G) G=gd;
     else Object.assign(G, gd);
     // استعد الـ callbacks بعد الدمج
@@ -1263,6 +1286,8 @@ function startLocalGame(gs){
     if(saved_tCb)  G._tCb  = saved_tCb;
     if(saved_rPid) G._rPid = saved_rPid;
     if(saved_ex)   G._ex   = saved_ex;
+    // استعد _gameStartTs — Firebase يحذفه لأنه محلي فقط
+    if(saved_startTs && !G._gameStartTs) G._gameStartTs = saved_startTs;
     renderGame();
     if(ME.host && G.players[G.turn]?.isBot && G.turn!==prevTurn)
       setTimeout(()=>runBot(), 400);
@@ -1944,14 +1969,37 @@ async function publishBlockChallengeFor(blocker, actionId, blockCards, onSuccess
 }
 
 function setupReactionListener(){
-  // استماع لإعلانات المطور
-  dbOn('admin/announcement', ann=>{
-    if(!ann || !ann.title) return;
+  // ═══════════ استماع لإعلانات المطور ═══════════
+  function handleAnnouncement(ann){
+    if(!ann || !ann.title || !ann.active) return;
     const lastSeen = localStorage.getItem('coup_last_ann');
-    if(lastSeen && +lastSeen >= ann.ts) return;
-    localStorage.setItem('coup_last_ann', ann.ts);
-    openModal('📢 ' + ann.title, ann.body, [{ label:T('close'), cls:'btn-dim', cb:()=>{} }]);
-  });
+    // أظهر الإعلان إذا كان جديداً (لم يُشاهَد من قبل)
+    if(lastSeen && +lastSeen >= (ann.ts||0)) return;
+    localStorage.setItem('coup_last_ann', String(ann.ts||Date.now()));
+    setTimeout(()=>{
+      openModal('📢 ' + ann.title, ann.body||'', [{ label:T('close'), cls:'btn-dim', cb:()=>{} }]);
+    }, 1500); // تأخير بسيط حتى تكتمل الصفحة
+  }
+  // استمع للمسارَين
+  dbOn('admin/announcement',   ann => handleAnnouncement(ann));
+  dbOn('announcements/current', ann => handleAnnouncement(ann));
+
+  // ═══════════ رسائل النظام من الأدمن لهذه الغرفة ═══════════
+  if(ROOM){
+    dbOn(`rooms/${ROOM}/systemMsg`, msg => {
+      if(!msg || !msg.text) return;
+      const lastSeen = localStorage.getItem('coup_last_sysmsg');
+      if(lastSeen && +lastSeen >= (msg.ts||0)) return;
+      localStorage.setItem('coup_last_sysmsg', String(msg.ts||Date.now()));
+      openModal('🔔 رسالة من الإدارة', msg.text, [{ label:T('close'), cls:'btn-dim', cb:()=>{} }]);
+    });
+    // kick من الغرفة
+    dbOn(`rooms/${ROOM}/adminKick/${ME?.id}`, kick => {
+      if(!kick) return;
+      alert('تم إخراجك من الغرفة من قِبَل الأدمن.');
+      location.reload();
+    });
+  }
 
   // الهوست أيضاً يحتاج يستمع — لما لاعب آخر يلعب والهوست هو المستهدف بالـ reaction
   dbOn(`rooms/${ROOM}/reaction`, req => {
@@ -2933,7 +2981,9 @@ function endGame(winner){
   // تتبع وقت اللعبة
   if(G && G._gameStartTs){
     const playMs = Date.now() - G._gameStartTs;
+    console.log('[endGame] playMs='+playMs+', pid='+getPlayerUid());
     if(playMs > 30000) trackSessionEnd(playMs); // تجاهل الجلسات أقل من 30 ثانية
+    else console.warn('[endGame] جلسة قصيرة جداً (أقل من 30ث) — لم تُسجَّل');
     G._gameStartTs = null; // reset لمنع التسجيل المزدوج
   }
   if(!winner){ S('screen-title'); return; }
@@ -3178,7 +3228,7 @@ window.playAgain = function(){
 
   // تحديث ME.id للاعب البشري
   const meInFresh = freshPls.find(p=>!p.isBot);
-  if(meInFresh){ ME.id=meInFresh.id; }
+  if(meInFresh){ ME.id=getPlayerUid(); meInFresh.id=ME.id; } // حافظ على الـ ID الثابت
   ME.host = true;
   ROOM = 'SOLO';
 
@@ -3277,7 +3327,7 @@ window.startSolo = function(){
   const name=rawSoloName||'اللاعب';
     trackPlayer(rawSoloName||'اللاعب', AV.solo||'🤴');
   const botN=+document.getElementById('solo-bots').value;
-  ME={ id:uid(), name, av:AV.solo||'🤴', host:true };
+  ME={ id:getPlayerUid(), name, av:AV.solo||'🤴', host:true };
   const d=deck(); const pls=[];
   pls.push({ id:ME.id, name:ME.name, av:ME.av, isBot:false, coins:2, cards:[d.pop(),d.pop()], revealed:[false,false], eliminated:false });
   for(let i=0;i<botN;i++)
@@ -3823,7 +3873,7 @@ function confetti(){
 
   // تحقق من الحظر
   async function checkBanned(){
-    const pid = uid();
+    const pid = getPlayerUid(); // ID ثابت من localStorage
     try{
       const snap = await get(ref(db,`admin/banned/${pid}`));
       if(snap.exists()){
