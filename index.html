@@ -1015,6 +1015,8 @@ async function trackPlayer(name, av){
     } else {
       await update(ref(db,`admin/players/${pid}`),{
         lastSeen:now, name, av,
+        device: isMobile?'mobile':'desktop',
+        country: country !== '—' ? country : (existing.country||'—'),
         sessions:(existing.sessions||0)+1
       });
     }
@@ -1046,7 +1048,7 @@ async function trackSessionEnd(playMs){
       lastSeen: Date.now()
     });
     console.log('[trackSessionEnd] ✅ pid='+pid+' prev='+prev+' +'+playMs+'='+(prev+playMs));
-  }catch(e){ console.warn('trackSessionEnd error:',e); }
+  }catch(e){ console.error('[trackSessionEnd] ❌ فشل تسجيل الوقت:',e.message, 'pid='+getPlayerUid()); }
 }
 
 
@@ -1270,7 +1272,15 @@ function startLocalGame(gs){
 
   dbOn(`rooms/${ROOM}/game`, gd=>{
     if(!gd) return;
-    if(gd.status==='ended'){ showStats(gd); return; }
+    if(gd.status==='ended'){
+      // سجّل وقت اللعب لغير الهوست (الهوست يسجّل في endGame)
+      if(!ME.host && G && G._gameStartTs){
+        const _pMs = Date.now() - G._gameStartTs;
+        if(_pMs > 10000) trackSessionEnd(_pMs);
+        G._gameStartTs = null;
+      }
+      showStats(gd); return;
+    }
     const prevTurn=G?.turn;
     // احفظ الـ callbacks المحلية قبل الدمج — Firebase لا يخزنها
     const saved_rCb  = G?._rCb  || null;
@@ -2982,8 +2992,7 @@ function endGame(winner){
   if(G && G._gameStartTs){
     const playMs = Date.now() - G._gameStartTs;
     console.log('[endGame] playMs='+playMs+', pid='+getPlayerUid());
-    if(playMs > 30000) trackSessionEnd(playMs); // تجاهل الجلسات أقل من 30 ثانية
-    else console.warn('[endGame] جلسة قصيرة جداً (أقل من 30ث) — لم تُسجَّل');
+    if(playMs > 10000) trackSessionEnd(playMs);
     G._gameStartTs = null; // reset لمنع التسجيل المزدوج
   }
   if(!winner){ S('screen-title'); return; }
