@@ -2006,8 +2006,16 @@ function setupReactionListener(){
     // kick من الغرفة
     dbOn(`rooms/${ROOM}/adminKick/${ME?.id}`, kick => {
       if(!kick) return;
-      alert('تم إخراجك من الغرفة من قِبَل الأدمن.');
-      location.reload();
+      // أنهِ اللعبة لهذا اللاعع وأعِد توجيهه للشاشة الرئيسية
+      clearTimer();
+      clearReactionListener();
+      G = null;
+      ROOM = null;
+      showModal(
+        LANG==='en' ? '🚫 Banned' : '🚫 تم حظرك',
+        LANG==='en' ? 'You have been banned by the admin.' : 'تم حظرك من قِبَل الأدمن. لا يمكنك الدخول مجدداً.',
+        [{ label: LANG==='en'?'OK':'حسناً', cls:'btn-gold', cb:()=>{ location.reload(); } }]
+      );
     });
   }
 
@@ -3120,12 +3128,14 @@ function startOnlineRematch(acceptedIds){
     treasury:Math.max(0,50-freshPls.length*2),
     turn:0,
     phase:'action',
-    startedAt:Date.now()
+    startedAt:Date.now(),
+    _gameStartTs:Date.now()
   };
-  // الهوست يكتب الـ game الجديد لـ Firebase
+  // الهوست يكتب الـ game الجديد لـ Firebase + يُحدّث حالة الغرفة
   dbSet(`rooms/${ROOM}/game`, newG).then(()=>{
     dbSet(`rooms/${ROOM}/log`, null);
   });
+  dbUpdate(`rooms/${ROOM}`, { status:'playing', ts:Date.now() });
   // الهوست يبدأ محلياً — إلغاء كل الـ listeners القديمة أولاً
   unsubAll();           // ← يلغي كل Firebase listeners
   ALL_LOG_ENTRIES=[];
