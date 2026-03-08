@@ -469,12 +469,38 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
       <div class="sheet-item-text"><div class="sheet-item-title" data-t="rules">قواعد اللعبة</div><div class="sheet-item-sub" data-t="rulesSub">دليل سريع للأفعال والشخصيات</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
+    <div class="sheet-item" onclick="closeSheet('more-sheet');showReportSheet()">
+      <span class="sheet-item-icon">📩</span>
+      <div class="sheet-item-text"><div class="sheet-item-title">تواصل معنا</div><div class="sheet-item-sub">شكوى · اقتراح · استفسار</div></div>
+      <span class="sheet-item-arr">›</span>
+    </div>
     <div class="sheet-item" onclick="closeSheet('more-sheet');showCredits()">
       <span class="sheet-item-icon">ℹ️</span>
       <div class="sheet-item-text"><div class="sheet-item-title">Credits</div><div class="sheet-item-sub">COUP™ — © 2026 Turki</div></div>
       <span class="sheet-item-arr">›</span>
     </div>
     <button class="btn btn-dim btn-full" onclick="closeSheet('more-sheet')" data-t="closeBtn">✕ إغلاق</button>
+  </div>
+</div>
+
+<!-- REPORT SHEET -->
+<div class="sheet-bg" id="report-sheet" onclick="if(event.target===this)closeSheet('report-sheet')">
+  <div class="sheet">
+    <div class="sheet-title">📩 تواصل معنا</div>
+    <div style="padding:0 4px 12px;">
+      <!-- نوع الرسالة -->
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button id="rtype-report" onclick="selectReportType('report')" class="btn btn-dim" style="flex:1;font-size:12px;padding:9px;">🚩 شكوى</button>
+        <button id="rtype-suggestion" onclick="selectReportType('suggestion')" class="btn btn-dim" style="flex:1;font-size:12px;padding:9px;">💡 اقتراح</button>
+        <button id="rtype-question" onclick="selectReportType('question')" class="btn btn-dim" style="flex:1;font-size:12px;padding:9px;">❓ استفسار</button>
+      </div>
+      <textarea id="report-msg-input" style="width:100%;min-height:100px;padding:12px;background:rgba(255,255,255,.05);border:1.5px solid rgba(201,168,76,.2);border-radius:10px;color:#e8e0d0;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;resize:vertical;outline:none;direction:rtl;" placeholder="اكتب رسالتك هنا..."></textarea>
+      <div id="report-send-msg" style="font-size:12px;min-height:18px;margin-top:6px;text-align:center;"></div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-dim" style="flex:1;" onclick="closeSheet('report-sheet')">إلغاء</button>
+      <button class="btn btn-gold" style="flex:2;" onclick="submitReport()">📤 إرسال</button>
+    </div>
   </div>
 </div>
 
@@ -955,7 +981,7 @@ window.openMoreSheet = ()=>document.getElementById('more-sheet').classList.add('
 window.openGameSheet = ()=>{
   const kickItem = document.getElementById('kick-sheet-item');
   const transferItem = document.getElementById('transfer-sheet-item');
-  const isHost = ME.host && ROOM && ROOM !== 'SOLO';
+  const isHost = ME.host && ROOM && !ROOM?.startsWith('SOLO_');
   if(kickItem) kickItem.style.display = isHost ? 'flex' : 'none';
   if(transferItem) transferItem.style.display = isHost ? 'flex' : 'none';
   document.getElementById('game-sheet').classList.add('open');
@@ -1020,6 +1046,10 @@ async function trackPlayer(name, av){
         sessions:(existing.sessions||0)+1
       });
     }
+  // حدّث everPlayed في سجل الزائر
+  try{
+    await update(ref(db,`admin/visitors/${pid}`), { everPlayed:true, name, av });
+  }catch(e2){}
   }catch(e){ console.warn('trackPlayer error:',e); }
 }
 
@@ -1052,6 +1082,55 @@ async function trackSessionEnd(playMs){
 }
 
 
+
+// ══════════════════════════════════════════════════════
+// 📩 REPORT — نموذج الشكاوى والاقتراحات
+// ══════════════════════════════════════════════════════
+let _reportType = 'question';
+
+window.showReportSheet = function(){
+  _reportType = 'question';
+  document.querySelectorAll('[id^="rtype-"]').forEach(b=>b.style.opacity='.5');
+  const q = document.getElementById('rtype-question');
+  if(q) q.style.opacity='1';
+  const inp = document.getElementById('report-msg-input');
+  if(inp) inp.value = '';
+  const msg = document.getElementById('report-send-msg');
+  if(msg) msg.textContent = '';
+  document.getElementById('report-sheet').classList.add('open');
+};
+
+window.selectReportType = function(type){
+  _reportType = type;
+  document.querySelectorAll('[id^="rtype-"]').forEach(b=>b.style.opacity='.5');
+  const el = document.getElementById('rtype-'+type);
+  if(el) el.style.opacity='1';
+};
+
+window.submitReport = async function(){
+  const msg   = document.getElementById('report-msg-input')?.value?.trim();
+  const msgEl = document.getElementById('report-send-msg');
+  if(!msg){ if(msgEl){ msgEl.style.color='var(--crimson-lt)'; msgEl.textContent='❌ اكتب رسالتك أولاً'; } return; }
+
+  const pid  = getPlayerUid();
+  const name = ME?.name || localStorage.getItem('coup_name') || '—';
+  const now  = Date.now();
+
+  try{
+    await push(ref(db,'admin/reports'), {
+      type:    _reportType,
+      msg,
+      playerId: pid,
+      playerName: name,
+      roomId:  ROOM && !ROOM?.startsWith('SOLO_') ? ROOM : null,
+      ts:      now
+    });
+    if(msgEl){ msgEl.style.color='var(--emerald-lt)'; msgEl.textContent='✅ تم الإرسال، شكراً!'; }
+    setTimeout(()=>{ closeSheet('report-sheet'); if(msgEl) msgEl.textContent=''; }, 1800);
+  }catch(e){
+    if(msgEl){ msgEl.style.color='var(--crimson-lt)'; msgEl.textContent='❌ فشل الإرسال، تحقق من اتصالك'; }
+  }
+};
 
 window.createRoom = async function(){
   const name=(document.getElementById('host-name').value.trim()||'المضيف');
@@ -1590,7 +1669,7 @@ function doAction(id){
   // ══════════════════════════════════════════════════════════
   // لو اللاعب مو هوست، يرسل الأكشن لـ Firebase والهوست يشغّله
   // ══════════════════════════════════════════════════════════
-  if(ROOM && ROOM !== 'SOLO' && !ME.host){
+  if(ROOM && !ROOM?.startsWith('SOLO_') && !ME.host){
     _doActionNonHost(id, me);
     return;
   }
@@ -1733,7 +1812,7 @@ function askReaction(actionId, target, claimedAs, onSuccess){
   const ops = G.players.filter(p => !p.eliminated && p.id !== ME.id);
   if(!ops.length){ onSuccess(); return; }
 
-  if(!ROOM || ROOM === 'SOLO'){
+  if(!ROOM || ROOM?.startsWith('SOLO_')){
     askNext(ops, 0, actionId, target, claimedAs, onSuccess, myP());
     return;
   }
@@ -2427,7 +2506,7 @@ function forceRevealRandom(pid, cb){
   glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[pick.c].icon} ${pick.c}`);
   SFX.cardReveal();
   checkElim(np, pi); pushUpdate({players:np}, null); G.players = np;
-  if(ROOM && ROOM !== 'SOLO' && pid !== ME.id && ME.host){
+  if(ROOM && !ROOM?.startsWith('SOLO_') && pid !== ME.id && ME.host){
     // في الأونلاين: أرسل revealRequest بالفعل الـ host اختار — لكن نُبلّغ اللاعب
     // لا نحتاج revealRequest هنا لأن الهوست اختار عشوائياً
   }
@@ -2453,7 +2532,7 @@ function forceReveal(pid,cb){
     checkElim(np,pi); pushUpdate({players:np},null); G.players=np; cb(); return;
   }
 
-  if(ROOM && ROOM !== 'SOLO' && pid !== ME.id){
+  if(ROOM && !ROOM?.startsWith('SOLO_') && pid !== ME.id){
     if(p.isBot){
       const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
       glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[c].icon} ${c}`);
@@ -2470,7 +2549,7 @@ function forceReveal(pid,cb){
   }
 
   // في السولو إذا الهدف بوت → اختر ورقته تلقائياً بدون مودال
-  if((!ROOM || ROOM==='SOLO') && p.isBot){
+  if((!ROOM || ROOM.startsWith('SOLO_')) && p.isBot){
     const {c,ci}=al[0]; const np=clonePlayers(); np[pi].revealed[ci]=true;
     glog(`💀 <span class="lh">${p.name}</span> ${LANG==="en"?"loses":"يخسر"}: ${CARDS[c].icon} ${c}`);
     SFX.cardReveal();
@@ -2533,7 +2612,7 @@ function doExchange(me,mi,pls){
   const opts=[...aliveCards.map(x=>x.c),d1,d2].filter(Boolean);
 
   // لو في أونلاين والـ actor مش الهوست، أرسل exchangeRequest له
-  if(ROOM && ROOM !== 'SOLO' && ME.host && me.id !== ME.id){
+  if(ROOM && !ROOM?.startsWith('SOLO_') && ME.host && me.id !== ME.id){
     const reqTs = Date.now();
     // امسح أي رد قديم أولاً قبل الاستماع
     dbSet(`rooms/${ROOM}/exchangeReply`, null).then(()=>{
@@ -2591,7 +2670,7 @@ window.confirmExchange = async function(){
   const {mi,alive,opts,chosen,pls,extraDeck,onlineMode}=G._ex;
 
   // لو في وضع أونلاين (اللاعب غير الهوست) أرسل الرد للهوست
-  if(onlineMode && ROOM && ROOM !== 'SOLO'){
+  if(onlineMode && ROOM && !ROOM?.startsWith('SOLO_')){
     closeModal();
     dbSet(`rooms/${ROOM}/exchangeReply`, { byId: ME.id, chosen, ts: G._ex.replyTs || Date.now() });
     return;
@@ -2710,7 +2789,7 @@ function botActionWithReaction(bot, actionId, target, onConfirm){
   if(_alBot.length <= 1){ endGame(_alBot[0]); return; }
 
   // Solo أو أونلاين — استخدم نفس المسار
-  if(!ROOM || ROOM === 'SOLO'){
+  if(!ROOM || ROOM?.startsWith('SOLO_')){
     askNext(ops, 0, actionId, target, CLAIM_MAP[actionId], onConfirm, bot);
     return;
   }
@@ -2893,7 +2972,7 @@ const idx=(pid,arr)=>arr.findIndex(p=>p.id===pid);
 
 async function pushUpdate(u,logMsg){
   Object.assign(G,u);
-  if(ROOM && ROOM !== 'SOLO'){
+  if(ROOM && !ROOM?.startsWith('SOLO_')){
     try {
       await dbUpdate(`rooms/${ROOM}/game`, u);
     } catch(e) {
@@ -3005,10 +3084,17 @@ function endGame(winner){
   }
   if(!winner){ S('screen-title'); return; }
   const endData={ ...G, status:'ended', winnerId:winner.id };
-  if(ROOM&&ROOM!=='SOLO'){
-    dbUpdate(`rooms/${ROOM}/game`,{ status:'ended', winnerId:winner.id });
-    setTimeout(()=>{ try{ remove(dbRef(`rooms/${ROOM}`)); }catch{} }, 10*60*1000);
-    logEvent(analytics, 'game_end', { winner: winner.name, isBot: winner.isBot });
+  if(ROOM){
+    if(ROOM.startsWith('SOLO_')){
+      // غرفة بوتات — حدّث الحالة في Firebase ثم احذفها بعد 5 دقائق
+      dbUpdate(`rooms/${ROOM}`, { status:'ended' }).catch(()=>{});
+      dbUpdate(`rooms/${ROOM}/game`, { status:'ended', winnerId:winner?.id||'' }).catch(()=>{});
+      setTimeout(()=>{ try{ remove(dbRef(`rooms/${ROOM}`)); }catch{} }, 5*60*1000);
+    } else {
+      dbUpdate(`rooms/${ROOM}/game`,{ status:'ended', winnerId:winner.id });
+      setTimeout(()=>{ try{ remove(dbRef(`rooms/${ROOM}`)); }catch{} }, 10*60*1000);
+      logEvent(analytics, 'game_end', { winner: winner.name, isBot: winner.isBot });
+    }
   }
   if(winner.id===ME.id) SFX.win(); else SFX.lose();
   const badge = document.getElementById('spectator-badge');
@@ -3020,7 +3106,7 @@ function endGame(winner){
 // زر جولة جديدة — سولو مباشرة / أونلاين تصويت
 // ══════════════════════════════════════════════════════════
 window.onPlayAgainClick = function(){
-  if(!ROOM || ROOM==='SOLO'){
+  if(!ROOM || ROOM.startsWith('SOLO_')){
     playAgain();
     return;
   }
@@ -3249,7 +3335,18 @@ window.playAgain = function(){
   const meInFresh = freshPls.find(p=>!p.isBot);
   if(meInFresh){ ME.id=getPlayerUid(); meInFresh.id=ME.id; } // حافظ على الـ ID الثابت
   ME.host = true;
-  ROOM = 'SOLO';
+  // أنشئ room ID جديد للجولة الجديدة
+  const _paRoomId = 'SOLO_' + ME.id.slice(0,8);
+  ROOM = _paRoomId;
+  const _paNow = Date.now();
+  const _paPlayers = {};
+  freshPls.forEach(p=>{ _paPlayers[p.id] = { id:p.id, name:p.name, av:p.av, isBot:!!p.isBot }; });
+  dbSet(`rooms/${_paRoomId}`, {
+    code:_paRoomId, status:'playing', hostId:ME.id, isSolo:true,
+    players:_paPlayers, ts:_paNow,
+    game:{ status:'playing', startedAt:_paNow, playerCount:freshPls.length }
+  }).catch(()=>{});
+  setTimeout(()=>{ try{ remove(dbRef(`rooms/${_paRoomId}`)); }catch{} }, 2*60*60*1000);
 
   G={ status:'playing', players:freshPls, deck:d,
       treasury:Math.max(0,50-freshPls.length*2),
@@ -3265,8 +3362,13 @@ window.playAgain = function(){
 };
 
 window.leaveRoom = async function(){
-  clearTimer(); // ← FIX: أوقف التايمر عند مغادرة الغرفة
-  if(ROOM&&ROOM!=='SOLO'&&ME.id){
+  clearTimer();
+  // احذف غرفة البوتات من Firebase فوراً
+  if(ROOM && ROOM.startsWith('SOLO_')){
+    try{ await remove(dbRef(`rooms/${ROOM}`)); }catch(e){}
+    ROOM = null;
+  }
+  if(ROOM&&ME.id){
     try{
       await dbUpdate(`rooms/${ROOM}/players/${ME.id}`,{ online:false });
       logEvent(analytics, 'leave_room', { room: ROOM });
@@ -3358,7 +3460,28 @@ window.startSolo = function(){
   const oldBadge=document.getElementById('spectator-badge'); if(oldBadge) oldBadge.remove();
 
   const shuffled = shuf(pls);
-  G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:Date.now(), _gameStartTs:Date.now() };
+  const _soloTs = Date.now();
+  G={ status:'playing', players:shuffled, deck:d, treasury:Math.max(0,50-shuffled.length*2), turn:0, phase:'action', startedAt:_soloTs, _gameStartTs:_soloTs };
+
+  // سجّل غرفة البوتات في Firebase لتظهر في الأدمن
+  const _soloRoomId = 'SOLO_' + ME.id.slice(0,8);
+  ROOM = _soloRoomId;
+  const _soloPlayers = {};
+  shuffled.forEach(p=>{ _soloPlayers[p.id] = { id:p.id, name:p.name, av:p.av, isBot:!!p.isBot }; });
+  dbSet(`rooms/${_soloRoomId}`, {
+    code: _soloRoomId,
+    status: 'playing',
+    hostId: ME.id,
+    isSolo: true,
+    botCount: botN,
+    players: _soloPlayers,
+    ts: _soloTs,
+    game: { status:'playing', startedAt:_soloTs, playerCount: shuffled.length }
+  }).catch(()=>{});
+  // حذف الغرفة بعد 2 ساعة تلقائياً
+  setTimeout(()=>{ try{ remove(dbRef(`rooms/${_soloRoomId}`)); }catch{} }, 2*60*60*1000);
+
+  SPECTATING=false;
   S('screen-game'); renderGame();
   glog(`⚔️ ${T('newRound')} <span class="lh">${cur().name}</span>`);
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
@@ -3905,6 +4028,85 @@ function confetti(){
 
 window.addEventListener('load', async ()=>{
   if(await checkBanned()) return;
+
+  // ════════════════════════════════════════════════
+  // VISITOR TRACKING — تتبع الزوار تلقائياً
+  // ════════════════════════════════════════════════
+  (async function trackVisitor(){
+    try{
+      const pid       = getPlayerUid();
+      const isMobile  = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      const device    = isMobile ? 'mobile' : 'desktop';
+      const lang      = navigator.language || '—';
+      const referrer  = document.referrer || 'direct';
+      const now       = Date.now();
+      const today     = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+      const hour      = new Date().getHours();
+      let country = '—';
+      try{
+        const geo = await fetch('https://ipapi.co/json/').then(r=>r.json());
+        country = geo.country_name || '—';
+      }catch(e){}
+
+      // 1. سجّل زيارة في admin/visitors/{pid}
+      const vSnap = await get(ref(db, `admin/visitors/${pid}`));
+      if(!vSnap.exists()){
+        await set(ref(db, `admin/visitors/${pid}`), {
+          uid: pid,
+          firstVisit: now,
+          lastVisit: now,
+          visits: 1,
+          device, country, lang, referrer,
+          everPlayed: false,
+        });
+      } else {
+        const prev = vSnap.val();
+        await update(ref(db, `admin/visitors/${pid}`), {
+          lastVisit: now,
+          visits: (prev.visits||0) + 1,
+          device, country,
+        });
+      }
+
+      // 2. سجّل إحصائيات يومية في admin/stats/daily/{today}
+      const daySnap = await get(ref(db, `admin/stats/daily/${today}`));
+      const dayData = daySnap.exists() ? daySnap.val() : {};
+      const uniqueToday = dayData.uniqueVisitors || {};
+      await update(ref(db, `admin/stats/daily/${today}`), {
+        [`uniqueVisitors/${pid}`]: true,
+        totalPageviews: (dayData.totalPageviews||0) + 1,
+        [`devices/${device}`]: (dayData.devices?.[device]||0) + 1,
+        [`hours/${hour}`]: (dayData.hours?.[hour]||0) + 1,
+        lastUpdated: now,
+      });
+
+      // 3. تتبع وقت الجلسة عند مغادرة الصفحة
+      const _visitStart = Date.now();
+      const saveSessionTime = async () => {
+        const sessionMs = Date.now() - _visitStart;
+        if(sessionMs < 3000) return; // تجاهل أقل من 3 ثوانٍ
+        try{
+          const vs2 = await get(ref(db, `admin/visitors/${pid}`));
+          if(vs2.exists()){
+            const prev2 = vs2.val();
+            await update(ref(db, `admin/visitors/${pid}`), {
+              totalTimeMs: (prev2.totalTimeMs||0) + sessionMs,
+            });
+          }
+          // وقت الجلسة في الإحصائيات اليومية
+          const ds2 = await get(ref(db, `admin/stats/daily/${today}`));
+          if(ds2.exists()){
+            await update(ref(db, `admin/stats/daily/${today}`), {
+              totalTimeMs: (ds2.val().totalTimeMs||0) + sessionMs,
+            });
+          }
+        }catch(e){}
+      };
+      window.addEventListener('beforeunload', saveSessionTime);
+      document.addEventListener('visibilitychange', ()=>{ if(document.hidden) saveSessionTime(); });
+
+    }catch(e){ console.warn('visitor tracking error:', e); }
+  })();
   const savedFont = localStorage.getItem('coup_fontsize')||'md';
   setSize(savedFont, document.querySelector(`.seg-btn:nth-child(${savedFont==='sm'?1:savedFont==='lg'?3:2})`));
   const savedTheme = localStorage.getItem('coup_theme') || 'dark';
