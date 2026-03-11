@@ -4097,66 +4097,76 @@ window.addEventListener('load', async ()=>{
   // ════════════════════════════════════════════════
   (async function trackVisitor(){
     try{
-      const pid       = getPlayerUid();
-      const isMobile  = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-      const device    = isMobile ? 'mobile' : 'desktop';
-      const lang      = navigator.language || '—';
-      const referrer  = document.referrer || 'direct';
-      const now       = Date.now();
-      const today     = new Date().toISOString().slice(0,10); // YYYY-MM-DD
-      const hour      = new Date().getHours();
-      let country = '—';
-      try{
-        const geo = await fetch('https://ipapi.co/json/').then(r=>r.json());
-        country = geo.country_name || '—';
-      }catch(e){}
+      const pid      = getPlayerUid();
+      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      const device   = isMobile ? 'mobile' : 'desktop';
+      const lang     = navigator.language || '—';
+      const referrer = document.referrer ? new URL(document.referrer).hostname : 'direct';
+      const now      = Date.now();
+      const today    = new Date().toISOString().slice(0,10);
+      const hour     = new Date().getHours();
 
-      // 1. سجّل زيارة في admin/visitors/{pid}
+      // ── دولة اللاعع (مرة واحدة فقط لتجنب استهلاك ipapi)
+      let country = localStorage.getItem('coup_country') || '';
+      if(!country){
+        try{
+          const geo = await fetch('https://ipapi.co/json/').then(r=>r.json());
+          country = geo.country_name || '—';
+          localStorage.setItem('coup_country', country);
+        }catch(e){ country = '—'; }
+      }
+
+      // ── 1. سجل الزائر في admin/visitors/{pid}
       const vSnap = await get(ref(db, `admin/visitors/${pid}`));
       if(!vSnap.exists()){
         await set(ref(db, `admin/visitors/${pid}`), {
-          uid: pid,
-          firstVisit: now,
-          lastVisit: now,
-          visits: 1,
-          device, country, lang, referrer,
-          everPlayed: false,
+          uid:pid, firstVisit:now, lastVisit:now,
+          visits:1, device, country, lang, referrer,
+          everPlayed:false, totalTimeMs:0,
         });
       } else {
         const prev = vSnap.val();
+        // نمنع عد نفس الجلسة مرتين إذا أعاد التحميل خلال دقيقتين
+        const isNewVisit = (now - (prev.lastVisit||0)) > 120000;
         await update(ref(db, `admin/visitors/${pid}`), {
           lastVisit: now,
-          visits: (prev.visits||0) + 1,
+          visits: isNewVisit ? (prev.visits||0)+1 : (prev.visits||1),
           device, country,
         });
       }
 
-      // 2. سجّل إحصائيات يومية في admin/stats/daily/{today}
+      // ── 2. إحصائيات يومية: pageviews = كل فتح حقيقي (بفارق أكثر من 2 دقيقة)
       const daySnap = await get(ref(db, `admin/stats/daily/${today}`));
       const dayData = daySnap.exists() ? daySnap.val() : {};
-      const uniqueToday = dayData.uniqueVisitors || {};
-      await update(ref(db, `admin/stats/daily/${today}`), {
+      const lastPV  = dayData[`pv_${pid}`] || 0;
+      const isNewPV = (now - lastPV) > 120000;
+      const updates = {
         [`uniqueVisitors/${pid}`]: true,
-        totalPageviews: (dayData.totalPageviews||0) + 1,
-        [`devices/${device}`]: (dayData.devices?.[device]||0) + 1,
-        [`hours/${hour}`]: (dayData.hours?.[hour]||0) + 1,
+        [`hours/${hour}`]: (dayData.hours?.[hour]||0) + (isNewPV?1:0),
         lastUpdated: now,
-      });
+      };
+      if(isNewPV){
+        updates.totalPageviews = (dayData.totalPageviews||0)+1;
+        updates[`pv_${pid}`] = now;
+        updates[`devices/${device}`] = (dayData.devices?.[device]||0)+1;
+      }
+      await update(ref(db, `admin/stats/daily/${today}`), updates);
 
-      // 3. تتبع وقت الجلسة عند مغادرة الصفحة
+      // ── 3. وقت الجلسة (مرة واحدة عند المغادرة فقط)
       const _visitStart = Date.now();
+      let _sessionSaved = false;
       const saveSessionTime = async () => {
+        if(_sessionSaved) return;
+        _sessionSaved = true;
         const sessionMs = Date.now() - _visitStart;
-        if(sessionMs < 3000) return; // تجاهل أقل من 3 ثوانٍ
+        if(sessionMs < 5000) return;
         try{
           const vs2 = await get(ref(db, `admin/visitors/${pid}`));
           if(vs2.exists()){
-            const prev2 = vs2.val();
             await update(ref(db, `admin/visitors/${pid}`), {
-              totalTimeMs: (prev2.totalTimeMs||0) + sessionMs,
+              totalTimeMs: (vs2.val().totalTimeMs||0) + sessionMs,
             });
           }
-          // وقت الجلسة في الإحصائيات اليومية
           const ds2 = await get(ref(db, `admin/stats/daily/${today}`));
           if(ds2.exists()){
             await update(ref(db, `admin/stats/daily/${today}`), {
@@ -4166,7 +4176,12 @@ window.addEventListener('load', async ()=>{
         }catch(e){}
       };
       window.addEventListener('beforeunload', saveSessionTime);
-      document.addEventListener('visibilitychange', ()=>{ if(document.hidden) saveSessionTime(); });
+      // visibilitychange: فقط لما يختفي الـ tab (مو لما يعود)
+      let _tabHidden = false;
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.hidden){ _tabHidden=true; saveSessionTime(); }
+        else if(_tabHidden){ _tabHidden=false; _sessionSaved=false; } // سمح بجلسة جديدة لو عاد
+      });
 
     }catch(e){ console.warn('visitor tracking error:', e); }
   })();
