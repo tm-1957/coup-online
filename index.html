@@ -161,7 +161,7 @@ body.light .player-row{background:rgba(0,0,0,.03);}
 .p-slot.active-turn .p-card.alive{animation:card-pulse 2.4s ease-in-out infinite;border-color:rgba(201,168,76,.7);box-shadow:0 0 4px rgba(201,168,76,.4);}
 @keyframes card-pulse{0%,100%{box-shadow:0 0 4px rgba(201,168,76,.3);}50%{box-shadow:0 0 8px rgba(201,168,76,.8);}}
 .p-av{font-size:26px;line-height:1;}
-.p-name{font-size:10px;font-weight:700;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.p-name{font-size:11px;font-weight:700;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;padding:0 2px;min-height:14px;}
 .p-coins{font-family:'Cinzel Decorative',serif;font-size:13px;color:var(--gold-lt);display:flex;align-items:center;gap:2px;}
 .p-coin-sym{font-size:10px;}.p-cards{display:flex;gap:2px;}
 .p-card{width:16px;height:24px;border-radius:3px;}
@@ -850,7 +850,7 @@ body.light .theme-pill.active{background:rgba(160,120,32,.12);color:var(--gold);
 <script type="module">
 import { initializeApp }                                              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics, logEvent }                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-import { getDatabase, ref, set, get, update, push, onValue, off, remove }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, update, push, onValue, off, remove, runTransaction }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCaQdotTFYyT0QQWgCv2_Li2OGnxOQmmB8",
@@ -1055,30 +1055,31 @@ async function trackPlayer(name, av){
 
 async function trackSessionEnd(playMs){
   if(!playMs || playMs <= 0) return;
-  const pid = getPlayerUid(); // نفس الـ ID المستخدم في trackPlayer
+  const pid = getPlayerUid();
   if(!pid) return;
   try{
-    const snap = await get(ref(db,`admin/players/${pid}`));
-    if(!snap.exists()){
-      console.warn('[trackSessionEnd] لاعب غير مسجل في admin/players/'+pid);
-      // سجّله أولاً ثم أضف الوقت
-      await set(ref(db,`admin/players/${pid}`),{
-        uid:pid, name:ME?.name||'لاعب', av:ME?.av||'🤴',
-        firstSeen:Date.now(), lastSeen:Date.now(),
-        sessions:1, totalPlayMs:playMs,
-        device:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'mobile':'desktop',
-        country:'—'
-      });
-      console.log('[trackSessionEnd] أُنشئ سجل جديد + playMs='+playMs);
-      return;
-    }
-    const prev = snap.val()?.totalPlayMs || 0;
-    await update(ref(db,`admin/players/${pid}`),{
-      totalPlayMs: prev + playMs,
-      lastSeen: Date.now()
+    const playerRef = ref(db, `admin/players/${pid}`);
+    await runTransaction(playerRef, current => {
+      if(current === null){
+        // لم يُسجَّل بعد — أنشئ سجل جديد
+        return {
+          uid: pid,
+          name: ME?.name || localStorage.getItem('coup_name') || 'لاعب',
+          av: ME?.av || '🤴',
+          firstSeen: Date.now(), lastSeen: Date.now(),
+          sessions: 1, totalPlayMs: playMs,
+          device: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+          country: '—'
+        };
+      }
+      current.totalPlayMs = (current.totalPlayMs || 0) + playMs;
+      current.sessions = (current.sessions || 0) + 1;
+      current.lastSeen = Date.now();
+      current.device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+      return current;
     });
-    console.log('[trackSessionEnd] ✅ pid='+pid+' prev='+prev+' +'+playMs+'='+(prev+playMs));
-  }catch(e){ console.error('[trackSessionEnd] ❌ فشل تسجيل الوقت:',e.message, 'pid='+getPlayerUid()); }
+    console.log('[trackSessionEnd] ✅ pid='+pid+' +'+playMs+'ms');
+  }catch(e){ console.error('[trackSessionEnd] ❌', e.message); }
 }
 
 
@@ -1338,6 +1339,8 @@ function startLocalGame(gs){
   const _sTs = (gs && gs._gameStartTs) ? gs._gameStartTs : Date.now();
   G = {...gs}; // نسخة محلية لا تُرفع لـ Firebase
   G._gameStartTs = _sTs; // دائماً موجود
+  // backup في localStorage لو G أصبح null لأي سبب
+  localStorage.setItem('coup_game_start_ts', String(_sTs));
   ALL_LOG_ENTRIES = [];
   const logEl = document.getElementById('log-entries');
   if(logEl) logEl.innerHTML = '';
@@ -1353,10 +1356,14 @@ function startLocalGame(gs){
     if(!gd) return;
     if(gd.status==='ended'){
       // سجّل وقت اللعب لغير الهوست (الهوست يسجّل في endGame)
-      if(!ME.host && G && G._gameStartTs){
-        const _pMs = Date.now() - G._gameStartTs;
-        if(_pMs > 10000) trackSessionEnd(_pMs);
-        G._gameStartTs = null;
+      if(!ME.host){
+        const _ts = G?._gameStartTs || +localStorage.getItem('coup_game_start_ts') || 0;
+        if(_ts > 0){
+          const _pMs = Date.now() - _ts;
+          if(_pMs > 10000) trackSessionEnd(_pMs);
+        }
+        if(G) G._gameStartTs = null;
+        localStorage.removeItem('coup_game_start_ts');
       }
       showStats(gd); return;
     }
@@ -1587,7 +1594,7 @@ function renderBar(){
     sl.className=`p-slot${isCur?' active-turn':''}${p.eliminated?' dead':''}${isMe?' me':''}`;
     const dots=p.cards.map((_,ci)=>`<div class="p-card ${p.revealed[ci]?'dead-card':'alive'}"></div>`).join('');
     sl.innerHTML=`<div class="p-av">${p.av}</div>
-      <div class="p-name${isCur?' active':''}">${isMe?(LANG==='en'?'You':'أنت'):p.name}</div>
+      <div class="p-name${isCur?' active':''}" title="${isMe?(LANG==='en'?'You':'أنت'):p.name}">${isMe?(LANG==='en'?'You':'أنت'):p.name}</div>
       <div class="p-coins"><span class="p-coin-sym">◈</span>${p.coins}</div>
       <div class="p-cards">${dots}</div>`;
     bar.appendChild(sl);
@@ -1809,7 +1816,8 @@ function askReaction(actionId, target, claimedAs, onSuccess){
   const canChal  = CAN_CHAL.includes(actionId) && !!_currentClaimedAs;
   if(!canBlock && !canChal){ onSuccess(); return; }
 
-  const ops = G.players.filter(p => !p.eliminated && p.id !== ME.id);
+  const _actorId = myP()?.id;
+  const ops = G.players.filter(p => !p.eliminated && p.id !== _actorId);
   if(!ops.length){ onSuccess(); return; }
 
   if(!ROOM || ROOM?.startsWith('SOLO_')){
@@ -1893,24 +1901,28 @@ async function publishReactionAs(ops, i, actionId, target, claimedAs, actorPlaye
     const body = `<b style="color:var(--gold-lt)">${actor.av} ${actor.name}</b> ${T('claims')}:<br>
       <b style="font-size:15px">${actionId}${cn ? ` (${CARDS[cn]?.icon||''} ${cn})` : ''}</b>${targetTxt}`;
     const actions = [
-      { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${ME.name||'أنت'}</span> ${LANG==="en"?"allowed":"سمح"}`); next_i(); } }
+      { label:T('allowTxt'), cls:'btn-green', cb:()=>{ clearTimer(); glog(`✅ <span class="lh">${LANG==='en'?'You':'أنت'}</span> ${LANG==="en"?"allowed":"سمح"}`); next_i(); } }
     ];
     if(canChal) actions.push({ label:'❓ أتحدّى!', cls:'btn-red', cb:()=>{
       clearTimer(); SFX.challenge();
-      glog(`❓ <span class="lh">${ME.name||'أنت'}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
+      glog(`❓ <span class="lh">${LANG==='en'?'You':'أنت'}</span> ${LANG==="en"?"challenges!":"يتحدّى!"}`);
       const fn = _reactionSuccess; _reactionSuccess = null;
       doChallengePid(ME.id, actionId, claimedAs, fn, actor, target?.id);
     }});
     if(canBlock){ const lbl = blockCards.map(c=>`${CARDS[c]?.icon||''} ${c}`).join('/');
       actions.push({ label:`🛡️ اعترض (${lbl})`, cls:'', cb:()=>{
         clearTimer(); SFX.block();
-        glog(`🛡️ <span class="lh">${ME.name||'أنت'}</span> ${LANG==="en"?"is blocking!":"يعترض!"}`);
+        glog(`🛡️ <span class="lh">${LANG==='en'?'You':'أنت'}</span> ${LANG==="en"?"is blocking!":"يعترض!"}`);
         const fn = _reactionSuccess; _reactionSuccess = null;
         publishBlockChallengeFor(opp, actionId, blockCards, fn, actorPlayer || actor);
       }});
     }
     clearTimer();
-    openModal(`${myP()?.av||''} ${myP()?.name||''} — ماذا تفعل؟`, body, actions);
+    // العنوان: وضّح أن actor يلعب وأنت تختار ردك
+    const modalTitle = actor.id === ME.id
+      ? `${T('whatDoYouDo')}` // لا ينبغي أن يحدث
+      : `${actor.av} ${actor.name} ${LANG==='en'?'is acting':'يلعب'} — ${LANG==='en'?'Your move':'ردك؟'}`;
+    openModal(modalTitle, body, actions);
     SFX.modal();
     startTimer(60, ()=>{ glog(`⏱ ${LANG==="en"?"timed out — auto-allowed":"انتهى وقتك — سُمح تلقائياً"}`); next_i(); });
     return;
@@ -2360,6 +2372,10 @@ function askNext(ops, i, actionId, target, claimedAs, onSuccess, actorPlayer){
 
   if(oppCurrent.eliminated){ setTimeout(()=>next(), 100); return; }
   if(opp.id === ME?.id && isSpectating()){ setTimeout(()=>next(), 200); return; }
+  // لا تسأل اللاعع أبداً أن يتحدى نفسه
+  if(actorPlayer && actorPlayer.id === opp.id){ setTimeout(()=>next(), 100); return; }
+  // حماية إضافية: لاعع بشري لا يُسأل عن نفسه حتى لو actorPlayer مش ممرَّر
+  if(!actorPlayer && opp.id === ME?.id){ setTimeout(()=>next(), 100); return; }
 
   // ══════════════════════════════════════════════════════
   // FIX: clearTimer قبل فتح مودال اللاعب البشري
@@ -3081,6 +3097,7 @@ function endGame(winner){
     console.log('[endGame] playMs='+playMs+', pid='+getPlayerUid());
     if(playMs > 10000) trackSessionEnd(playMs);
     G._gameStartTs = null;
+    localStorage.removeItem('coup_game_start_ts');
     // احفظ snapshot للاعبين في admin/players لضمان الوصول بعد حذف الغرفة
     if(ROOM && ROOM.startsWith('SOLO_') && G?.players){
       G.players.filter(p=>!p.isBot).forEach(p=>{
@@ -4106,51 +4123,49 @@ window.addEventListener('load', async ()=>{
       const today    = new Date().toISOString().slice(0,10);
       const hour     = new Date().getHours();
 
-      // ── دولة اللاعع (مرة واحدة فقط لتجنب استهلاك ipapi)
-      let country = localStorage.getItem('coup_country') || '';
-      if(!country){
-        try{
-          const geo = await fetch('https://ipapi.co/json/').then(r=>r.json());
-          country = geo.country_name || '—';
-          localStorage.setItem('coup_country', country);
-        }catch(e){ country = '—'; }
+      // ── دولة اللاعع (بدون انتظار — لا تعطّل باقي التسجيل)
+      let country = localStorage.getItem('coup_country') || '—';
+      if(country === '—'){
+        fetch('https://ipapi.co/json/').then(r=>r.json()).then(geo=>{
+          const c = geo.country_name || '—';
+          localStorage.setItem('coup_country', c);
+          // حدّث السجل بعد ما نعرف الدولة
+          update(ref(db, `admin/visitors/${pid}`), { country: c }).catch(()=>{});
+        }).catch(()=>{});
       }
 
       // ── 1. سجل الزائر في admin/visitors/{pid}
-      const vSnap = await get(ref(db, `admin/visitors/${pid}`));
-      if(!vSnap.exists()){
-        await set(ref(db, `admin/visitors/${pid}`), {
-          uid:pid, firstVisit:now, lastVisit:now,
-          visits:1, device, country, lang, referrer,
-          everPlayed:false, totalTimeMs:0,
-        });
-      } else {
-        const prev = vSnap.val();
-        // نمنع عد نفس الجلسة مرتين إذا أعاد التحميل خلال دقيقتين
-        const isNewVisit = (now - (prev.lastVisit||0)) > 120000;
-        await update(ref(db, `admin/visitors/${pid}`), {
+      await runTransaction(ref(db, `admin/visitors/${pid}`), current => {
+        const isNewVisit = !current || (now - (current.lastVisit||0)) > 120000;
+        if(!current){
+          return { uid:pid, firstVisit:now, lastVisit:now, visits:1, device, country, lang, referrer, everPlayed:false, totalTimeMs:0 };
+        }
+        return {
+          ...current,
           lastVisit: now,
-          visits: isNewVisit ? (prev.visits||0)+1 : (prev.visits||1),
+          visits: isNewVisit ? (current.visits||0)+1 : (current.visits||1),
           device, country,
-        });
-      }
+        };
+      });
 
-      // ── 2. إحصائيات يومية: pageviews = كل فتح حقيقي (بفارق أكثر من 2 دقيقة)
-      const daySnap = await get(ref(db, `admin/stats/daily/${today}`));
-      const dayData = daySnap.exists() ? daySnap.val() : {};
-      const lastPV  = dayData[`pv_${pid}`] || 0;
-      const isNewPV = (now - lastPV) > 120000;
-      const updates = {
-        [`uniqueVisitors/${pid}`]: true,
-        [`hours/${hour}`]: (dayData.hours?.[hour]||0) + (isNewPV?1:0),
-        lastUpdated: now,
-      };
-      if(isNewPV){
-        updates.totalPageviews = (dayData.totalPageviews||0)+1;
-        updates[`pv_${pid}`] = now;
-        updates[`devices/${device}`] = (dayData.devices?.[device]||0)+1;
-      }
-      await update(ref(db, `admin/stats/daily/${today}`), updates);
+      // ── 2. إحصائيات يومية atomic
+      await runTransaction(ref(db, `admin/stats/daily/${today}`), dayData => {
+        if(!dayData) dayData = {};
+        const lastPV = dayData[`pv_${pid}`] || 0;
+        const isNewPV = (now - lastPV) > 120000;
+        if(!dayData.uniqueVisitors) dayData.uniqueVisitors = {};
+        dayData.uniqueVisitors[pid] = true;
+        if(!dayData.hours) dayData.hours = {};
+        if(isNewPV){
+          dayData.totalPageviews = (dayData.totalPageviews||0)+1;
+          dayData[`pv_${pid}`] = now;
+          if(!dayData.devices) dayData.devices = {};
+          dayData.devices[device] = (dayData.devices[device]||0)+1;
+          dayData.hours[hour] = (dayData.hours[hour]||0)+1;
+        }
+        dayData.lastUpdated = now;
+        return dayData;
+      });
 
       // ── 3. وقت الجلسة (مرة واحدة عند المغادرة فقط)
       const _visitStart = Date.now();
@@ -4161,18 +4176,9 @@ window.addEventListener('load', async ()=>{
         const sessionMs = Date.now() - _visitStart;
         if(sessionMs < 5000) return;
         try{
-          const vs2 = await get(ref(db, `admin/visitors/${pid}`));
-          if(vs2.exists()){
-            await update(ref(db, `admin/visitors/${pid}`), {
-              totalTimeMs: (vs2.val().totalTimeMs||0) + sessionMs,
-            });
-          }
-          const ds2 = await get(ref(db, `admin/stats/daily/${today}`));
-          if(ds2.exists()){
-            await update(ref(db, `admin/stats/daily/${today}`), {
-              totalTimeMs: (ds2.val().totalTimeMs||0) + sessionMs,
-            });
-          }
+          // استخدم runTransaction لضمان الكتابة الصحيحة حتى مع تعدد التبويبات
+          await runTransaction(ref(db, `admin/visitors/${pid}/totalTimeMs`), cur => (cur||0) + sessionMs);
+          await runTransaction(ref(db, `admin/stats/daily/${today}/totalTimeMs`), cur => (cur||0) + sessionMs);
         }catch(e){}
       };
       window.addEventListener('beforeunload', saveSessionTime);
