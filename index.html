@@ -3080,15 +3080,31 @@ function endGame(winner){
     const playMs = Date.now() - G._gameStartTs;
     console.log('[endGame] playMs='+playMs+', pid='+getPlayerUid());
     if(playMs > 10000) trackSessionEnd(playMs);
-    G._gameStartTs = null; // reset لمنع التسجيل المزدوج
+    G._gameStartTs = null;
+    // احفظ snapshot للاعبين في admin/players لضمان الوصول بعد حذف الغرفة
+    if(ROOM && ROOM.startsWith('SOLO_') && G?.players){
+      G.players.filter(p=>!p.isBot).forEach(p=>{
+        update(ref(db,`admin/players/${p.id}`),{
+          lastGame:{ roomId:ROOM, ts:Date.now(), coins:p.coins, eliminated:p.eliminated }
+        }).catch(()=>{});
+      });
+    }
   }
   if(!winner){ S('screen-title'); return; }
   const endData={ ...G, status:'ended', winnerId:winner.id };
   if(ROOM){
     if(ROOM.startsWith('SOLO_')){
-      // غرفة بوتات — حدّث الحالة في Firebase ثم احذفها بعد 5 دقائق
+      // حدّث Firebase بالوضع النهائي للاعبين
+      const _finalPls = (G?.players||[]).map(p=>({
+        id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
+        coins:p.coins, eliminated:p.eliminated,
+        cards:p.cards.map(()=>'?'), revealed:[...p.revealed]
+      }));
       dbUpdate(`rooms/${ROOM}`, { status:'ended' }).catch(()=>{});
-      dbUpdate(`rooms/${ROOM}/game`, { status:'ended', winnerId:winner?.id||'' }).catch(()=>{});
+      dbUpdate(`rooms/${ROOM}/game`, {
+        status:'ended', winnerId:winner?.id||'',
+        players:_finalPls, turn:G?.turn??0, treasury:G?.treasury??0
+      }).catch(()=>{});
       setTimeout(()=>{ try{ remove(dbRef(`rooms/${ROOM}`)); }catch{} }, 5*60*1000);
     } else {
       dbUpdate(`rooms/${ROOM}/game`,{ status:'ended', winnerId:winner.id });
@@ -3341,10 +3357,15 @@ window.playAgain = function(){
   const _paNow = Date.now();
   const _paPlayers = {};
   freshPls.forEach(p=>{ _paPlayers[p.id] = { id:p.id, name:p.name, av:p.av, isBot:!!p.isBot }; });
+  const _paGamePlayers = freshPls.map(p=>({
+    id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
+    coins:p.coins, eliminated:p.eliminated,
+    cards:p.cards.map(()=>'?'), revealed:[...p.revealed]
+  }));
   dbSet(`rooms/${_paRoomId}`, {
     code:_paRoomId, status:'playing', hostId:ME.id, isSolo:true,
     players:_paPlayers, ts:_paNow,
-    game:{ status:'playing', startedAt:_paNow, playerCount:freshPls.length }
+    game:{ status:'playing', startedAt:_paNow, players:_paGamePlayers, turn:0, treasury:Math.max(0,50-freshPls.length*2) }
   }).catch(()=>{});
   setTimeout(()=>{ try{ remove(dbRef(`rooms/${_paRoomId}`)); }catch{} }, 2*60*60*1000);
 
@@ -3356,7 +3377,7 @@ window.playAgain = function(){
   S('screen-game');
   renderGame();
   glog(`⚔️ ${T('newRound')} ${cur().name}`);
-  setupReactionListener();
+  setupSoloAdminListeners();
   // تشغيل البوت إن كان دوره
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); }, 400);
 };
@@ -3468,6 +3489,13 @@ window.startSolo = function(){
   ROOM = _soloRoomId;
   const _soloPlayers = {};
   shuffled.forEach(p=>{ _soloPlayers[p.id] = { id:p.id, name:p.name, av:p.av, isBot:!!p.isBot }; });
+  // أرسل players كاملة لـ game لتظهر في مشاهدة الأدمن
+  const _soloGamePlayers = shuffled.map(p=>({
+    id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
+    coins:p.coins, eliminated:p.eliminated,
+    cards:p.cards.map(()=>'?'), // لا نكشف الأوراق
+    revealed:[...p.revealed]
+  }));
   dbSet(`rooms/${_soloRoomId}`, {
     code: _soloRoomId,
     status: 'playing',
@@ -3476,7 +3504,11 @@ window.startSolo = function(){
     botCount: botN,
     players: _soloPlayers,
     ts: _soloTs,
-    game: { status:'playing', startedAt:_soloTs, playerCount: shuffled.length }
+    game: {
+      status:'playing', startedAt:_soloTs,
+      players: _soloGamePlayers,
+      turn:0, treasury:G.treasury
+    }
   }).catch(()=>{});
   // حذف الغرفة بعد 2 ساعة تلقائياً
   setTimeout(()=>{ try{ remove(dbRef(`rooms/${_soloRoomId}`)); }catch{} }, 2*60*60*1000);
@@ -3484,8 +3516,39 @@ window.startSolo = function(){
   SPECTATING=false;
   S('screen-game'); renderGame();
   glog(`⚔️ ${T('newRound')} <span class="lh">${cur().name}</span>`);
+
+  // استمع لأوامر الأدمن (إنهاء / حظر / رسالة)
+  setupSoloAdminListeners();
+
   setTimeout(()=>{ if(G?.players?.[G.turn]?.isBot) runBot(); },400);
 };
+
+function setupSoloAdminListeners(){
+  if(!ROOM || !ROOM.startsWith('SOLO_')) return;
+  // رسالة النظام
+  dbOn(`rooms/${ROOM}/systemMsg`, msg => {
+    if(!msg || !msg.text) return;
+    const lastSeen = localStorage.getItem('coup_last_sysmsg');
+    if(lastSeen && +lastSeen >= (msg.ts||0)) return;
+    localStorage.setItem('coup_last_sysmsg', String(msg.ts||Date.now()));
+    openModal('🔔 رسالة من الإدارة', msg.text, [{ label:T('close'), cls:'btn-dim', cb:()=>{} }]);
+  });
+  // إنهاء قسري
+  dbOn(`rooms/${ROOM}/adminForceEnd`, signal => {
+    if(!signal) return;
+    clearTimer(); clearReactionListener();
+    openModal('🛑 إنهاء من الأدمن', 'تم إنهاء هذه الجلسة من قِبَل الإدارة.',
+      [{ label:'حسناً', cls:'btn-dim', cb:()=>{ G=null; ROOM=null; S('screen-title'); } }]);
+  });
+  // كيك / حظر
+  dbOn(`rooms/${ROOM}/adminKick/${ME?.id}`, kick => {
+    if(!kick) return;
+    clearTimer(); clearReactionListener();
+    G=null; ROOM=null;
+    openModal('🚫 تم حظرك', 'تم حظرك من قِبَل الأدمن.',
+      [{ label:'حسناً', cls:'btn-gold', cb:()=>{ location.reload(); } }]);
+  });
+}
 
 window.showCredits = function(){
   const card = s => `<div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px 16px;">${s}</div>`;
