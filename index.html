@@ -3115,7 +3115,7 @@ function endGame(winner){
       const _finalPls = (G?.players||[]).map(p=>({
         id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
         coins:p.coins, eliminated:p.eliminated,
-        cards:p.cards.map(()=>'?'), revealed:[...p.revealed]
+        cards:[...p.cards], revealed:[...p.revealed]
       }));
       dbUpdate(`rooms/${ROOM}`, { status:'ended' }).catch(()=>{});
       dbUpdate(`rooms/${ROOM}/game`, {
@@ -3377,7 +3377,7 @@ window.playAgain = function(){
   const _paGamePlayers = freshPls.map(p=>({
     id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
     coins:p.coins, eliminated:p.eliminated,
-    cards:p.cards.map(()=>'?'), revealed:[...p.revealed]
+    cards:[...p.cards], revealed:[...p.revealed]
   }));
   dbSet(`rooms/${_paRoomId}`, {
     code:_paRoomId, status:'playing', hostId:ME.id, isSolo:true,
@@ -3510,7 +3510,7 @@ window.startSolo = function(){
   const _soloGamePlayers = shuffled.map(p=>({
     id:p.id, name:p.name, av:p.av, isBot:!!p.isBot,
     coins:p.coins, eliminated:p.eliminated,
-    cards:p.cards.map(()=>'?'), // لا نكشف الأوراق
+    cards:[...p.cards], // الأدمن يرى الكروت
     revealed:[...p.revealed]
   }));
   dbSet(`rooms/${_soloRoomId}`, {
